@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { greet } from "./index.js";
+import { greet } from "./index";
 
 describe("Charlie Index Functions", () => {
   it("should greet properly", () => {
