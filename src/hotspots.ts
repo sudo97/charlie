@@ -1,7 +1,7 @@
 import { Revisions } from "./revisions";
 import { visualComplexity } from "./visual-complexity";
 
-type Hotspot = {
+export type Hotspot = {
   file: string;
   complexity: number;
   revisions: number;
