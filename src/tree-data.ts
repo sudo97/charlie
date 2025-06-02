@@ -21,13 +21,14 @@ export function treeData(hotspots: Hotspot[]): TreeData {
 
   for (const hotspot of hotspots) {
     const path = hotspot.file.split("/");
+    const lastItem = path.pop()!;
+
     let subTree = root;
-    while (path.length > 1) {
-      const folderName = path.shift()!;
+    for (const folderName of path) {
       let nextSubTree = subTree.children.find(
         (child): child is Folder =>
           child.name === folderName && "children" in child
-      )!;
+      );
       if (!nextSubTree) {
         nextSubTree = {
           name: folderName,
@@ -38,12 +39,11 @@ export function treeData(hotspots: Hotspot[]): TreeData {
       subTree = nextSubTree;
     }
     subTree.children.push({
-      name: path[0]!,
+      name: lastItem,
       complexity: hotspot.complexity,
       revisions: hotspot.revisions,
     });
   }
-  console.log(root);
 
   return root;
 }
