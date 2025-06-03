@@ -18,3 +18,5 @@ This is the [Charlie](https://en.wikipedia.org/wiki/Charlie_Eppes) of your git h
 - [ ] Add a way to find file/module owners
 - [ ] Add a way to find teams that happen to form by analyzing authors
 - [ ] Add a way to show fractal diagrams for the files or modules based on their ownership
+- [ ] Add a way to show the "social graph" of the team based on the git history
+- [ ] Add a way to calculate truck-factor of a project (i.e. how many people can leave before 50% of the code is left without a knowledgeable maintainer)
