@@ -1,7 +1,13 @@
 import fs from "fs/promises";
 import path from "path";
 import mustache from "mustache";
-import type { ReportOptions } from "../shared/types.js";
+import type { TreeData } from "@shared/tree-data.js";
+
+export interface ReportOptions {
+  title: string;
+  outputPath: string;
+  data: TreeData;
+}
 
 export class ReportGenerator {
   private templatePath: string;
