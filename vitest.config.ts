@@ -9,21 +9,23 @@ export default defineConfig({
     include: ["src/**/*.{test,spec}.{js,ts}"],
     exclude: ["node_modules", "dist"],
 
+    // Enable this for test-coverage
+    //
     // Reporter configuration
-    reporters: ["verbose", "json", "html"],
+    // reporters: ["verbose", "json", "html"],
 
     // Coverage configuration
-    coverage: {
-      provider: "v8",
-      reporter: ["text", "json", "html"],
-      include: ["src/**/*.ts"],
-      exclude: [
-        "src/**/*.test.ts",
-        "src/**/*.spec.ts",
-        "src/types/**",
-        "src/**/*.d.ts",
-      ],
-    },
+    // coverage: {
+    //   provider: "v8",
+    //   reporter: ["text", "json", "html"],
+    //   include: ["src/**/*.ts"],
+    //   exclude: [
+    //     "src/**/*.test.ts",
+    //     "src/**/*.spec.ts",
+    //     "src/types/**",
+    //     "src/**/*.d.ts",
+    //   ],
+    // },
 
     // Watch configuration
     watch: false,
