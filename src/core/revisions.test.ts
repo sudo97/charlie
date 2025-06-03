@@ -9,7 +9,17 @@ describe("Revisions", () => {
   });
 
   it("should count each file change", () => {
-    const result = revisions([[{ file: "file1.txt" }, { file: "file2.txt" }]]);
+    const result = revisions([
+      {
+        hash: "123",
+        date: "2021-01-01",
+        author: "John Doe",
+        fileEntries: [
+          { fileName: "file1.txt", added: 1, removed: 0 },
+          { fileName: "file2.txt", added: 1, removed: 0 },
+        ],
+      },
+    ]);
     expect(result).toEqual({
       "file1.txt": 1,
       "file2.txt": 1,
@@ -18,11 +28,44 @@ describe("Revisions", () => {
 
   it("should count each file change multiple times", () => {
     const result = revisions([
-      [{ file: "file1.txt" }, { file: "file2.txt" }],
-      [{ file: "file1.txt" }],
+      {
+        fileEntries: [
+          { fileName: "file1.txt", added: 1, removed: 0 },
+          { fileName: "file2.txt", added: 1, removed: 0 },
+        ],
+        hash: "123",
+        date: "2021-01-01",
+        author: "John Doe",
+      },
+      {
+        fileEntries: [{ fileName: "file1.txt", added: 1, removed: 0 }],
+        hash: "123",
+        date: "2021-01-01",
+        author: "John Doe",
+      },
     ]);
     expect(result).toEqual({
       "file1.txt": 2,
+      "file2.txt": 1,
+    });
+  });
+
+  it("should take optional blacklist", () => {
+    const result = revisions(
+      [
+        {
+          hash: "123",
+          date: "2021-01-01",
+          author: "John Doe",
+          fileEntries: [
+            { fileName: "file1.txt", added: 1, removed: 0 },
+            { fileName: "file2.txt", added: 1, removed: 0 },
+          ],
+        },
+      ],
+      [/file1\.txt/]
+    );
+    expect(result).toEqual({
       "file2.txt": 1,
     });
   });

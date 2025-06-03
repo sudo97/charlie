@@ -1,25 +1,23 @@
-import { getGitLogWithFiles } from "./git-log.js";
-import { hotspots } from "../core/hotspots.js";
+import * as path from "path";
 import * as fs from "fs/promises";
 import { revisions } from "../core/revisions.js";
-import { treeData } from "../core/tree-data.js";
-import * as path from "path";
+import { hotspots } from "../core/hotspots.js";
+import { produceGitLog } from "./git-log.js";
 import { ReportGenerator } from "./report-generator.js";
+import { treeData } from "../core/tree-data.js";
 
 const repositoryPath = path.resolve(process.argv[2] ?? ".");
 
-const skip = new RegExp("package.*json|.*.md|drizzle\\/meta"); // <- TODO: use .charlieignore
+const blacklist = [
+  /package-lock\.json/,
+  /package\.json/,
+  /yarn\.lock/,
+  /\.md$/,
+];
 
-console.log("getting history");
-const history = await getGitLogWithFiles(repositoryPath);
-console.log("Calculating revisions");
-const revisionsData = revisions(
-  history.map((commit) => {
-    return commit.filter((file) => !skip.test(file.file));
-  })
-);
+const logItems = await produceGitLog(repositoryPath);
 
-console.log("calculating hotspots");
+const revisionsData = revisions(logItems, blacklist);
 
 const hotspotsData = await hotspots(revisionsData, async (file) => {
   const filepath = path.join(repositoryPath, file);
@@ -35,7 +33,6 @@ const hotspotsData = await hotspots(revisionsData, async (file) => {
   return "";
 });
 
-// Generate HTML report instead of console output
 const reportGenerator = new ReportGenerator();
 const outputPath = path.join(process.cwd(), "charlie-report.html");
 

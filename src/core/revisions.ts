@@ -1,18 +1,28 @@
-export type FileChange = {
-  file: string;
-  // linesAdded: number;
-  // linesRemoved: number;
+export type FileEntry = {
+  added: number;
+  removed: number;
+  fileName: string;
 };
 
-export type Commit = FileChange[];
-
-export type History = Commit[];
+export type LogItem = {
+  hash: string;
+  date: string;
+  author: string;
+  fileEntries: FileEntry[];
+};
 
 export type Revisions = Record<string, number>;
 
-export function revisions(history: History): Revisions {
+export function revisions(
+  history: LogItem[],
+  blacklist: RegExp[] = []
+): Revisions {
   return history
-    .flatMap((commit) => commit.map((file) => file.file))
+    .flatMap((commit) =>
+      commit.fileEntries
+        .filter((file) => !blacklist.some((regex) => regex.test(file.fileName)))
+        .map((file) => file.fileName)
+    )
     .reduce((acc, file) => {
       acc[file] = (acc[file] || 0) + 1;
       return acc;
