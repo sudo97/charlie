@@ -12,3 +12,9 @@ This is the [Charlie](https://en.wikipedia.org/wiki/Charlie_Eppes) of your git h
 - [ ] Pick prettier colours for the visualization
 - [ ] Add a diagram (and calculation) for the coupling pairs
 - [ ] Add a diagram (and calculation) for the SOC
+- [ ] Add .charlignore file support
+- [ ] Add a way to provide "include" and "exclude" patterns for the git log, so that subtrees can be analyzed separately
+- [ ] Add a way to group files into "architectural components"
+- [ ] Add a way to find file/module owners
+- [ ] Add a way to find teams that happen to form by analyzing authors
+- [ ] Add a way to show fractal diagrams for the files or modules based on their ownership
