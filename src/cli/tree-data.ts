@@ -1,17 +1,5 @@
-import { Hotspot } from "./hotspots.js";
-
-type Folder = {
-  name: string;
-  children: TreeData[];
-};
-
-type File = {
-  name: string;
-  complexity: number;
-  revisions: number;
-};
-
-export type TreeData = Folder | File;
+import type { Folder, TreeData } from "../shared/types.js";
+import type { Hotspot } from "./hotspots.js";
 
 export function treeData(hotspots: Hotspot[]): TreeData {
   const root: TreeData = {

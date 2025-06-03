@@ -1,6 +1,6 @@
-import * as gigitygit from "isomorphic-git";
-import * as fs from "fs";
-import { History } from "./revisions.js";
+import * as Git from "isomorphic-git";
+import fs from "fs";
+import type { History } from "./revisions.js";
 
 /**
  * Gets affected files between two commits
@@ -16,11 +16,11 @@ async function getAffectedFiles(
 ): Promise<string[]> {
   // If no parent commit, compare against empty tree
   const tree1 = commitHash1
-    ? gigitygit.TREE({ ref: commitHash1 })
-    : gigitygit.TREE({ ref: "4b825dc642cb6eb9a060e54bf8d69288fbee4904" });
-  const tree2 = gigitygit.TREE({ ref: commitHash2 });
+    ? Git.TREE({ ref: commitHash1 })
+    : Git.TREE({ ref: "4b825dc642cb6eb9a060e54bf8d69288fbee4904" });
+  const tree2 = Git.TREE({ ref: commitHash2 });
 
-  const changes = await gigitygit.walk({
+  const changes = await Git.walk({
     fs,
     dir,
     trees: [tree1, tree2],
@@ -59,13 +59,13 @@ async function getAllBranchCommits(
   repositoryPath: string,
   depth?: number,
   since?: Date
-): Promise<gigitygit.ReadCommitResult[]> {
-  const refs = await gigitygit.listBranches({ fs, dir: repositoryPath });
-  const allCommits: gigitygit.ReadCommitResult[] = [];
+): Promise<Git.ReadCommitResult[]> {
+  const refs = await Git.listBranches({ fs, dir: repositoryPath });
+  const allCommits: Git.ReadCommitResult[] = [];
 
   for (const branchRef of refs) {
     try {
-      const branchCommits = await gigitygit.log({
+      const branchCommits = await Git.log({
         fs,
         dir: repositoryPath,
         ref: branchRef,
@@ -112,7 +112,7 @@ export async function getGitLogWithFiles(
     // Get commits from git log
     const commits = all
       ? await getAllBranchCommits(repositoryPath, depth, since)
-      : await gigitygit.log({
+      : await Git.log({
           fs,
           dir: repositoryPath,
           ref,

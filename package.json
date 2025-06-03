@@ -3,14 +3,17 @@
   "version": "0.1.0",
   "description": "A tool for analyzing and visualizing your git history. Based on ideas from 'Your Code as a Crime Scene' by Andrew M. Sutton.",
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./dist/cli/cli/index.js",
   "bin": {
-    "charlie": "./dist/cli.js"
+    "charlie": "./dist/cli/cli/index.js"
   },
   "scripts": {
-    "execute": "node dist/index.js",
-    "build": "tsc",
-    "dev": "tsc --watch",
+    "execute": "node dist/cli/cli/index.js",
+    "build": "npm run build:frontend && npm run build:cli",
+    "build:frontend": "vite build",
+    "build:cli": "tsc --project tsconfig.cli.json",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run build:cli -- --watch\"",
+    "dev:frontend": "vite serve",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
@@ -32,18 +35,22 @@
   "dependencies": {
     "commander": "^11.1.0",
     "d3": "^7.8.5",
-    "isomorphic-git": "^1.30.2"
+    "isomorphic-git": "^1.30.2",
+    "mustache": "^4.2.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.28.0",
     "@types/d3": "^7.4.3",
+    "@types/mustache": "^4.2.2",
     "@types/node": "^20.10.6",
     "@vitest/coverage-v8": "^1.1.0",
     "@vitest/ui": "^1.1.0",
+    "concurrently": "^7.6.0",
     "eslint": "^9.28.0",
     "globals": "^16.2.0",
     "typescript": "^5.3.3",
     "typescript-eslint": "^8.33.0",
+    "vite": "^4.4.9",
     "vitest": "^1.1.0"
   },
   "engines": {

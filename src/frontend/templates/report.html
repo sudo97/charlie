@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{title}}</title>
+    <style>{{css}}</style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>{{title}}</h1>
+      <div id="visualization">
+        <!-- D3 visualization will be inserted here -->
+      </div>
+    </div>
+
+    <!-- Inject report data -->
+    <script id="data" type="application/json">
+      {{{reportDataJson}}}
+    </script>
+    
+    <!-- Load the built frontend bundle -->
+    <script type="module">
+      {{js}}
+    </script>
+  </body>
+</html> 

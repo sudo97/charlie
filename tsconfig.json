@@ -2,9 +2,9 @@
   "compilerOptions": {
     // Language and Environment
     "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "lib": ["ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     
     // Emit
     "outDir": "./dist",
@@ -20,6 +20,7 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
+    "verbatimModuleSyntax": true,
     
     // Type Checking
     "strict": true,
@@ -41,7 +42,13 @@
     "noPropertyAccessFromIndexSignature": true,
     
     // Completeness
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    
+    // Path mapping for shared code
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["src/shared/*"]
+    }
   },
   "include": [
     "src/**/*"
