@@ -1,4 +1,4 @@
-import { Hotspot } from "./hotspots";
+import { Hotspot } from "./hotspots.js";
 
 type Folder = {
   name: string;
