@@ -44,10 +44,10 @@
     // Completeness
     "skipLibCheck": true,
     
-    // Path mapping for shared code
+    // Path mapping for core code
     "baseUrl": ".",
     "paths": {
-      "@shared/*": ["src/shared/*"]
+      "@core/*": ["src/core/*"]
     }
   },
   "include": [

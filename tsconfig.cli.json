@@ -7,7 +7,7 @@
   },
   "include": [
     "src/cli/**/*.ts",
-    "src/shared/**/*.ts"
+    "src/core/**/*.ts"
   ],
   "exclude": [
     "node_modules",

@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import type { TreeData } from "../../shared/types.js";
+import type { TreeData } from "../../core/types.js";
 import "../styles/main.css";
 
 interface Window {

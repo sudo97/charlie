@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import mustache from "mustache";
-import type { TreeData } from "@shared/tree-data.js";
+import type { TreeData } from "src/core/tree-data.js";
 
 export interface ReportOptions {
   title: string;

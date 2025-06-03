@@ -1,6 +1,6 @@
 import * as Git from "isomorphic-git";
 import fs from "fs";
-import type { History } from "../shared/revisions.js";
+import type { History } from "../core/revisions.js";
 
 /**
  * Gets affected files between two commits
