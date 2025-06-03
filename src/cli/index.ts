@@ -10,14 +10,20 @@ const repositoryPath = path.resolve(process.argv[2] ?? ".");
 
 const skip = new RegExp("package.*json|.*.md|drizzle\\/meta"); // <- TODO: use .charlieignore
 
+console.log("getting history");
 const history = await getGitLogWithFiles(repositoryPath);
+console.log("Calculating revisions");
 const revisionsData = revisions(
   history.map((commit) => {
     return commit.filter((file) => !skip.test(file.file));
   })
 );
+
+console.log("calculating hotspots");
+
 const hotspotsData = await hotspots(revisionsData, async (file) => {
   const filepath = path.join(repositoryPath, file);
+  console.log("reading", filepath);
   if (
     await fs
       .access(filepath)

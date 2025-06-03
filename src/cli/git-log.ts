@@ -122,7 +122,11 @@ export async function getGitLogWithFiles(
 
     const commitsWithFiles: History = [];
 
-    for (const commitData of commits) {
+    console.log("obtained commits");
+
+    const length = commits.length;
+    for (let i = 0; i < length; i++) {
+      const commitData = commits[i];
       if (!commitData) {
         continue;
       }
@@ -135,6 +139,8 @@ export async function getGitLogWithFiles(
         parentCommit,
         commitData.oid
       );
+
+      console.log(`obtained affected files for commit ${i + 1} of ${length}`);
 
       commitsWithFiles.push(affectedFiles.map((file) => ({ file })));
     }
