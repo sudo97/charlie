@@ -1,12 +1,11 @@
 import * as d3 from "d3";
 import "../styles/main.css";
-import type { TreeData } from "@core/tree-data";
+import type { TreeData, Folder, File } from "@core/tree-data";
+import type { HierarchyNode as D3HierarchyNode } from "d3";
 
-interface Window {
-  __REPORT_DATA__?: TreeData;
+interface HierarchyNode<Datum> extends D3HierarchyNode<Datum> {
+  r?: number;
 }
-
-declare const window: Window;
 
 class CharlieVisualization {
   private data: TreeData | null = null;
@@ -18,13 +17,6 @@ class CharlieVisualization {
   }
 
   private loadData(): void {
-    // Try to get data from window (injected by template)
-    if (window.__REPORT_DATA__) {
-      this.data = window.__REPORT_DATA__;
-      this.render();
-      return;
-    }
-
     // Fallback: try to get data from script tag (for backward compatibility)
     const dataElement = document.getElementById("data");
     if (dataElement) {
@@ -72,10 +64,12 @@ class CharlieVisualization {
       .style("height", "auto");
 
     // Create hierarchy - using any for now to avoid complex D3 typing
-    const root = d3.hierarchy(this.data).sum((d: any) => d.revisions || 0);
+    const root = d3
+      .hierarchy(this.data)
+      .sum((d) => ("revisions" in d ? d.revisions : 0));
 
     // Create pack layout
-    const pack = d3.pack().size([width, height]).padding(3);
+    const pack = d3.pack<TreeData>().size([width, height]).padding(3);
 
     // Apply pack layout
     pack(root);
@@ -83,8 +77,8 @@ class CharlieVisualization {
     // Find min and max complexity for color scale
     const allNodes = root.descendants();
     const complexityValues = allNodes
-      .filter((d: any) => d.data.complexity !== undefined)
-      .map((d: any) => d.data.complexity);
+      .filter((d) => "complexity" in d.data && d.data.complexity !== undefined)
+      .map((d) => (d.data as File).complexity);
 
     if (complexityValues.length === 0) {
       this.showError("No complexity data found");
@@ -104,13 +98,14 @@ class CharlieVisualization {
       .selectAll("circle")
       .data(root.descendants())
       .join("circle")
-      .attr("cx", (d: any) => d.x)
-      .attr("cy", (d: any) => d.y)
-      .attr("r", (d: any) => d.r)
-      .attr("fill", (d: any) => {
+      .attr("cx", (d: HierarchyNode<TreeData>) => d.x ?? 0)
+      .attr("cy", (d: HierarchyNode<TreeData>) => d.y ?? 0)
+      .attr("r", (d: HierarchyNode<TreeData>) => d.r ?? 0)
+      .attr("fill", (d: HierarchyNode<TreeData>) => {
         // Use complexity for color, fallback to light gray for nodes without complexity
-        if (d.data.complexity !== undefined) {
-          return color(d.data.complexity);
+        const data = d.data as File | Folder;
+        if ("complexity" in data && data.complexity !== undefined) {
+          return color(data.complexity);
         }
         return "#e8e8e8"; // Light gray for containers
       })
@@ -123,15 +118,18 @@ class CharlieVisualization {
       .selectAll("text")
       .data(root.descendants())
       .join("text")
-      .attr("x", (d: any) => d.x)
-      .attr("y", (d: any) => d.y - d.r + 15)
+      .attr("x", (d: HierarchyNode<TreeData>) => d.x ?? 0)
+      .attr("y", (d: HierarchyNode<TreeData>) => (d.y ?? 0) - (d.r ?? 0) + 15)
       .attr("text-anchor", "middle")
       .attr("dominant-baseline", "hanging")
-      .style("font-size", (d: any) => Math.min(d.r / 3, 14) + "px")
+      .style(
+        "font-size",
+        (d: HierarchyNode<TreeData>) => Math.min((d.r ?? 0) / 3, 14) + "px"
+      )
       .style("font-weight", "bold")
       .style("fill", "#333")
       .style("pointer-events", "none")
-      .text((d: any) => d.data.name);
+      .text((d) => d.data.name);
 
     // Add the SVG to the container
     this.container.appendChild(svg.node()!);
