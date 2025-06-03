@@ -8,6 +8,7 @@
     "charlie": "./dist/cli.js"
   },
   "scripts": {
+    "execute": "node dist/index.js",
     "build": "tsc",
     "dev": "tsc --watch",
     "test": "vitest",
