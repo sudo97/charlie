@@ -11,9 +11,12 @@ export type GitLogEmitter = {
 // This is tricky. I tried using isomorphic-git, but it was very slow.
 // Now we are parsing the output of git log --all --numstat --date=short --pretty=format:'--%h--%ad--%aN' --no-renames --after=(CURRENT_YEAR - 1)
 // and splitting it into log items.
+// Then I also decided to write tests for this, so that it's easier to maintain.
+// So I created a GitLogEmitter type instead of using child_process.spawn directly.
+// TODO: Write more tests for this, maybe include few different git log outputs, perhaps with a long list of
+// items and randomly slice the string into chunks.
 
 export async function produceGitLog(
-  // repositoryPath: string
   gitLogEmitter: GitLogEmitter
 ): Promise<LogItem[]> {
   return new Promise((res, rej) => {
@@ -22,6 +25,7 @@ export async function produceGitLog(
     let buffer = "";
 
     gitLogEmitter.onData((chunk) => {
+      console.log("buffer", JSON.stringify(buffer));
       // Process each chunk of data as it comes in
       // console.log("--");
 
