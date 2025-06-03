@@ -26,99 +26,101 @@
       }
     </style>
 
+    <!-- TODO: Insert this with a template engine -->
+    <script id="data" type="application/json">
+      {
+        "name": "Charlie",
+        "children": [
+          {
+            "name": "src",
+            "children": [
+              {
+                "name": "tree-data.ts",
+                "complexity": 53,
+                "revisions": 4
+              },
+              {
+                "name": "tree-data.test.ts",
+                "complexity": 94,
+                "revisions": 2
+              },
+              {
+                "name": "git-log.ts",
+                "complexity": 164,
+                "revisions": 1
+              },
+              {
+                "name": "hotspots.test.ts",
+                "complexity": 43,
+                "revisions": 3
+              },
+              {
+                "name": "hotspots.ts",
+                "complexity": 26,
+                "revisions": 3
+              },
+              {
+                "name": "index.ts",
+                "complexity": 34,
+                "revisions": 2
+              },
+              {
+                "name": "revisions.test.ts",
+                "complexity": 32,
+                "revisions": 1
+              },
+              {
+                "name": "index.test.ts",
+                "complexity": 15,
+                "revisions": 2
+              },
+              {
+                "name": "visual-complexity.test.ts",
+                "complexity": 25,
+                "revisions": 1
+              },
+              {
+                "name": "revisions.ts",
+                "complexity": 20,
+                "revisions": 1
+              },
+              {
+                "name": "visual-complexity.ts",
+                "complexity": 19,
+                "revisions": 1
+              }
+            ]
+          },
+          {
+            "name": "tsconfig.json",
+            "complexity": 63,
+            "revisions": 2
+          },
+          {
+            "name": "vitest.config.ts",
+            "complexity": 38,
+            "revisions": 2
+          },
+          {
+            "name": ".gitignore",
+            "complexity": 56,
+            "revisions": 1
+          },
+          {
+            "name": "eslint.config.js",
+            "complexity": 26,
+            "revisions": 1
+          }
+        ]
+      }
+      
+    </script>
+
     <script type="module">
       import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
-      const data = {
-        name: "charlie",
-        children: [
-          {
-            name: "visual.html",
-            complexity: 1285,
-            revisions: 1,
-          },
-          {
-            name: "src",
-            children: [
-              {
-                name: "tree-data.ts",
-                complexity: 53,
-                revisions: 4,
-              },
-              {
-                name: "tree-data.test.ts",
-                complexity: 94,
-                revisions: 2,
-              },
-              {
-                name: "git-log.ts",
-                complexity: 164,
-                revisions: 1,
-              },
-              {
-                name: "hotspots.test.ts",
-                complexity: 43,
-                revisions: 3,
-              },
-              {
-                name: "hotspots.ts",
-                complexity: 26,
-                revisions: 3,
-              },
-              {
-                name: "index.ts",
-                complexity: 34,
-                revisions: 2,
-              },
-              {
-                name: "revisions.test.ts",
-                complexity: 32,
-                revisions: 1,
-              },
-              {
-                name: "index.test.ts",
-                complexity: 15,
-                revisions: 2,
-              },
-              {
-                name: "visual-complexity.test.ts",
-                complexity: 25,
-                revisions: 1,
-              },
-              {
-                name: "revisions.ts",
-                complexity: 20,
-                revisions: 1,
-              },
-              {
-                name: "visual-complexity.ts",
-                complexity: 19,
-                revisions: 1,
-              },
-            ],
-          },
-          {
-            name: "tsconfig.json",
-            complexity: 63,
-            revisions: 2,
-          },
-          {
-            name: "vitest.config.ts",
-            complexity: 38,
-            revisions: 2,
-          },
-          {
-            name: ".gitignore",
-            complexity: 56,
-            revisions: 1,
-          },
-          {
-            name: "eslint.config.js",
-            complexity: 26,
-            revisions: 1,
-          },
-        ],
-      };
+      const dataElement = document.getElementById("data");
+      const data = JSON.parse(dataElement.textContent);
 
       // Set up dimensions
       const width = 800;
