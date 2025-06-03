@@ -1,6 +1,6 @@
 import * as d3 from "d3";
-import type { TreeData } from "../../core/types.js";
 import "../styles/main.css";
+import type { TreeData } from "@core/tree-data";
 
 interface Window {
   __REPORT_DATA__?: TreeData;

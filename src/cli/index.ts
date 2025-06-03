@@ -4,6 +4,7 @@ import * as fs from "fs/promises";
 import { revisions } from "../core/revisions.js";
 import { treeData } from "../core/tree-data.js";
 import * as path from "path";
+import { ReportGenerator } from "./report-generator.js";
 
 const repositoryPath = path.resolve(process.argv[2] ?? ".");
 
@@ -28,5 +29,14 @@ const hotspotsData = await hotspots(revisionsData, async (file) => {
   return "";
 });
 
-// console.log(JSON.stringify(hotspotsData, null, 2));
-console.log(JSON.stringify(treeData(hotspotsData), null, 2));
+// Generate HTML report instead of console output
+const reportGenerator = new ReportGenerator();
+const outputPath = path.join(process.cwd(), "charlie-report.html");
+
+await reportGenerator.generateReport({
+  title: "Charlie Code Hotspots Report",
+  outputPath,
+  data: treeData(hotspotsData),
+});
+
+console.log(`Report generated successfully at: ${outputPath}`);
