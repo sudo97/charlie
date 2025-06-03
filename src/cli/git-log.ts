@@ -3,7 +3,7 @@ import { parseFileEntry, parseHeader } from "./parse-log.js";
 import { type LogItem } from "../core/revisions.js";
 
 // This is tricky. I tried using isomorphic-git, but it was very slow.
-// Now we are parsing the output of git log --all --numstat --date=short --pretty=format:'--%h--%ad--%aN' --no-renames --after=2024-01-01
+// Now we are parsing the output of git log --all --numstat --date=short --pretty=format:'--%h--%ad--%aN' --no-renames --after=(CURRENT_YEAR - 1)
 // and splitting it into log items.
 
 export async function produceGitLog(
