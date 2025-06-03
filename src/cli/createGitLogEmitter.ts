@@ -1,7 +1,10 @@
 import { spawn } from "child_process";
 import type { GitLogEmitter } from "./git-log.js";
 
-export function createGitLogEmitter(repositoryPath: string): GitLogEmitter {
+export function createGitLogEmitter(
+  repositoryPath: string,
+  after?: Date
+): GitLogEmitter {
   const lastYear = new Date();
 
   lastYear.setFullYear(lastYear.getFullYear() - 1);
@@ -13,7 +16,7 @@ export function createGitLogEmitter(repositoryPath: string): GitLogEmitter {
     "--date=short",
     "--pretty=format:'--%h--%ad--%aN'",
     "--no-renames",
-    `--after=${lastYear.toJSON()}`,
+    `--after=${after ? after.toJSON() : lastYear.toJSON()}`,
   ];
 
   const gitProcess = spawn("git", gitArgs, { cwd: repositoryPath });
