@@ -1,8 +1,8 @@
 import { getGitLogWithFiles } from "./git-log.js";
-import { hotspots } from "./hotspots.js";
+import { hotspots } from "../shared/hotspots.js";
 import * as fs from "fs/promises";
-import { revisions } from "./revisions.js";
-import { treeData } from "./tree-data.js";
+import { revisions } from "../shared/revisions.js";
+import { treeData } from "../shared/tree-data.js";
 import * as path from "path";
 
 const repositoryPath = path.resolve(process.argv[2] ?? ".");

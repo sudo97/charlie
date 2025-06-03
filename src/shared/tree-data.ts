@@ -1,4 +1,4 @@
-import type { Folder, TreeData } from "../shared/types.js";
+import type { Folder, TreeData } from "./types.js";
 import type { Hotspot } from "./hotspots.js";
 
 export function treeData(hotspots: Hotspot[]): TreeData {
