@@ -1,36 +1,27 @@
-import { spawn } from "child_process";
 import { parseFileEntry, parseHeader } from "./parse-log.js";
 import { type LogItem } from "../core/revisions.js";
+
+export type GitLogEmitter = {
+  onData: (listener: (chunk: string) => void) => void;
+  onError: (listener: (error: Error) => void) => void;
+  onErrorData: (listener: (chunk: string) => void) => void;
+  onClose: (listener: (code: number) => void) => void;
+};
 
 // This is tricky. I tried using isomorphic-git, but it was very slow.
 // Now we are parsing the output of git log --all --numstat --date=short --pretty=format:'--%h--%ad--%aN' --no-renames --after=(CURRENT_YEAR - 1)
 // and splitting it into log items.
 
 export async function produceGitLog(
-  repositoryPath: string
+  // repositoryPath: string
+  gitLogEmitter: GitLogEmitter
 ): Promise<LogItem[]> {
   return new Promise((res, rej) => {
-    const lastYear = new Date();
-
-    lastYear.setFullYear(lastYear.getFullYear() - 1);
-
-    const gitArgs = [
-      "log",
-      "--all",
-      "--numstat",
-      "--date=short",
-      "--pretty=format:'--%h--%ad--%aN'",
-      "--no-renames",
-      `--after=${lastYear.toJSON()}`,
-    ];
-
-    const gitProcess = spawn("git", gitArgs, { cwd: repositoryPath });
-
     const logItems: LogItem[] = [];
 
     let buffer = "";
 
-    gitProcess.stdout.on("data", (chunk) => {
+    gitLogEmitter.onData((chunk) => {
       // Process each chunk of data as it comes in
       // console.log("--");
 
@@ -63,16 +54,17 @@ export async function produceGitLog(
       // process.stdout.write(chunk);
     });
 
-    gitProcess.stderr.on("data", (chunk) => {
+    gitLogEmitter.onErrorData((chunk) => {
       // Handle error output
       process.stderr.write(chunk);
     });
 
-    gitProcess.on("error", (error) => {
+    gitLogEmitter.onError((error) => {
       console.error(`spawn error: ${error}`);
+      rej(error);
     });
 
-    gitProcess.on("close", (code) => {
+    gitLogEmitter.onClose((code) => {
       if (code !== 0) {
         console.error(`git process exited with code ${code}`);
         rej(new Error(`git process exited with code ${code}`));

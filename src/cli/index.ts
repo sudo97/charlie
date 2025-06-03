@@ -5,6 +5,7 @@ import { hotspots } from "../core/hotspots.js";
 import { produceGitLog } from "./git-log.js";
 import { ReportGenerator } from "./report-generator.js";
 import { treeData } from "../core/tree-data.js";
+import { createGitLogEmitter } from "./createGitLogEmitter.js";
 
 const repositoryPath = path.resolve(process.argv[2] ?? ".");
 
@@ -15,7 +16,7 @@ const blacklist = [
   /\.md$/,
 ];
 
-const logItems = await produceGitLog(repositoryPath);
+const logItems = await produceGitLog(createGitLogEmitter(repositoryPath));
 
 const revisionsData = revisions(logItems, blacklist);
 
