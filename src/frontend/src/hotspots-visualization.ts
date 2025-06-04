@@ -9,11 +9,27 @@ interface HierarchyNode<Datum> extends D3HierarchyNode<Datum> {
 export class HotspotsVisualization {
   private data: TreeData | null = null;
   private container: HTMLElement;
-  private svg: any = null;
-  private g: any = null;
-  private circle: any = null;
-  private text: any = null;
-  private node: any = null;
+  private svg: d3.Selection<SVGSVGElement, unknown, null, undefined> | null =
+    null;
+  private g: d3.Selection<SVGGElement, unknown, null, undefined> | null = null;
+  private circle: d3.Selection<
+    SVGCircleElement,
+    HierarchyNode<TreeData>,
+    SVGGElement,
+    unknown
+  > | null = null;
+  private text: d3.Selection<
+    SVGTextElement,
+    HierarchyNode<TreeData>,
+    SVGGElement,
+    unknown
+  > | null = null;
+  private node: d3.Selection<
+    SVGCircleElement | SVGTextElement,
+    HierarchyNode<TreeData>,
+    SVGGElement,
+    unknown
+  > | null = null;
   private root: HierarchyNode<TreeData> | null = null;
   private focus: HierarchyNode<TreeData> | null = null;
   private view: [number, number, number] | null = null;
@@ -23,6 +39,12 @@ export class HotspotsVisualization {
 
   constructor() {
     this.container = document.getElementById("visualization") as HTMLElement;
+    if (!this.container) {
+      console.error(
+        "Hotspots visualization container 'visualization' not found"
+      );
+      return;
+    }
     this.loadData();
   }
 
@@ -31,9 +53,12 @@ export class HotspotsVisualization {
     const dataElement = document.getElementById("data");
     if (dataElement) {
       try {
-        this.data = JSON.parse(dataElement.textContent || "{}");
-        this.render();
-        return;
+        const parsedData = JSON.parse(dataElement.textContent || "{}");
+        if (parsedData && typeof parsedData === "object") {
+          this.data = parsedData;
+          this.render();
+          return;
+        }
       } catch (error) {
         console.error("Failed to parse data from script tag:", error);
       }
@@ -43,8 +68,8 @@ export class HotspotsVisualization {
   }
 
   private render(): void {
-    if (!this.data) {
-      this.showError("Invalid data");
+    if (!this.data || !this.container) {
+      this.showError("Invalid data or container");
       return;
     }
 
@@ -58,7 +83,7 @@ export class HotspotsVisualization {
   }
 
   private createVisualization(): void {
-    if (!this.data) return;
+    if (!this.data || !this.container) return;
 
     // Create SVG
     this.svg = d3
@@ -69,7 +94,12 @@ export class HotspotsVisualization {
       .style("max-width", "100%")
       .style("height", "auto")
       .style("background", "#f9f9f9")
-      .style("cursor", "pointer");
+      .style("cursor", "pointer") as d3.Selection<
+      SVGSVGElement,
+      unknown,
+      null,
+      undefined
+    >;
 
     // Create main group centered in the SVG
     if (this.svg) {
@@ -84,6 +114,11 @@ export class HotspotsVisualization {
       .sum((d) =>
         "revisions" in d ? d.revisions : 0
       ) as HierarchyNode<TreeData>;
+
+    if (!this.root) {
+      this.showError("Failed to create data hierarchy");
+      return;
+    }
 
     // Create pack layout with margin
     const pack = d3
@@ -117,21 +152,28 @@ export class HotspotsVisualization {
       .domain([maxComplexity, minComplexity]); // Reversed domain: high complexity = red, low = green
 
     // Add circles
-    this.circle = this.g
-      .selectAll("circle")
-      .data(this.root.descendants())
-      .join("circle")
-      .attr("class", (d: any) =>
-        d.parent ? (d.children ? "node" : "node node--leaf") : "node node--root"
+    this.circle = this.g!.selectAll<SVGCircleElement, HierarchyNode<TreeData>>(
+      "circle"
+    )
+      .data(
+        this.root.descendants().filter((d) => d !== null && d !== undefined)
       )
-      .style("fill", (d: any) => {
-        if (d.children) {
+      .join("circle")
+      .attr("class", (d: HierarchyNode<TreeData>) =>
+        d?.parent
+          ? d.children
+            ? "node"
+            : "node node--leaf"
+          : "node node--root"
+      )
+      .style("fill", (d: HierarchyNode<TreeData>) => {
+        if (d?.children) {
           // Container nodes get a light color based on depth
           return d3.interpolateBlues(0.3 + d.depth * 0.1);
         } else {
           // Use complexity for color, fallback to light gray for nodes without complexity
-          const data = d.data as File | Folder;
-          if ("complexity" in data && data.complexity !== undefined) {
+          const data = d?.data as File | Folder;
+          if (data && "complexity" in data && data.complexity !== undefined) {
             return color(data.complexity);
           }
           return "#e8e8e8"; // Light gray for leaf nodes without complexity
@@ -141,23 +183,26 @@ export class HotspotsVisualization {
       .attr("stroke-width", 2)
       .style("opacity", 0.8)
       .style("cursor", "pointer")
-      .on("click", (event: any, d: any) => {
-        if (this.focus !== d) {
+      .on("click", (event: MouseEvent, d: HierarchyNode<TreeData>) => {
+        if (d && this.focus !== d) {
           this.zoom(d);
           event.stopPropagation();
         }
       })
-      .on("mouseover", function () {
+      .on("mouseover", function (this: SVGCircleElement) {
         d3.select(this).attr("stroke", "#000").attr("stroke-width", 3);
       })
-      .on("mouseout", function () {
+      .on("mouseout", function (this: SVGCircleElement) {
         d3.select(this).attr("stroke", "#fff").attr("stroke-width", 2);
       });
 
     // Add text labels
-    this.text = this.g
-      .selectAll("text")
-      .data(this.root.descendants())
+    this.text = this.g!.selectAll<SVGTextElement, HierarchyNode<TreeData>>(
+      "text"
+    )
+      .data(
+        this.root.descendants().filter((d) => d !== null && d !== undefined)
+      )
       .join("text")
       .attr("class", "label")
       .attr("text-anchor", "middle")
@@ -170,14 +215,19 @@ export class HotspotsVisualization {
         "text-shadow",
         "0 1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff, 0 -1px 0 #fff"
       )
-      .style("fill-opacity", (d: any) => (d.parent === this.root ? 1 : 0))
-      .style("display", (d: any) =>
-        d.parent === this.root ? "inline" : "none"
+      .style("fill-opacity", (d: HierarchyNode<TreeData>) =>
+        d?.parent === this.root ? 1 : 0
       )
-      .text((d: any) => d.data.name);
+      .style("display", (d: HierarchyNode<TreeData>) =>
+        d?.parent === this.root ? "inline" : "none"
+      )
+      .text((d: HierarchyNode<TreeData>) => d?.data?.name || "");
 
     // Combine circles and text for easier manipulation
-    this.node = this.g.selectAll("circle, text");
+    this.node = this.g!.selectAll<
+      SVGCircleElement | SVGTextElement,
+      HierarchyNode<TreeData>
+    >("circle, text");
 
     // Add click handler to SVG background to zoom out to root
     if (this.svg) {
@@ -200,6 +250,8 @@ export class HotspotsVisualization {
   }
 
   private zoom(d: HierarchyNode<TreeData>): void {
+    if (!d) return;
+
     this.focus = d;
 
     const transition = d3
@@ -219,26 +271,26 @@ export class HotspotsVisualization {
     const focusContext = this.focus;
     transition
       .selectAll("text")
-      .filter(function (node: any) {
-        const d = node as HierarchyNode<TreeData>;
+      .filter(function (this: d3.BaseType, datum: unknown) {
+        const d = datum as HierarchyNode<TreeData>;
         return (
-          d.parent === focusContext ||
+          d?.parent === focusContext ||
           d3.select(this).style("display") === "inline"
         );
       })
-      .style("fill-opacity", (node: any) => {
-        const d = node as HierarchyNode<TreeData>;
-        return d.parent === focusContext ? 1 : 0;
+      .style("fill-opacity", (datum: unknown) => {
+        const d = datum as HierarchyNode<TreeData>;
+        return d?.parent === focusContext ? 1 : 0;
       })
-      .on("start", function (node: any) {
-        const d = node as HierarchyNode<TreeData>;
-        if (d.parent === focusContext) {
+      .on("start", function (this: d3.BaseType, datum: unknown) {
+        const d = datum as HierarchyNode<TreeData>;
+        if (d?.parent === focusContext) {
           d3.select(this).style("display", "inline");
         }
       })
-      .on("end", function (node: any) {
-        const d = node as HierarchyNode<TreeData>;
-        if (d.parent !== focusContext) {
+      .on("end", function (this: d3.BaseType, datum: unknown) {
+        const d = datum as HierarchyNode<TreeData>;
+        if (d?.parent !== focusContext) {
           d3.select(this).style("display", "none");
         }
       });
@@ -251,19 +303,21 @@ export class HotspotsVisualization {
     if (this.node) {
       this.node.attr(
         "transform",
-        (d: any) => `translate(${(d.x! - v[0]) * k}, ${(d.y! - v[1]) * k})`
+        (d: HierarchyNode<TreeData>) =>
+          `translate(${((d?.x || 0) - v[0]) * k}, ${((d?.y || 0) - v[1]) * k})`
       );
     }
 
     if (this.circle) {
-      this.circle.attr("r", (d: any) => d.r! * k);
+      this.circle.attr("r", (d: HierarchyNode<TreeData>) => (d?.r || 0) * k);
     }
 
     // Update font size based on zoom level
     if (this.text) {
       this.text.style(
         "font-size",
-        (d: any) => Math.min((d.r! * k) / 3, 14) + "px"
+        (d: HierarchyNode<TreeData>) =>
+          Math.min(((d?.r || 0) * k) / 3, 14) + "px"
       );
     }
   }
