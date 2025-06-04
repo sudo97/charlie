@@ -12,20 +12,31 @@ import { soc } from "../core/soc.js";
 const repositoryPath = path.resolve(process.argv[2] ?? ".");
 
 const blacklist = [
-  /package-lock\.json/,
-  /package\.json/,
-  /yarn\.lock/,
-  /\.md$/,
-];
+  "package-lock.json",
+  "package.json",
+  "yarn.lock",
+  "\\.md$",
+  "terraform",
+  "pipelines",
+  ".DS_Store",
+  ".vscode",
+].map((pattern) => new RegExp(pattern));
 
-const logItems = (await produceGitLog(createGitLogEmitter(repositoryPath))).map(
-  (item) => ({
+const subPaths: RegExp[] = ["^src/components"].map(
+  (pattern) => new RegExp(pattern)
+);
+
+const logItems = (await produceGitLog(createGitLogEmitter(repositoryPath)))
+  .map((item) => ({
     ...item,
     fileEntries: item.fileEntries.filter(
-      (file) => !blacklist.some((regex) => regex.test(file.fileName))
+      (file) =>
+        !blacklist.some((regex) => regex.test(file.fileName)) &&
+        (subPaths.length === 0 ||
+          subPaths.some((subPath) => subPath.test(file.fileName)))
     ),
-  })
-);
+  }))
+  .filter((item) => item.fileEntries.length > 0);
 
 const revisionsData = revisions(logItems);
 
