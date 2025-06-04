@@ -62,6 +62,7 @@ await generateReport({
   outputPath,
   data: treeData(hotspotsData),
   coupledPairs: coupledPairsData,
+  socData: socData,
 });
 
 console.log(`Report generated successfully at: ${outputPath}`);
