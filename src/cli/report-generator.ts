@@ -16,7 +16,7 @@ export class ReportGenerator {
   constructor() {
     this.templatePath = path.join(
       process.cwd(),
-      "src/frontend/templates/report.html"
+      "src/frontend/templates/report.mustache"
     );
     this.frontendDistPath = path.join(process.cwd(), "dist/frontend");
   }
