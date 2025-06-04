@@ -2,11 +2,13 @@ import fs from "fs/promises";
 import path from "path";
 import mustache from "mustache";
 import type { TreeData } from "src/core/tree-data.js";
+import type { CoupledPair } from "../core/coupled-pairs.js";
 
 export interface ReportOptions {
   title: string;
   outputPath: string;
   data: TreeData;
+  coupledPairs: CoupledPair[];
 }
 
 export async function generateReport(options: ReportOptions) {
@@ -28,6 +30,7 @@ export async function generateReport(options: ReportOptions) {
       css: css,
       js: js,
       reportDataJson: JSON.stringify(options.data),
+      coupledPairsJson: JSON.stringify(options.coupledPairs),
     };
 
     const html = mustache.render(template, templateData);

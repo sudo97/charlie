@@ -43,16 +43,6 @@ const hotspotsData = await hotspots(revisionsData, async (file) => {
   return "";
 });
 
-const outputPath = path.join(process.cwd(), "charlie-report.html");
-
-await generateReport({
-  title: "Charlie Code Hotspots Report",
-  outputPath,
-  data: treeData(hotspotsData),
-});
-
-console.log(`Report generated successfully at: ${outputPath}`);
-
 const coupledPairsData = coupledPairs(logItems);
 
 const outputPath2 = path.join(process.cwd(), "coupled-pairs.json");
@@ -64,3 +54,14 @@ const socData = soc(logItems);
 const outputPath3 = path.join(process.cwd(), "soc.json");
 await fs.writeFile(outputPath3, JSON.stringify(socData, null, 2));
 console.log(`Soc data written to: ${outputPath3}`);
+
+const outputPath = path.join(process.cwd(), "charlie-report.html");
+
+await generateReport({
+  title: "Charlie Code Hotspots Report",
+  outputPath,
+  data: treeData(hotspotsData),
+  coupledPairs: coupledPairsData,
+});
+
+console.log(`Report generated successfully at: ${outputPath}`);

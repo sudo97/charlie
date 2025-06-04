@@ -20,7 +20,7 @@ h1 {
   margin-top: 0;
 }
 
-#visualization {
+.visualization {
   display: flex;
   justify-content: center;
   align-items: center;
