@@ -82,7 +82,9 @@ export function coupledPairs(revisions: LogItem[]): CoupledPair[] {
     });
   }
 
-  const maxRevisions = Math.max(...result.map((pair) => pair.revisions));
+  const maxRevisions = result
+    .map((pair) => pair.revisions)
+    .reduce((a, b) => Math.max(a, b), 0);
 
   const filteredCoupledPairsData = result
     .filter((pair) => pair.revisions / maxRevisions > 0.02)
