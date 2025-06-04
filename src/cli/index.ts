@@ -3,7 +3,7 @@ import * as fs from "fs/promises";
 import { revisions } from "../core/revisions.js";
 import { hotspots } from "../core/hotspots.js";
 import { produceGitLog } from "./git-log.js";
-import { ReportGenerator } from "./report-generator.js";
+import { generateReport } from "./report-generator.js";
 import { treeData } from "../core/tree-data.js";
 import { createGitLogEmitter } from "./createGitLogEmitter.js";
 
@@ -34,10 +34,9 @@ const hotspotsData = await hotspots(revisionsData, async (file) => {
   return "";
 });
 
-const reportGenerator = new ReportGenerator();
 const outputPath = path.join(process.cwd(), "charlie-report.html");
 
-await reportGenerator.generateReport({
+await generateReport({
   title: "Charlie Code Hotspots Report",
   outputPath,
   data: treeData(hotspotsData),

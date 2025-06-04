@@ -9,57 +9,49 @@ export interface ReportOptions {
   data: TreeData;
 }
 
-export class ReportGenerator {
-  private templatePath: string;
-  private frontendDistPath: string;
+export async function generateReport(options: ReportOptions) {
+  const templatePath = path.join(
+    process.cwd(),
+    "src/frontend/templates/report.mustache"
+  );
 
-  constructor() {
-    this.templatePath = path.join(
-      process.cwd(),
-      "src/frontend/templates/report.mustache"
+  const frontendDistPath = path.join(process.cwd(), "dist/frontend");
+
+  try {
+    const template = await fs.readFile(templatePath, "utf-8");
+
+    const css = await readFrontendAsset(frontendDistPath, "bundle.css");
+    const js = await readFrontendAsset(frontendDistPath, "bundle.js");
+
+    const templateData = {
+      title: options.title,
+      css: css,
+      js: js,
+      reportDataJson: JSON.stringify(options.data),
+    };
+
+    const html = mustache.render(template, templateData);
+
+    await fs.writeFile(options.outputPath, html, "utf-8");
+
+    console.log(`Report generated: ${options.outputPath}`);
+  } catch (error) {
+    console.error("Failed to generate report:", error);
+    throw error;
+  }
+}
+
+async function readFrontendAsset(
+  frontendDistPath: string,
+  filename: string
+): Promise<string> {
+  try {
+    const filePath = path.join(frontendDistPath, filename);
+    return await fs.readFile(filePath, "utf-8");
+  } catch {
+    console.warn(
+      `Warning: Could not read frontend asset ${filename}. Make sure to run 'npm run build:frontend' first.`
     );
-    this.frontendDistPath = path.join(process.cwd(), "dist/frontend");
-  }
-
-  async generateReport(options: ReportOptions): Promise<void> {
-    try {
-      // Read template
-      const template = await fs.readFile(this.templatePath, "utf-8");
-
-      // Read built frontend assets
-      const css = await this.readFrontendAsset("bundle.css");
-      const js = await this.readFrontendAsset("bundle.js");
-
-      // Prepare template data
-      const templateData = {
-        title: options.title,
-        css: css,
-        js: js,
-        reportDataJson: JSON.stringify(options.data),
-      };
-
-      // Render template
-      const html = mustache.render(template, templateData);
-
-      // Write output file
-      await fs.writeFile(options.outputPath, html, "utf-8");
-
-      console.log(`Report generated: ${options.outputPath}`);
-    } catch (error) {
-      console.error("Failed to generate report:", error);
-      throw error;
-    }
-  }
-
-  private async readFrontendAsset(filename: string): Promise<string> {
-    try {
-      const filePath = path.join(this.frontendDistPath, filename);
-      return await fs.readFile(filePath, "utf-8");
-    } catch {
-      console.warn(
-        `Warning: Could not read frontend asset ${filename}. Make sure to run 'npm run build:frontend' first.`
-      );
-      return "";
-    }
+    return "";
   }
 }
