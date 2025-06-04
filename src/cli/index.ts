@@ -11,6 +11,7 @@ import { soc } from "../core/soc.js";
 
 const repositoryPath = path.resolve(process.argv[2] ?? ".");
 
+// TODO: Move this to a config file, and it must be a separate concern.
 const blacklist = [
   "package-lock.json",
   "package.json",
@@ -37,6 +38,8 @@ const logItems = (await produceGitLog(createGitLogEmitter(repositoryPath)))
     ),
   }))
   .filter((item) => item.fileEntries.length > 0);
+
+// TODO: Add a way to group files into "architectural components", but still allow to calculate the complexity, by creating a sum of the complexity of the files in the component.
 
 const revisionsData = revisions(logItems);
 
