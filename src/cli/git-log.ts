@@ -25,7 +25,7 @@ export async function produceGitLog(
     let buffer = "";
 
     gitLogEmitter.onData((chunk) => {
-      console.log("buffer", JSON.stringify(buffer));
+      // console.log("buffer", JSON.stringify(buffer));
       // Process each chunk of data as it comes in
       // console.log("--");
 
@@ -73,7 +73,6 @@ export async function produceGitLog(
         console.error(`git process exited with code ${code}`);
         rej(new Error(`git process exited with code ${code}`));
       } else {
-        // console.log(JSON.stringify(revisions(logItems), null, 2));
         res(logItems);
       }
     });
