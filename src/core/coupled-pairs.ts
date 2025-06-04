@@ -82,7 +82,11 @@ export function coupledPairs(revisions: LogItem[]): CoupledPair[] {
     });
   }
 
-  return result.sort(
-    (a, b) => b.percentage * b.revisions - a.percentage * a.revisions
-  );
+  const maxRevisions = Math.max(...result.map((pair) => pair.revisions));
+
+  const filteredCoupledPairsData = result
+    .filter((pair) => pair.revisions / maxRevisions > 0.02)
+    .sort((a, b) => b.percentage - a.percentage);
+
+  return filteredCoupledPairsData;
 }
