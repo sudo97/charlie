@@ -80,7 +80,8 @@ describe("git-log parser", () => {
       onData: (listener) => {
         (async () => {
           while (expectedLogItemString.length > 0) {
-            listener(expectedLogItemString.shift()!);
+            const randomChunkSize = Math.floor(Math.random() * 10) + 1;
+            listener(expectedLogItemString.splice(0, randomChunkSize).join(""));
             await sleep(1);
           }
           done(0);
