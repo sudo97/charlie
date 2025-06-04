@@ -10,10 +10,9 @@ This is the [Charlie](https://en.wikipedia.org/wiki/Charlie_Eppes) of your git h
 - [x] Calculate the hotspots based on the complexity and the number of revisions
 - [x] Produce D3 visualization of the hotspots inside an html page
 - [ ] Pick prettier colours for the visualization
-- [ ] Add a diagram (and calculation) for the coupling pairs
-- [ ] Add a diagram (and calculation) for the SOC
-- [ ] Add .charlignore file support
-- [ ] Add a way to provide "include" and "exclude" patterns for the git log, so that subtrees can be analyzed separately
+- [x] Add a diagram (and calculation) for the coupling pairs
+- [x] Add a diagram (and calculation) for the SOC
+- [ ] Add .charlie.config.json file support. It should support a list of files that should be excluded from the analysis, and a list of files that should be included, and a list of files that should be grouped into "architectural components".
 - [ ] Add a way to group files into "architectural components"
 - [ ] Add a way to find file/module owners
 - [ ] Add a way to find teams that happen to form by analyzing authors
