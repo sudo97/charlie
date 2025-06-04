@@ -49,24 +49,4 @@ describe("Revisions", () => {
       "file2.txt": 1,
     });
   });
-
-  it("should take optional blacklist", () => {
-    const result = revisions(
-      [
-        {
-          hash: "123",
-          date: "2021-01-01",
-          author: "John Doe",
-          fileEntries: [
-            { fileName: "file1.txt", added: 1, removed: 0 },
-            { fileName: "file2.txt", added: 1, removed: 0 },
-          ],
-        },
-      ],
-      [/file1\.txt/]
-    );
-    expect(result).toEqual({
-      "file2.txt": 1,
-    });
-  });
 });

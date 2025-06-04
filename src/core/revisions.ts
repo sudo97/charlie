@@ -13,16 +13,9 @@ export type LogItem = {
 
 export type Revisions = Record<string, number>;
 
-export function revisions(
-  history: LogItem[],
-  blacklist: RegExp[] = []
-): Revisions {
+export function revisions(history: LogItem[]): Revisions {
   return history
-    .flatMap((commit) =>
-      commit.fileEntries
-        .filter((file) => !blacklist.some((regex) => regex.test(file.fileName)))
-        .map((file) => file.fileName)
-    )
+    .flatMap((commit) => commit.fileEntries.map((file) => file.fileName))
     .reduce((acc, file) => {
       acc[file] = (acc[file] || 0) + 1;
       return acc;

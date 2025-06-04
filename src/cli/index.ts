@@ -17,9 +17,16 @@ const blacklist = [
   /\.md$/,
 ];
 
-const logItems = await produceGitLog(createGitLogEmitter(repositoryPath));
+const logItems = (await produceGitLog(createGitLogEmitter(repositoryPath))).map(
+  (item) => ({
+    ...item,
+    fileEntries: item.fileEntries.filter(
+      (file) => !blacklist.some((regex) => regex.test(file.fileName))
+    ),
+  })
+);
 
-const revisionsData = revisions(logItems, blacklist);
+const revisionsData = revisions(logItems);
 
 const hotspotsData = await hotspots(revisionsData, async (file) => {
   const filepath = path.join(repositoryPath, file);
