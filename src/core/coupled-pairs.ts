@@ -7,77 +7,74 @@ export type CoupledPair = {
   revisions: number;
 };
 
-class Pairs {
-  private pairs: Map<string, number> = new Map();
+function createPairKey(file1: string, file2: string): string {
+  return [file1, file2].sort().join(separator);
+}
 
-  private key(file1: string, file2: string) {
-    return [file1, file2].sort().join("-");
-  }
-
-  add(file1: string, file2: string) {
-    const key = this.key(file1, file2);
-    this.pairs.set(key, (this.pairs.get(key) ?? 0) + 1);
-  }
-
-  get(file1: string, file2: string) {
-    return this.pairs.get(this.key(file1, file2)) ?? 0;
-  }
-
-  items(): { file1: string; file2: string; occurences: number }[] {
-    return Array.from(this.pairs.entries()).map(([key, value]) => {
-      const [file1, file2] = key.split("-");
-      return {
-        file1: file1!,
-        file2: file2!,
-        occurences: value,
-      };
-    });
+function addPairToCommit(
+  filesInCommit: string[],
+  pairCommitCounts: Map<string, number>
+): void {
+  for (let j = 0; j < filesInCommit.length; j++) {
+    for (let k = j + 1; k < filesInCommit.length; k++) {
+      const file1 = filesInCommit[j]!;
+      const file2 = filesInCommit[k]!;
+      const pairKey = createPairKey(file1, file2);
+      pairCommitCounts.set(pairKey, (pairCommitCounts.get(pairKey) ?? 0) + 1);
+    }
   }
 }
 
-class SeparateFiles {
-  private files: Map<string, number> = new Map();
-
-  add(file: string) {
-    this.files.set(file, (this.files.get(file) ?? 0) + 1);
-  }
-
-  get(file: string) {
-    return this.files.get(file) ?? 0;
-  }
-}
+const separator = "|||||||||||||||||||||||||||||||";
 
 export function coupledPairs(revisions: LogItem[]): CoupledPair[] {
   if (revisions.length === 0) {
     return [];
   }
 
-  const pairs = new Pairs();
-  const separateFiles = new SeparateFiles();
+  // Track which files appear together in commits
+  const pairCommitCounts = new Map<string, number>();
+  // Track which commits each file appears in
+  const fileCommitSets = new Map<string, Set<number>>();
 
-  for (const rev of revisions) {
-    for (const file of rev.fileEntries) {
-      for (const otherFile of rev.fileEntries) {
-        if (file.fileName === otherFile.fileName) {
-          continue;
-        }
+  // Process each revision
+  for (let i = 0; i < revisions.length; i++) {
+    const rev = revisions[i]!;
+    const filesInCommit = rev.fileEntries.map((entry) => entry.fileName);
 
-        pairs.add(file.fileName, otherFile.fileName);
+    // Track which files appear in this commit
+    for (const file of filesInCommit) {
+      if (!fileCommitSets.has(file)) {
+        fileCommitSets.set(file, new Set());
       }
-      separateFiles.add(file.fileName);
+      fileCommitSets.get(file)!.add(i);
     }
+
+    // Create pairs for files that appear together in this commit
+    addPairToCommit(filesInCommit, pairCommitCounts);
   }
 
   const result: CoupledPair[] = [];
 
-  for (const item of pairs.items()) {
-    const total = separateFiles.get(item.file1) + separateFiles.get(item.file2);
+  // Calculate statistics for each pair
+  for (const [pairKey, bothCount] of pairCommitCounts.entries()) {
+    const [file1, file2] = pairKey.split(separator);
+
+    // Get commits where each file appears
+    const file1Commits = fileCommitSets.get(file1!) ?? new Set();
+    const file2Commits = fileCommitSets.get(file2!) ?? new Set();
+
+    // Count commits where either file appears (union of sets)
+    const eitherCommits = new Set([...file1Commits, ...file2Commits]);
+    const eitherCount = eitherCommits.size;
+
     result.push({
-      file1: item.file1,
-      file2: item.file2,
-      percentage: item.occurences / total,
-      revisions: item.occurences,
+      file1: file1!,
+      file2: file2!,
+      percentage: bothCount / eitherCount,
+      revisions: eitherCount,
     });
   }
+
   return result;
 }

@@ -6,6 +6,7 @@ import { produceGitLog } from "./git-log.js";
 import { generateReport } from "./report-generator.js";
 import { treeData } from "../core/tree-data.js";
 import { createGitLogEmitter } from "./createGitLogEmitter.js";
+import { coupledPairs } from "../core/coupled-pairs.js";
 
 const repositoryPath = path.resolve(process.argv[2] ?? ".");
 
@@ -43,3 +44,9 @@ await generateReport({
 });
 
 console.log(`Report generated successfully at: ${outputPath}`);
+
+const coupledPairsData = coupledPairs(logItems);
+
+const outputPath2 = path.join(process.cwd(), "coupled-pairs.json");
+await fs.writeFile(outputPath2, JSON.stringify(coupledPairsData, null, 2));
+console.log(`Coupled pairs data written to: ${outputPath2}`);
