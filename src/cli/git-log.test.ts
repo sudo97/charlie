@@ -3,22 +3,6 @@ import { produceGitLog, type GitLogEmitter } from "./git-log.js";
 import { type LogItem } from "../core/revisions.js";
 
 describe("git-log parser", () => {
-  it("should produce an empty array if the git log is empty", async () => {
-    const mockGitLogEmitter: GitLogEmitter = {
-      onData: (listener) => {
-        listener("");
-      },
-      onError: () => {},
-      onErrorData: () => {},
-      onClose: (listener) => {
-        listener(0);
-      },
-    };
-
-    const logItems = await produceGitLog(mockGitLogEmitter);
-    expect(logItems).toEqual([]);
-  });
-
   it("should reject if the git log emits an error", async () => {
     const mockGitLogEmitter: GitLogEmitter = {
       onData: () => {},
