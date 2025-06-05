@@ -12,7 +12,8 @@ This is the [Charlie](https://en.wikipedia.org/wiki/Charlie_Eppes) of your git h
 - [ ] Pick prettier colours for the visualization
 - [x] Add a diagram (and calculation) for the coupling pairs
 - [x] Add a diagram (and calculation) for the SOC
-- [ ] Add .charlie.config.json file support. It should support a list of files that should be excluded from the analysis, and a list of files that should be included, and a list of files that should be grouped into "architectural components".
+- [x] Add .charlie.config.json file support. It should support a list of files that should be excluded from the analysis, and a list of files that should be included, and a list of files that should be grouped into "architectural components".
+- [ ] Alternatively, maybe .charlie.config.json should be a starting point, but then in the webpage the user could change the config to see different slices of data.
 - [ ] Add a way to group files into "architectural components"
 - [ ] Add a way to find file/module owners
 - [ ] Add a way to find teams that happen to form by analyzing authors

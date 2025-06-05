@@ -8,33 +8,26 @@ import { treeData } from "../core/tree-data.js";
 import { createGitLogEmitter } from "./createGitLogEmitter.js";
 import { coupledPairs } from "../core/coupled-pairs.js";
 import { soc } from "../core/soc.js";
+import { parseConfig } from "./config.js";
 
 const repositoryPath = path.resolve(process.argv[2] ?? ".");
 
-// TODO: Move this to a config file, and it must be a separate concern.
-const blacklist = [
-  "package-lock.json",
-  "package.json",
-  "yarn.lock",
-  "\\.md$",
-  "terraform",
-  "pipelines",
-  ".DS_Store",
-  ".vscode",
-].map((pattern) => new RegExp(pattern));
-
-const subPaths: RegExp[] = ["^src/components"].map(
-  (pattern) => new RegExp(pattern)
+const config = parseConfig(
+  await fs
+    .readFile(path.join(repositoryPath, ".charlie.config.json"), "utf8")
+    .catch(() => "{}")
 );
+
+const { exclude, include } = config;
 
 const logItems = (await produceGitLog(createGitLogEmitter(repositoryPath)))
   .map((item) => ({
     ...item,
     fileEntries: item.fileEntries.filter(
       (file) =>
-        !blacklist.some((regex) => regex.test(file.fileName)) &&
-        (subPaths.length === 0 ||
-          subPaths.some((subPath) => subPath.test(file.fileName)))
+        !exclude.some((regex) => regex.test(file.fileName)) &&
+        (include.length === 0 ||
+          include.some((regex) => regex.test(file.fileName)))
     ),
   }))
   .filter((item) => item.fileEntries.length > 0);
