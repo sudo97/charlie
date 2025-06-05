@@ -39,8 +39,6 @@ export async function generateReport(options: ReportOptions) {
     const html = mustache.render(template, templateData);
 
     await fs.writeFile(options.outputPath, html, "utf-8");
-
-    console.log(`Report generated: ${options.outputPath}`);
   } catch (error) {
     console.error("Failed to generate report:", error);
     throw error;
