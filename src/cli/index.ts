@@ -10,6 +10,7 @@ import { coupledPairs } from "../core/coupled-pairs.js";
 import { soc } from "../core/soc.js";
 import { parseConfig } from "./config.js";
 import { applyFilters } from "../core/filters.js";
+import { groupHotspots } from "../core/group-hotspots.js";
 
 const repositoryPath = path.resolve(process.argv[2] ?? ".");
 
@@ -28,7 +29,7 @@ const logItems = applyFilters(
 
 const revisionsData = revisions(logItems);
 
-const hotspotsData = await hotspots(revisionsData, async (file) => {
+let hotspotsData = await hotspots(revisionsData, async (file) => {
   const filepath = path.join(repositoryPath, file);
   console.log("reading", filepath);
   if (
@@ -41,6 +42,10 @@ const hotspotsData = await hotspots(revisionsData, async (file) => {
   }
   return "";
 });
+
+if (config.architecturalGroups) {
+  hotspotsData = groupHotspots(hotspotsData, config.architecturalGroups);
+}
 
 const coupledPairsData = coupledPairs(logItems);
 
