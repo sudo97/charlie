@@ -20,7 +20,9 @@ const config = parseConfig(
 
 const { exclude, include } = config;
 
-const logItems = (await produceGitLog(createGitLogEmitter(repositoryPath)))
+const logItems = (
+  await produceGitLog(createGitLogEmitter(repositoryPath, config.after))
+)
   .map((item) => ({
     ...item,
     fileEntries: item.fileEntries.filter(
