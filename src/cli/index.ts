@@ -9,6 +9,7 @@ import { createGitLogEmitter } from "./createGitLogEmitter.js";
 import { coupledPairs } from "../core/coupled-pairs.js";
 import { soc } from "../core/soc.js";
 import { parseConfig } from "./config.js";
+import { applyFilters } from "../core/filters.js";
 
 const repositoryPath = path.resolve(process.argv[2] ?? ".");
 
@@ -18,21 +19,10 @@ const config = parseConfig(
     .catch(() => "{}")
 );
 
-const { exclude, include } = config;
-
-const logItems = (
-  await produceGitLog(createGitLogEmitter(repositoryPath, config.after))
-)
-  .map((item) => ({
-    ...item,
-    fileEntries: item.fileEntries.filter(
-      (file) =>
-        !exclude.some((regex) => regex.test(file.fileName)) &&
-        (include.length === 0 ||
-          include.some((regex) => regex.test(file.fileName)))
-    ),
-  }))
-  .filter((item) => item.fileEntries.length > 0);
+const logItems = applyFilters(
+  await produceGitLog(createGitLogEmitter(repositoryPath, config.after)),
+  config
+);
 
 // TODO: Add a way to group files into "architectural components", but still allow to calculate the complexity, by creating a sum of the complexity of the files in the component.
 
