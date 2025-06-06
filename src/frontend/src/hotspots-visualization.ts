@@ -10,12 +10,13 @@ function getData(): TreeData {
   return JSON.parse(dataElement.textContent || "{}");
 }
 
-const bgColor = "hsla(210, 40%, 85%, 0.3)";
-const strokeColor = "#4a90e2";
-const hoverColor = "#2c5aa0";
-const lowComplexityColor = "hsl(210, 30%, 85%)";
-const midComplexityColor = "hsl(35, 70%, 65%)";
-const highComplexityColor = "hsl(0, 75%, 55%)";
+const rootColor = "hsla(0, 0%, 100%, 1)";
+const bgColor = "rgba(0, 0, 0, 0.05)";
+const strokeColor = "hsla(0, 0%, 82.7%, 1)";
+const hoverColor = "hsla(12, 4%, 67.3%, 1)";
+const lowComplexityColor = "rgba(22, 26, 29, 0.2)";
+const midComplexityColor = "hsla(33, 94%, 50%, 1)";
+const highComplexityColor = "hsla(0, 100%, 40.0%, 1)";
 
 const mkColor = (root: d3.HierarchyCircularNode<TreeData>) => {
   const [min, max] = getColorDomain(root);
@@ -37,7 +38,7 @@ const getSvgRoot = ({ width, height }: { width: number; height: number }) => {
       .attr("height", height)
       .attr(
         "style",
-        `max-width: 100%; height: auto; display: block; margin: 0 -14px; background: ${bgColor}; cursor: pointer;`
+        `max-width: 100%; height: auto; display: block; margin: 0 -14px; background: ${rootColor}; cursor: pointer;`
       )
   );
 };
