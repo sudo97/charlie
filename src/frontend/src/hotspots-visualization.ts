@@ -42,7 +42,6 @@ const packData = (
     if ("revisions" in node.data) {
       return node.data.revisions;
     }
-    // return 0;
     if ("children" in node.data) {
       return node.data.children.reduce(
         (acc, child) => acc + getRevisions({ data: child } as any),
@@ -104,8 +103,8 @@ function getSvg(data: TreeData) {
       return color(complexity);
     })
     .attr("pointer-events", (d) => (!d.children ? "none" : null))
-    .attr("cx", (d) => d.x)
-    .attr("cy", (d) => d.y)
+    .attr("cx", (d) => d.x - width / 2)
+    .attr("cy", (d) => d.y - height / 2)
     .attr("r", (d) => d.r)
     .attr("stroke", strokeColor)
     .on("mouseover", function () {
@@ -129,8 +128,8 @@ function getSvg(data: TreeData) {
     .selectAll("text")
     .data(root.descendants())
     .join("text")
-    .attr("x", (d) => d.x)
-    .attr("y", (d) => d.y)
+    .attr("x", (d) => d.x - width / 2)
+    .attr("y", (d) => d.y - height / 2)
     .style("fill-opacity", (d) => (d.parent === root ? 1 : 0))
     .style("display", (d) => (d.parent === root ? "inline" : "none"))
     .text((d: d3.HierarchyCircularNode<TreeData>) => d.data.name);
