@@ -29,7 +29,7 @@ function createColorScale(maxSoc: number) {
 function createTitle(): HTMLElement {
   const title = document.createElement("h2");
   title.textContent =
-    "Sum of Coupling (SOC) - Files Changed Together Most Often";
+    "Sum of Coupling (SOC) - Files Most Often Changed with Others";
   title.style.cssText = "margin: 0 0 20px 0; color: #333; font-size: 1.5em;";
   return title;
 }
@@ -37,7 +37,7 @@ function createTitle(): HTMLElement {
 function createDescription(): HTMLElement {
   const description = document.createElement("p");
   description.textContent =
-    "SOC measures how often files are modified together in the same commit. Higher values indicate tight coupling.";
+    "SOC measures how many times a file is included in commits with any other file. Higher scores indicate files that are sources of coupling. Connect this data to the hotspots visualization to see which files are the priority for refactoring.";
   description.style.cssText =
     "margin: 0 0 20px 0; color: #666; font-size: 0.9em;";
   return description;
@@ -61,22 +61,22 @@ function createStatisticsPanel(data: Soc[]): HTMLElement {
   const minSoc = Math.min(...data.map((d) => d.soc));
 
   statsPanel.innerHTML = `
-    <h3 style="margin: 0 0 10px 0; color: #333;">SOC Statistics</h3>
+    <h3 style="margin: 0 0 10px 0; color: #333;">Coupling Statistics</h3>
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
       <div>
         <strong>Files Analyzed:</strong><br>
         <span style="font-size: 1.2em; color: #007bff;">${totalFiles}</span>
       </div>
       <div>
-        <strong>Average SOC:</strong><br>
+        <strong>Average Coupling:</strong><br>
         <span style="font-size: 1.2em; color: #28a745;">${avgSoc}</span>
       </div>
       <div>
-        <strong>Highest SOC:</strong><br>
+        <strong>Highest Coupling:</strong><br>
         <span style="font-size: 1.2em; color: #dc3545;">${maxSoc}</span>
       </div>
       <div>
-        <strong>Lowest SOC:</strong><br>
+        <strong>Lowest Coupling:</strong><br>
         <span style="font-size: 1.2em; color: #6c757d;">${minSoc}</span>
       </div>
     </div>
