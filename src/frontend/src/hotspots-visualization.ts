@@ -86,8 +86,8 @@ const getColorDomain = (
 };
 
 function getSvg(data: TreeData) {
-  const width = 928;
-  const height = 928;
+  const width = 800;
+  const height = 800;
 
   const svg = getSvgRoot({ width, height });
 
