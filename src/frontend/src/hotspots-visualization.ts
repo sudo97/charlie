@@ -160,7 +160,11 @@ function getSvg(data: TreeData) {
       .transition()
       .duration(event.altKey ? 7500 : 750)
       .tween("zoom", () => {
-        const i = d3.interpolateZoom(view, [focus.x, focus.y, focus.r * 2]);
+        const i = d3.interpolateZoom(view, [
+          focus.x,
+          focus.y,
+          focus.r * 2 + 10,
+        ]);
         return (t) => zoomTo(i(t));
       });
 
