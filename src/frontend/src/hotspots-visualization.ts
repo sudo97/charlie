@@ -11,13 +11,19 @@ function getData(): TreeData {
 }
 
 const bgColor = "hsla(186, 53.40%, 49.60%, 0.62)";
+const strokeColor = "#888";
+const hoverColor = "#000";
+const lowComplexityColor = "hsl(152,80%,80%)";
+const highComplexityColor = "hsl(24, 88.90%, 57.60%)";
 
-const getColor = (min: number, max: number) =>
-  d3
+const mkColor = (root: d3.HierarchyCircularNode<TreeData>) => {
+  const [min, max] = getColorDomain(root);
+  return d3
     .scaleLinear()
     .domain([min, max])
-    .range(["hsl(152,80%,80%)", "hsl(24, 88.90%, 57.60%)"] as any)
+    .range([lowComplexityColor, highComplexityColor] as any)
     .interpolate(d3.interpolateHcl as any);
+};
 
 const getSvgRoot = ({ width, height }: { width: number; height: number }) => {
   return (
@@ -84,13 +90,7 @@ function getSvg(data: TreeData) {
   const svg = getSvgRoot({ width, height });
 
   const root = packData(data, { width, height });
-
-  const [minComplexity, maxComplexity] = getColorDomain(root);
-
-  const color = getColor(minComplexity, maxComplexity);
-
-  const strokeColor = "#aaa";
-  const hoverColor = "#000";
+  const color = mkColor(root);
 
   const node = svg
     .append("g")
@@ -98,7 +98,7 @@ function getSvg(data: TreeData) {
     .data(root.descendants().slice(1))
     .join("circle")
     .attr("fill", (d) => {
-      if (d.children) return "hsla(186, 80.40%, 80.00%, 0.30)";
+      if (d.children) return bgColor;
       const complexity = "complexity" in d.data ? d.data.complexity : 0;
       return color(complexity);
     })
