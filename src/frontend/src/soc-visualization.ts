@@ -234,8 +234,6 @@ export function visualizeSoc(container: HTMLElement) {
     // Clear previous content
     container.innerHTML = "";
 
-    // const topPercentileData = socPercentile(data, 0.8);
-
     // Add components
     container.appendChild(createTitle());
     container.appendChild(createDescription());
