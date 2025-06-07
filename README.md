@@ -50,7 +50,7 @@ Specifies the earliest date for git commits to include in the analysis. Only com
 **Type:** `Record<string, string>` (regex pattern → group name mapping)  
 **Default:** `undefined` (no grouping)
 
-Allows you to group files into architectural components for analysis. The key is a regex pattern that matches file paths, and the value is the name of the architectural group. Files matching the same group will be consolidated into a single hotspot entry.
+Allows you to group files into architectural components for analysis. The key is a regex pattern that matches file paths, and the value is the name of the architectural group. Files matching the same group will be consolidated into a single hotspot entry. Only the first group that matches a file is used.
 
 ```json
 {
@@ -62,6 +62,8 @@ Allows you to group files into architectural components for analysis. The key is
   }
 }
 ```
+
+note: Currently, only works for hotspots.
 
 ### `socPercentile` (optional)
 **Type:** `number` (between 0 and 1)  
@@ -126,6 +128,7 @@ This configuration system allows you to focus your analysis on specific parts of
 - [x] Add a diagram (and calculation) for the coupling pairs
 - [x] Add a diagram (and calculation) for the SOC
 - [x] Add .charlie.config.json file support. It should support a list of files that should be excluded from the analysis, and a list of files that should be included, and a list of files that should be grouped into "architectural components".
+- [ ] Make architectural groups work for all the data, not just hotspots.
 - [ ] Coupled pairs and SOC should show only significant data. Currently this part is calculated in the frontend, but it should be calculated in the backend.
 - [ ] Alternatively, maybe .charlie.config.json should be a starting point, but then in the webpage the user could change the config to see different slices of data.
 - [ ] Add a way to group files into "architectural components"
