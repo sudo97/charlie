@@ -2,8 +2,10 @@ import * as d3 from "d3";
 import type { Soc } from "../../core/soc.js";
 
 // Color constants for easy designer customization
-const LOW_SOC_COLOR = "#28a745"; // Green for low coupling
-const HIGH_SOC_COLOR = "#dc3545"; // Red for high coupling
+const LOW_SOC_COLOR = "rgba(207, 215, 222, 1)";
+const MID_SOC_COLOR = "rgba(160, 173, 187, 1)";
+const HIGH_SOC_COLOR = "rgba(208, 0, 0, 1)";
+
 const BACKGROUND_COLOR = "#fafafa";
 const BORDER_COLOR = "#e9ecef";
 const HOVER_COLOR = "#f8f9fa";
@@ -21,8 +23,8 @@ function getData(): Soc[] {
 function createColorScale(maxSoc: number) {
   return d3
     .scaleLinear<string>()
-    .domain([0, maxSoc])
-    .range([LOW_SOC_COLOR, HIGH_SOC_COLOR])
+    .domain([0, maxSoc / 2, maxSoc])
+    .range([LOW_SOC_COLOR, MID_SOC_COLOR, HIGH_SOC_COLOR])
     .interpolate(d3.interpolateHcl);
 }
 

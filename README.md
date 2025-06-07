@@ -9,7 +9,7 @@ This is the [Charlie](https://en.wikipedia.org/wiki/Charlie_Eppes) of your git h
 - [x] Retrieve number of revisions for each file
 - [x] Calculate the hotspots based on the complexity and the number of revisions
 - [x] Produce D3 visualization of the hotspots inside an html page
-- [x] Pick prettier colours for the visualization
+- [ ] Pick prettier colours for the visualization (and move them into theme.ts file)
 - [x] Add a diagram (and calculation) for the coupling pairs
 - [x] Add a diagram (and calculation) for the SOC
 - [x] Add .charlie.config.json file support. It should support a list of files that should be excluded from the analysis, and a list of files that should be included, and a list of files that should be grouped into "architectural components".
