@@ -32,6 +32,9 @@ interface Link {
   revisions: number;
 }
 
+// TODO: Simplify, do not use class, follow simpler functional approach.
+// TODO: show not only file names, but directory names too.
+// TODO: Possibly group by directory with different colors.
 export class HierarchicalEdgeBundlingVisualization {
   private data: CoupledPair[] | null = null;
   private container: HTMLElement;
