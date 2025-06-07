@@ -13,8 +13,6 @@ export type GitLogEmitter = {
 // and splitting it into log items.
 // Then I also decided to write tests for this, so that it's easier to maintain.
 // So I created a GitLogEmitter type instead of using child_process.spawn directly.
-// TODO: Write more tests for this, maybe include few different git log outputs, perhaps with a long list of
-// items and randomly slice the string into chunks.
 
 export async function produceGitLog(
   gitLogEmitter: GitLogEmitter

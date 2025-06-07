@@ -233,6 +233,7 @@ export function visualizeSoc(container: HTMLElement) {
     container.innerHTML = "";
 
     // TODO: Sorting and filtering should be done in the backend.
+    // Probably allow fine-tuning the thresholds with .charlie.config.json file.
     // Sort data by SOC in descending order
     const sortedData = [...data].sort((a, b) => b.soc - a.soc);
 
