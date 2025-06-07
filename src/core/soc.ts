@@ -20,3 +20,15 @@ export function soc(gitRevisions: LogItem[]): Soc[] {
     .map(([file, soc]) => ({ file, soc }))
     .sort((a, b) => b.soc - a.soc);
 }
+
+export function socPercentile(data: Soc[], percentile: number): Soc[] {
+  // TODO: Sorting and filtering should be done in the backend.
+  // Probably allow fine-tuning the thresholds with .charlie.config.json file.
+  // Sort data by SOC in descending order
+
+  const percentile80Index = Math.floor(data.length * percentile);
+
+  return [...data]
+    .sort((a, b) => b.soc - a.soc)
+    .slice(0, data.length - percentile80Index);
+}

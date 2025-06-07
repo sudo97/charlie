@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { Soc, soc } from "./soc.js";
+import { Soc, soc, socPercentile } from "./soc.js";
 import { LogItem } from "./revisions.js";
 
 describe("soc", () => {
@@ -57,5 +57,24 @@ describe("soc", () => {
         soc: 1,
       },
     ]);
+  });
+});
+
+describe("socPercentile", () => {
+  it("should return the top n% of the data", () => {
+    const length = 10;
+    const data: Soc[] = Array.from({ length }).map((_, i) => ({
+      file: `file${i}.txt`,
+      soc: 10 - i,
+    }));
+
+    for (let i = 1; i < length; i++) {
+      const result = socPercentile(data, i / length);
+      const min = data[length - i].soc;
+
+      for (const item of result) {
+        expect(item.soc).toBeGreaterThanOrEqual(min);
+      }
+    }
   });
 });

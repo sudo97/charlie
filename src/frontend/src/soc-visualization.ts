@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import type { Soc } from "../../core/soc.js";
+import { socPercentile, type Soc } from "../../core/soc.js";
 
 // Color constants for easy designer customization
 const LOW_SOC_COLOR = "rgba(207, 215, 222, 1)";
@@ -220,25 +220,6 @@ function showError(message: string): HTMLElement {
   `;
   errorDiv.textContent = message;
   return errorDiv;
-}
-
-function socPercentile(data: Soc[], percentile: number) {
-  // TODO: Sorting and filtering should be done in the backend.
-  // Probably allow fine-tuning the thresholds with .charlie.config.json file.
-  // Sort data by SOC in descending order
-  const sortedData = [...data].sort((a, b) => b.soc - a.soc);
-
-  // Calculate 80th percentile threshold
-  const socScores = data.map((d) => d.soc).sort((a, b) => a - b);
-  const percentile80Index = Math.floor(socScores.length * percentile);
-  const percentile80Threshold = socScores[percentile80Index] || 0;
-
-  // Filter to show only top 80th percentile (scores above the threshold)
-  const topPercentileData = sortedData.filter(
-    (d) => d.soc > percentile80Threshold
-  );
-
-  return topPercentileData;
 }
 
 export function visualizeSoc(container: HTMLElement) {
