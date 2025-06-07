@@ -95,24 +95,6 @@ export class HierarchicalEdgeBundlingVisualization {
           return;
         }
 
-        // TODO: Move this logic to the backend.
-        // Probably allow fine-tuning the thresholds with .charlie.config.json file.
-        // this.data = this.
-        // Calculate 80th percentile threshold for revisions
-        const revisions = this.data
-          .map((pair) => pair.revisions)
-          .sort((a, b) => a - b);
-        const percentile80Index = Math.floor(revisions.length * 0.6);
-        const revisionThreshold = revisions[percentile80Index] || 0;
-
-        // Filter data to only show pairs with:
-        // 1. More than 50% coupling
-        // 2. Number of revisions above 80th percentile
-        this.data = this.data.filter(
-          (pair) =>
-            pair.percentage >= 0.5 && pair.revisions >= revisionThreshold
-        );
-
         this.render();
         return;
       } catch (error) {

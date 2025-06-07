@@ -92,3 +92,26 @@ export function coupledPairs(revisions: LogItem[]): CoupledPair[] {
 
   return filteredCoupledPairsData;
 }
+
+export function significantCoupledPairs(
+  data: CoupledPair[],
+  revisionsPercentile: number,
+  minCouplingPercentage: number
+): CoupledPair[] {
+  // TODO: Move this logic to the backend.
+  // Probably allow fine-tuning the thresholds with .charlie.config.json file.
+  // this.data = this.
+  // Calculate 80th percentile threshold for revisions
+  const revisions = data.map((pair) => pair.revisions).sort((a, b) => a - b);
+  const percentile80Index = Math.floor(revisions.length * revisionsPercentile);
+  const revisionThreshold = revisions[percentile80Index] || 0;
+
+  // Filter data to only show pairs with:
+  // 1. More than 50% coupling
+  // 2. Number of revisions above 80th percentile
+  return data.filter(
+    (pair) =>
+      pair.percentage >= minCouplingPercentage ||
+      pair.revisions >= revisionThreshold
+  );
+}

@@ -6,7 +6,10 @@ import { produceGitLog } from "./git-log.js";
 import { generateReport } from "./report-generator.js";
 import { treeData } from "../core/tree-data.js";
 import { createGitLogEmitter } from "./createGitLogEmitter.js";
-import { coupledPairs } from "../core/coupled-pairs.js";
+import {
+  coupledPairs,
+  significantCoupledPairs,
+} from "../core/coupled-pairs.js";
 import { soc, socPercentile } from "../core/soc.js";
 import { parseConfig } from "./config.js";
 import { applyFilters } from "../core/filters.js";
@@ -45,7 +48,11 @@ if (config.architecturalGroups) {
   hotspotsData = groupHotspots(hotspotsData, config.architecturalGroups);
 }
 
-const coupledPairsData = coupledPairs(logItems);
+const coupledPairsData = significantCoupledPairs(
+  coupledPairs(logItems),
+  config.revisionsPercentile,
+  config.minCouplingPercentage
+);
 
 const outputPath2 = path.join(process.cwd(), "coupled-pairs.json");
 await fs.writeFile(outputPath2, JSON.stringify(coupledPairsData, null, 2));

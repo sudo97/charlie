@@ -6,6 +6,10 @@ const configSchema = z.object({
   after: z.optional(z.iso.date()),
   architecturalGroups: z.optional(z.record(z.string(), z.string())),
   socPercentile: z.optional(z.number().check(z.minimum(0), z.maximum(1))),
+  revisionsPercentile: z.optional(z.number().check(z.minimum(0), z.maximum(1))),
+  minCouplingPercentage: z.optional(
+    z.number().check(z.minimum(0), z.maximum(1))
+  ),
 });
 
 export type Config = {
@@ -14,6 +18,8 @@ export type Config = {
   after: Date;
   architecturalGroups: Record<string, string> | undefined;
   socPercentile: number;
+  revisionsPercentile: number;
+  minCouplingPercentage: number;
 };
 
 export function parseConfig(config: string): Config {
@@ -34,5 +40,7 @@ export function parseConfig(config: string): Config {
     after,
     architecturalGroups: parsed.architecturalGroups,
     socPercentile: parsed.socPercentile ?? 0.8,
+    revisionsPercentile: parsed.revisionsPercentile ?? 0.8,
+    minCouplingPercentage: parsed.minCouplingPercentage ?? 0.5,
   };
 }
