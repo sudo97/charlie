@@ -29,11 +29,6 @@ describe("Hotspots", () => {
       async (file) => fileSystem[file]
     );
 
-    // TODO: The book's python script sorts purely by revisions. We may want to
-    // revisit this in the future and decide if we want to stick to that or
-    // calculate importance based on the complexity of the file and the number of
-    // revisions.
-    // In other hand, this becomes less important when we display data visually
     expect(result).toEqual([
       { file: "file2.txt", complexity: 3, revisions: 1 },
       { file: "file1.txt", complexity: 2, revisions: 1 },

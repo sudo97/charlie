@@ -25,8 +25,6 @@ const logItems = applyFilters(
   config
 );
 
-// TODO: Add a way to group files into "architectural components", but still allow to calculate the complexity, by creating a sum of the complexity of the files in the component.
-
 const revisionsData = revisions(logItems);
 
 let hotspotsData = await hotspots(revisionsData, async (file) => {

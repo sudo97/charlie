@@ -109,6 +109,4 @@ describe("coupledPairs", () => {
       },
     ]);
   });
-
-  // TODO: Add tests for the filtering
 });
