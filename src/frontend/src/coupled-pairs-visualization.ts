@@ -339,7 +339,7 @@ export class HierarchicalEdgeBundlingVisualization {
       .data(groups)
       .join("g")
       .attr("class", "legend-item")
-      .attr("transform", (d, i) => `translate(0, ${i * 20})`);
+      .attr("transform", (_d, i) => `translate(0, ${i * 20})`);
 
     legendItems
       .append("circle")
