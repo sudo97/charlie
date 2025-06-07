@@ -222,6 +222,25 @@ function showError(message: string): HTMLElement {
   return errorDiv;
 }
 
+function socPercentile(data: Soc[], percentile: number) {
+  // TODO: Sorting and filtering should be done in the backend.
+  // Probably allow fine-tuning the thresholds with .charlie.config.json file.
+  // Sort data by SOC in descending order
+  const sortedData = [...data].sort((a, b) => b.soc - a.soc);
+
+  // Calculate 80th percentile threshold
+  const socScores = data.map((d) => d.soc).sort((a, b) => a - b);
+  const percentile80Index = Math.floor(socScores.length * percentile);
+  const percentile80Threshold = socScores[percentile80Index] || 0;
+
+  // Filter to show only top 80th percentile (scores above the threshold)
+  const topPercentileData = sortedData.filter(
+    (d) => d.soc > percentile80Threshold
+  );
+
+  return topPercentileData;
+}
+
 export function visualizeSoc(container: HTMLElement) {
   try {
     const data = getData();
@@ -234,20 +253,7 @@ export function visualizeSoc(container: HTMLElement) {
     // Clear previous content
     container.innerHTML = "";
 
-    // TODO: Sorting and filtering should be done in the backend.
-    // Probably allow fine-tuning the thresholds with .charlie.config.json file.
-    // Sort data by SOC in descending order
-    const sortedData = [...data].sort((a, b) => b.soc - a.soc);
-
-    // Calculate 80th percentile threshold
-    const socScores = data.map((d) => d.soc).sort((a, b) => a - b);
-    const percentile80Index = Math.floor(socScores.length * 0.8);
-    const percentile80Threshold = socScores[percentile80Index] || 0;
-
-    // Filter to show only top 80th percentile (scores above the threshold)
-    const topPercentileData = sortedData.filter(
-      (d) => d.soc > percentile80Threshold
-    );
+    const topPercentileData = socPercentile(data, 0.8);
 
     // Add components
     container.appendChild(createTitle());
