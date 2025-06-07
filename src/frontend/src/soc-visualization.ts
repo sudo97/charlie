@@ -28,8 +28,7 @@ function createColorScale(maxSoc: number) {
 
 function createTitle(): HTMLElement {
   const title = document.createElement("h2");
-  title.textContent =
-    "Sum of Coupling (SOC) - Files Most Often Changed with Others";
+  title.textContent = "Sum of Coupling (SOC) - Top 20% Most Coupled Files";
   title.style.cssText = "margin: 0 0 20px 0; color: #333; font-size: 1.5em;";
   return title;
 }
@@ -37,7 +36,7 @@ function createTitle(): HTMLElement {
 function createDescription(): HTMLElement {
   const description = document.createElement("p");
   description.textContent =
-    "SOC measures how many times a file is included in commits with any other file. Higher scores indicate files that are sources of coupling. Connect this data to the hotspots visualization to see which files are the priority for refactoring.";
+    "SOC measures how many times a file is included in commits with any other file. This view shows only the top 20% most coupled files (70th percentile and above). Higher scores indicate files that are sources of coupling. Connect this data to the hotspots visualization to see which files are the priority for refactoring.";
   description.style.cssText =
     "margin: 0 0 20px 0; color: #666; font-size: 0.9em;";
   return description;
@@ -236,11 +235,21 @@ export function visualizeSoc(container: HTMLElement) {
     // Sort data by SOC in descending order
     const sortedData = [...data].sort((a, b) => b.soc - a.soc);
 
+    // Calculate 70th percentile threshold
+    const socScores = data.map((d) => d.soc).sort((a, b) => a - b);
+    const percentile80Index = Math.floor(socScores.length * 0.8);
+    const percentile80Threshold = socScores[percentile80Index] || 0;
+
+    // Filter to show only top 70th percentile (scores above the threshold)
+    const topPercentileData = sortedData.filter(
+      (d) => d.soc > percentile80Threshold
+    );
+
     // Add components
     container.appendChild(createTitle());
     container.appendChild(createDescription());
-    container.appendChild(createVisualizationContainer(sortedData));
-    container.appendChild(createStatisticsPanel(sortedData));
+    container.appendChild(createVisualizationContainer(topPercentileData));
+    container.appendChild(createStatisticsPanel(topPercentileData));
   } catch (error) {
     container.appendChild(
       showError("Error loading SOC data: " + (error as Error).message)
