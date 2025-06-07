@@ -30,7 +30,7 @@ function createColorScale(maxSoc: number) {
 
 function createTitle(): HTMLElement {
   const title = document.createElement("h2");
-  title.textContent = "Sum of Coupling (SOC) - Top 20% Most Coupled Files";
+  title.textContent = "Sum of Coupling (SOC)";
   title.style.cssText = "margin: 0 0 20px 0; color: #333; font-size: 1.5em;";
   return title;
 }
@@ -38,7 +38,7 @@ function createTitle(): HTMLElement {
 function createDescription(): HTMLElement {
   const description = document.createElement("p");
   description.textContent =
-    "SOC measures how many times a file is included in commits with any other file. This view shows only the top 20% most coupled files (80th percentile and above). Higher scores indicate files that are sources of coupling. Connect this data to the hotspots visualization to see which files are the priority for refactoring.";
+    "SOC measures how many times a file is included in commits with any other file. Higher scores indicate files that are sources of coupling. Connect this data to the hotspots visualization to see which files are the priority for refactoring.";
   description.style.cssText =
     "margin: 0 0 20px 0; color: #666; font-size: 0.9em;";
   return description;
