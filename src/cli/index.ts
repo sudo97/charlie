@@ -51,7 +51,7 @@ const outputPath2 = path.join(process.cwd(), "coupled-pairs.json");
 await fs.writeFile(outputPath2, JSON.stringify(coupledPairsData, null, 2));
 console.log(`Coupled pairs data written to: ${outputPath2}`);
 
-const socData = socPercentile(soc(logItems), 0.8);
+const socData = socPercentile(soc(logItems), config.socPercentile);
 
 const outputPath3 = path.join(process.cwd(), "soc.json");
 await fs.writeFile(outputPath3, JSON.stringify(socData, null, 2));
