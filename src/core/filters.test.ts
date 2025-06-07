@@ -19,11 +19,12 @@ describe("applyFilters", () => {
   const createConfig = (
     include: string[] = [],
     exclude: string[] = []
-  ): Config => ({
-    include: include.map((pattern) => new RegExp(pattern)),
-    exclude: exclude.map((pattern) => new RegExp(pattern)),
-    after: new Date(),
-  });
+  ): Config =>
+    ({
+      include: include.map((pattern) => new RegExp(pattern)),
+      exclude: exclude.map((pattern) => new RegExp(pattern)),
+      after: new Date(),
+    } as Config);
 
   it("should return empty array when input is empty", () => {
     const config = createConfig();
