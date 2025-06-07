@@ -232,6 +232,7 @@ export function visualizeSoc(container: HTMLElement) {
     // Clear previous content
     container.innerHTML = "";
 
+    // TODO: Sorting and filtering should be done in the backend.
     // Sort data by SOC in descending order
     const sortedData = [...data].sort((a, b) => b.soc - a.soc);
 
