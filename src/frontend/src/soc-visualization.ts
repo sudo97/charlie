@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { socPercentile, type Soc } from "../../core/soc.js";
+import type { Soc } from "../../core/soc.js";
 
 // Color constants for easy designer customization
 const LOW_SOC_COLOR = "rgba(207, 215, 222, 1)";
@@ -234,13 +234,13 @@ export function visualizeSoc(container: HTMLElement) {
     // Clear previous content
     container.innerHTML = "";
 
-    const topPercentileData = socPercentile(data, 0.8);
+    // const topPercentileData = socPercentile(data, 0.8);
 
     // Add components
     container.appendChild(createTitle());
     container.appendChild(createDescription());
-    container.appendChild(createVisualizationContainer(topPercentileData));
-    container.appendChild(createStatisticsPanel(topPercentileData));
+    container.appendChild(createVisualizationContainer(data));
+    container.appendChild(createStatisticsPanel(data));
   } catch (error) {
     container.appendChild(
       showError("Error loading SOC data: " + (error as Error).message)
