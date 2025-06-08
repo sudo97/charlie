@@ -55,17 +55,17 @@ const coupledPairsData = significantCoupledPairs(
   config.minCouplingPercentage
 );
 
-const outputPath2 = path.join(process.cwd(), "coupled-pairs.json");
+const outputPath2 = path.join(repositoryPath, "coupled-pairs.json");
 await fs.writeFile(outputPath2, JSON.stringify(coupledPairsData, null, 2));
 console.log(`Coupled pairs data written to: ${outputPath2}`);
 
 const socData = socPercentile(soc(logItems), config.socPercentile);
 
-const outputPath3 = path.join(process.cwd(), "soc.json");
+const outputPath3 = path.join(repositoryPath, "soc.json");
 await fs.writeFile(outputPath3, JSON.stringify(socData, null, 2));
 console.log(`Soc data written to: ${outputPath3}`);
 
-const outputPath = path.join(process.cwd(), "charlie-report.html");
+const outputPath = path.join(repositoryPath, "charlie-report.html");
 
 await generateReport({
   title: "Charlie Code Hotspots Report",
