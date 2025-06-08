@@ -153,13 +153,13 @@ This configuration system allows you to focus your analysis on specific parts of
 - [x] Calculate the hotspots based on the complexity and the number of revisions
 - [x] Produce D3 visualization of the hotspots inside an html page
 - [x] Pick prettier colours for the visualization
-- [ ] Move colours into theme.ts file
+- [x] Move colours into theme.ts file
 - [x] Add a diagram (and calculation) for the coupling pairs
 - [x] Add a diagram (and calculation) for the SOC
 - [x] Add .charlie.config.json file support. It should support a list of files that should be excluded from the analysis, and a list of files that should be included, and a list of files that should be grouped into "architectural components".
 - [x] Add a way to group files into "architectural components"
+- [x] Coupled pairs and SOC should show only significant data. This filtering should be implemented in the backend using `revisionsPercentile` and `minCouplingPercentage` configuration options.
 - [ ] Make architectural groups work for all the data, not just hotspots.
-- [x] Coupled pairs and SOC should show only significant data. This filtering is now implemented in the backend using `revisionsPercentile` and `minCouplingPercentage` configuration options.
 - [ ] Alternatively, maybe .charlie.config.json should be a starting point, but then in the webpage the user could change the config to see different slices of data.
 - [ ] Add a way to find file/module owners
 - [ ] Add a way to find teams that happen to form by analyzing authors
