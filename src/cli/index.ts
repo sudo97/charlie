@@ -34,10 +34,11 @@ let hotspotsData = await hotspots(revisionsData, async (file) => {
   const filepath = path.join(repositoryPath, file);
   console.log("reading", filepath);
   if (
-    await fs
+    (await fs
       .access(filepath)
       .then(() => true)
-      .catch(() => false)
+      .catch(() => false)) &&
+    !(await fs.stat(filepath)).isDirectory()
   ) {
     return fs.readFile(filepath, "utf8");
   }
