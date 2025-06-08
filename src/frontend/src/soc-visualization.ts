@@ -1,16 +1,15 @@
 import * as d3 from "d3";
 import type { Soc } from "../../core/soc.js";
-
-// Color constants for easy designer customization
-const LOW_SOC_COLOR = "rgba(207, 215, 222, 1)";
-const MID_SOC_COLOR = "rgba(160, 173, 187, 1)";
-const HIGH_SOC_COLOR = "rgba(208, 0, 0, 1)";
-
-const BACKGROUND_COLOR = "#fafafa";
-const BORDER_COLOR = "#e9ecef";
-const HOVER_COLOR = "#f8f9fa";
-const TEXT_COLOR = "#333";
-const MUTED_TEXT_COLOR = "#495057";
+import {
+  LOW_IMPORTANCE_COLOR,
+  MID_IMPORTANCE_COLOR,
+  HIGH_IMPORTANCE_COLOR,
+  BACKGROUND_COLOR,
+  BORDER_COLOR,
+  HOVER_COLOR,
+  TEXT_COLOR,
+  MUTED_TEXT_COLOR,
+} from "./colours.js";
 
 function getData(): Soc[] {
   const dataElement = document.getElementById("soc-data");
@@ -24,7 +23,7 @@ function createColorScale(maxSoc: number) {
   return d3
     .scaleLinear<string>()
     .domain([0, maxSoc / 2, maxSoc])
-    .range([LOW_SOC_COLOR, MID_SOC_COLOR, HIGH_SOC_COLOR])
+    .range([LOW_IMPORTANCE_COLOR, MID_IMPORTANCE_COLOR, HIGH_IMPORTANCE_COLOR])
     .interpolate(d3.interpolateHcl);
 }
 

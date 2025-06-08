@@ -1,6 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as d3 from "d3";
 import type { TreeData } from "@core/tree-data";
+import {
+  BG_COLOR,
+  ROOT_COLOR,
+  STROKE_COLOR,
+  HOVER_STROKE_COLOR,
+  LOW_IMPORTANCE_COLOR,
+  MID_IMPORTANCE_COLOR,
+  HIGH_IMPORTANCE_COLOR,
+} from "./colours.js";
 
 function getData(): TreeData {
   const dataElement = document.getElementById("data");
@@ -10,22 +19,17 @@ function getData(): TreeData {
   return JSON.parse(dataElement.textContent || "{}");
 }
 
-const bgColor = "rgba(0, 0, 0, 0.05)";
-const rootColor = "rgba(255, 255, 255, 1)";
-const strokeColor = "rgba(211, 211, 211, 1)";
-const hoverColor = "rgba(177, 167, 166, 1)";
-
-const lowComplexityColor = "rgba(207, 215, 222, 1)";
-const midComplexityColor = "rgba(160, 173, 187, 1)";
-const highComplexityColor = "rgba(208, 0, 0, 1)";
-
 const mkColor = (root: d3.HierarchyCircularNode<TreeData>) => {
   const [min, max] = getColorDomain(root);
   const mid = (min + max) / 2;
   return d3
     .scaleLinear()
     .domain([min, mid, max])
-    .range([lowComplexityColor, midComplexityColor, highComplexityColor] as any)
+    .range([
+      LOW_IMPORTANCE_COLOR,
+      MID_IMPORTANCE_COLOR,
+      HIGH_IMPORTANCE_COLOR,
+    ] as any)
     .interpolate(d3.interpolateHcl as any);
 };
 
@@ -40,7 +44,7 @@ const mkColorForFocus = (focusNode: d3.HierarchyCircularNode<TreeData>) => {
     return d3
       .scaleLinear()
       .domain([0, 1])
-      .range([lowComplexityColor, lowComplexityColor] as any);
+      .range([LOW_IMPORTANCE_COLOR, LOW_IMPORTANCE_COLOR] as any);
   }
 
   const min = Math.min(...complexities);
@@ -50,7 +54,11 @@ const mkColorForFocus = (focusNode: d3.HierarchyCircularNode<TreeData>) => {
   return d3
     .scaleLinear()
     .domain([min, mid, max])
-    .range([lowComplexityColor, midComplexityColor, highComplexityColor] as any)
+    .range([
+      LOW_IMPORTANCE_COLOR,
+      MID_IMPORTANCE_COLOR,
+      HIGH_IMPORTANCE_COLOR,
+    ] as any)
     .interpolate(d3.interpolateHcl as any);
 };
 
@@ -64,7 +72,7 @@ const getSvgRoot = ({ width, height }: { width: number; height: number }) => {
       .attr("height", height)
       .attr(
         "style",
-        `max-width: 100%; height: auto; display: block; margin: 0 -14px; background: ${rootColor}; cursor: pointer;`
+        `max-width: 100%; height: auto; display: block; margin: 0 -14px; background: ${ROOT_COLOR}; cursor: pointer;`
       )
   );
 };
@@ -127,7 +135,7 @@ function getSvg(data: TreeData) {
     .data(root.descendants().slice(1))
     .join("circle")
     .attr("fill", (d) => {
-      if (d.children) return bgColor;
+      if (d.children) return BG_COLOR;
       const complexity = "complexity" in d.data ? d.data.complexity : 0;
       return originalColor(complexity);
     })
@@ -135,12 +143,12 @@ function getSvg(data: TreeData) {
     .attr("cx", (d) => d.x - width / 2)
     .attr("cy", (d) => d.y - height / 2)
     .attr("r", (d) => d.r)
-    .attr("stroke", strokeColor)
+    .attr("stroke", STROKE_COLOR)
     .on("mouseover", function () {
-      d3.select(this).attr("stroke", hoverColor);
+      d3.select(this).attr("stroke", HOVER_STROKE_COLOR);
     })
     .on("mouseout", function () {
-      d3.select(this).attr("stroke", strokeColor);
+      d3.select(this).attr("stroke", STROKE_COLOR);
     })
     .on("click", (event, d) => {
       return focus !== d && (zoom(event, d), event.stopPropagation());
@@ -199,11 +207,11 @@ function getSvg(data: TreeData) {
 
     // Update colors during transition
     node.transition(transition as any).attr("fill", (d) => {
-      if (d.children) return bgColor;
+      if (d.children) return BG_COLOR;
 
       // If the node is not a descendant of focus, make it low complexity color
       if (!focusDescendants.has(d)) {
-        return lowComplexityColor;
+        return LOW_IMPORTANCE_COLOR;
       }
 
       const complexity = "complexity" in d.data ? d.data.complexity : 0;
