@@ -7,11 +7,16 @@
   "bin": {
     "charlie": "./dist/cli/cli/index.js"
   },
+  "files": [
+    "dist/",
+    "templates/"
+  ],
   "scripts": {
     "execute": "node dist/cli/cli/index.js",
-    "build": "npm run build:frontend && npm run build:cli",
+    "build": "npm run build:frontend && npm run build:cli && npm run copy:templates",
     "build:frontend": "vite build",
     "build:cli": "tsc --project tsconfig.cli.json",
+    "copy:templates": "cp -r src/frontend/templates ./",
     "dev": "concurrently \"npm run dev:frontend\" \"npm run build:cli -- --watch\"",
     "dev:frontend": "vite serve",
     "test": "vitest",
@@ -19,7 +24,7 @@
     "test:coverage": "vitest --coverage",
     "test:watch": "vitest --watch",
     "lint": "tsc --noEmit",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf dist templates",
     "prepublishOnly": "npm run clean && npm run build"
   },
   "keywords": [

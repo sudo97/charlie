@@ -67,3 +67,4 @@ temp/
 .rts2_cache_umd/ 
 
 html
+templates/report.mustache

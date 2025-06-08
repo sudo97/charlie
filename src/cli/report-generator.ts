@@ -1,5 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
+import { fileURLToPath } from "url";
 import mustache from "mustache";
 import type { TreeData } from "src/core/tree-data.js";
 import type { CoupledPair } from "../core/coupled-pairs.js";
@@ -13,13 +14,15 @@ export interface ReportOptions {
   socData: Soc[];
 }
 
-export async function generateReport(options: ReportOptions) {
-  const templatePath = path.join(
-    process.cwd(),
-    "src/frontend/templates/report.mustache"
-  );
+// Get the directory of this module file
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-  const frontendDistPath = path.join(process.cwd(), "dist/frontend");
+export async function generateReport(options: ReportOptions) {
+  // Navigate from dist/cli/cli/ to the package root, then to the template
+  const packageRoot = path.resolve(__dirname, "../../..");
+  const templatePath = path.join(packageRoot, "templates/report.mustache");
+  const frontendDistPath = path.join(packageRoot, "dist/frontend");
 
   try {
     const template = await fs.readFile(templatePath, "utf-8");
