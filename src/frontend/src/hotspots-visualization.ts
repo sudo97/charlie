@@ -29,6 +29,31 @@ const mkColor = (root: d3.HierarchyCircularNode<TreeData>) => {
     .interpolate(d3.interpolateHcl as any);
 };
 
+const mkColorForFocus = (focusNode: d3.HierarchyCircularNode<TreeData>) => {
+  const descendants = focusNode.descendants();
+  const complexities = descendants
+    .filter((d) => "complexity" in d.data)
+    .map((d) => (d.data as any).complexity);
+
+  if (complexities.length === 0) {
+    // If no complexity data, return a default scale
+    return d3
+      .scaleLinear()
+      .domain([0, 1])
+      .range([lowComplexityColor, lowComplexityColor] as any);
+  }
+
+  const min = Math.min(...complexities);
+  const max = Math.max(...complexities);
+  const mid = (min + max) / 2;
+
+  return d3
+    .scaleLinear()
+    .domain([min, mid, max])
+    .range([lowComplexityColor, midComplexityColor, highComplexityColor] as any)
+    .interpolate(d3.interpolateHcl as any);
+};
+
 const getSvgRoot = ({ width, height }: { width: number; height: number }) => {
   return (
     d3
@@ -94,7 +119,7 @@ function getSvg(data: TreeData) {
   const svg = getSvgRoot({ width, height });
 
   const root = packData(data, { width, height });
-  const color = mkColor(root);
+  const originalColor = mkColor(root); // Store original global color scale
 
   const node = svg
     .append("g")
@@ -104,7 +129,7 @@ function getSvg(data: TreeData) {
     .attr("fill", (d) => {
       if (d.children) return bgColor;
       const complexity = "complexity" in d.data ? d.data.complexity : 0;
-      return color(complexity);
+      return originalColor(complexity);
     })
     .attr("pointer-events", (d) => (!d.children ? "none" : null))
     .attr("cx", (d) => d.x - width / 2)
@@ -156,6 +181,10 @@ function getSvg(data: TreeData) {
   function zoom(event: any, d: d3.HierarchyCircularNode<TreeData>) {
     focus = d;
 
+    // Calculate color scale for the new focus
+    const focusColor = focus === root ? originalColor : mkColorForFocus(focus);
+    const focusDescendants = new Set(focus.descendants());
+
     const transition = svg
       .transition()
       .duration(event.altKey ? 7500 : 750)
@@ -167,6 +196,19 @@ function getSvg(data: TreeData) {
         ]);
         return (t) => zoomTo(i(t));
       });
+
+    // Update colors during transition
+    node.transition(transition as any).attr("fill", (d) => {
+      if (d.children) return bgColor;
+
+      // If the node is not a descendant of focus, make it low complexity color
+      if (!focusDescendants.has(d)) {
+        return lowComplexityColor;
+      }
+
+      const complexity = "complexity" in d.data ? d.data.complexity : 0;
+      return focusColor(complexity);
+    });
 
     label
       .filter(function (d) {
