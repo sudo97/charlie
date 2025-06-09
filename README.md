@@ -123,7 +123,7 @@ Allows you to group files into architectural components for analysis. The key is
 }
 ```
 
-note: Currently, only works for hotspots.
+note: Currently, only works for hotspots. Please see [notes](#on-architectural-grouping) on why this is the case.
 
 ### `socPercentile` (optional)
 
