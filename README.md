@@ -2,6 +2,30 @@
 
 This is a tool for analyzing and visualizing your git history. Based on ideas from "[Your Code as a Crime Scene](https://pragprog.com/titles/atcrime2/your-code-as-a-crime-scene-second-edition/)" by Adam Tornhill. Highly recommended reading.
 
+## Table of Contents
+
+- [Motivation](#motivation)
+- [Core Concepts](#core-concepts)
+  - [Hotspots](#hotspots)
+  - [Coupled Pairs](#coupled-pairs)
+  - [Sum of Coupling (SOC)](#sum-of-coupling-soc)
+  - [The Power of Data Over Time](#the-power-of-data-over-time)
+  - [Complexity Calculation](#complexity-calculation)
+- [.charlie.config.json](#charlieconfigjson)
+  - [Configuration Fields](#configuration-fields)
+    - [`include` (optional)](#include-optional)
+    - [`exclude` (optional)](#exclude-optional)
+    - [`after` (optional)](#after-optional)
+    - [`architecturalGroups` (optional)](#architecturalgroups-optional)
+    - [`socPercentile` (optional)](#socpercentile-optional)
+    - [`revisionsPercentile` (optional)](#revisionspercentile-optional)
+    - [`minCouplingPercentage` (optional)](#mincouplingpercentage-optional)
+  - [Complete Example](#complete-example)
+  - [How It Works](#how-it-works)
+- [Thoughts](#thoughts)
+  - [On Architectural Grouping](#on-architectural-grouping)
+- [TODO](#todo)
+
 ## Motivation
 
 In "Your Code as a Crime Scene", Adam Tornhill presents powerful techniques for mining insights from version control systems to identify problematic code patterns, architectural issues, and team dynamics. The book demonstrates these concepts using [Code Maat](https://github.com/adamtornhill/code-maat), a command-line tool that extracts and analyzes VCS data. While Code Maat is excellent for research and deep analysis, it requires exporting git logs to files and often involves additional Python scripts to generate visualizations from CSV outputs.
@@ -183,6 +207,14 @@ Here's a comprehensive example of a `.charlie.config.json` file:
 5. **Coupled Pairs Filtering**: Coupled pairs are filtered using two criteria - files are included if they meet either the minimum coupling percentage threshold OR have revision counts above the specified percentile, ensuring both highly coupled and frequently co-changed files are captured.
 
 This configuration system allows you to focus your analysis on specific parts of your codebase and organize the results in a way that makes sense for your project's architecture.
+
+# Thoughts
+
+## On Architectural Grouping
+
+I personally haven't yet found an easy and useful case for architectural grouping. Usually when the codebase is messy, it's very hard to group things properly, but these types of codebases are the ones you usually need to analyze with tools like Charlie. And the codebases where things are easy to group, well... things are usually obvious enough without needing to group them.
+
+This creates an interesting paradox: the feature works best on codebases that need it least, and struggles most on codebases that would benefit from it the most. That said, your mileage may vary - if you have a reasonably well-organized codebase with clear architectural boundaries that just needs some fine-tuning, architectural grouping might provide valuable insights. Or, perhaps, you have a good codebase, but the number of files is so large that it's hard to see the forest for the trees.
 
 # TODO:
 
