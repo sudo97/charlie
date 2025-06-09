@@ -1,8 +1,35 @@
-# Charlie 🕵 ️ 
+# Charlie 🕵️ 
 
-This is a tool for analyzing and visualizing your git history. Based on ideas from "Your Code as a Crime Scene" by Andrew M. Sutton.
+This is a tool for analyzing and visualizing your git history. Based on ideas from "[Your Code as a Crime Scene](https://pragprog.com/titles/atcrime2/your-code-as-a-crime-scene-second-edition/)" by Adam Tornhill. Highly recommended reading.
 
-This is the [Charlie](https://en.wikipedia.org/wiki/Charlie_Eppes) of your git history.
+## Motivation
+
+In "Your Code as a Crime Scene", Adam Tornhill presents powerful techniques for mining insights from version control systems to identify problematic code patterns, architectural issues, and team dynamics. The book demonstrates these concepts using [Code Maat](https://github.com/adamtornhill/code-maat), a command-line tool that extracts and analyzes VCS data. While Code Maat is excellent for research and deep analysis, it requires exporting git logs to files and often involves additional Python scripts to generate visualizations from CSV outputs.
+
+[CodeScene](https://codescene.com/), the commercial evolution of these ideas, provides beautiful visualizations and automated analysis through GitHub integration. While it's a powerful tool, some developers prefer a completely local solution without any external service dependencies.
+
+Charlie bridges this gap by providing a tool similar to `bundle-analyzer` or `dependency-cruiser` - you can run it locally with a single command and immediately see visual results in your browser. No file exports, no online services, just instant insights into your codebase's behavioral patterns.
+
+Building this tool has been the best way to truly understand the concepts from the book. As they say, you don't really know something until you can build it yourself.
+
+## Core Concepts
+
+### Hotspots
+A **hotspot** is a file or module that is both frequently modified AND has high complexity. These represent the most problematic areas of your codebase - they change often (indicating active development or bug fixes) and are complex (making them risky to modify). Hotspots should be your top priority for refactoring.
+
+### Coupled Pairs
+**Coupled pairs** are files that frequently appear together in the same commits. When two files are consistently modified together, it suggests they're more tightly coupled than your architecture might indicate. High coupling can lead to ripple effects where changes in one file require changes in another.
+
+### Sum of Coupling (SOC)
+**SOC** is a metric calculated per file that counts how many times the file appears in commits with other files (i.e., it's not alone in the commit). Every time a file is committed alongside other files, we assume it might be coupled with them. A high SOC score indicates a file that's frequently involved in multi-file changes, which could signal architectural problems. When a file is both a hotspot AND has high SOC, it becomes a critical refactoring priority.
+
+### The Power of Data Over Time
+These metrics might sound overly simplistic at first glance, but when you collect data over months or a full year, powerful patterns emerge. Individual commits might seem random, but aggregate behavior reveals the true structure and pain points of your codebase. **Data is king** - it shows you what's actually happening, not what you think is happening.
+
+### Complexity Calculation
+Charlie calculates complexity using a simple but effective approach: it adds 1 to the complexity score for each line of code in the file, and adds another point whenever a line has more leading whitespace than the previous line (indicating nested code blocks). This method is language-agnostic and works well for identifying complex areas across different codebases. As long as the formatting is consistent, this approach will work.
+
+While cyclomatic complexity might be more academically accurate, this nested-based approach is sufficient for the behavioral analysis goals of this tool. For individual file analysis, I still recommend measuring cyclomatic complexity, but for understanding large-scale patterns and trends, this simpler metric serves us well.
 
 # .charlie.config.json
 
