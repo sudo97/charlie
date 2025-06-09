@@ -5,7 +5,7 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    
+
     // Emit
     "outDir": "./dist",
     "rootDir": "./src",
@@ -14,14 +14,14 @@
     "sourceMap": true,
     "removeComments": true,
     "importHelpers": true,
-    
+
     // Interop Constraints
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
-    
+
     // Type Checking
     "strict": true,
     "noImplicitAny": true,
@@ -40,26 +40,19 @@
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
-    
+
     // Completeness
     "skipLibCheck": true,
-    
+
     // Path mapping for core code
     "baseUrl": ".",
     "paths": {
       "@core/*": ["src/core/*"]
     }
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.ts",
-    "**/*.spec.ts"
-  ],
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
   "ts-node": {
     "esm": true
   }
-} 
+}

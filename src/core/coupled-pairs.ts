@@ -1,4 +1,4 @@
-import type { LogItem } from "./revisions.js";
+import type { LogItem } from './revisions.js';
 
 export type CoupledPair = {
   file1: string;
@@ -8,7 +8,7 @@ export type CoupledPair = {
 };
 
 function createPairKey(file1: string, file2: string): string {
-  return [file1, file2].sort().join("");
+  return [file1, file2].sort().join('');
 }
 
 function addPairToCommit(
@@ -40,7 +40,7 @@ export function coupledPairs(revisions: LogItem[]): CoupledPair[] {
 
   for (let i = 0; i < revisions.length; i++) {
     const rev = revisions[i]!;
-    const filesInCommit = rev.fileEntries.map((entry) => entry.fileName);
+    const filesInCommit = rev.fileEntries.map(entry => entry.fileName);
 
     for (const file of filesInCommit) {
       if (!fileCommitSets.has(file)) {
@@ -83,11 +83,11 @@ export function coupledPairs(revisions: LogItem[]): CoupledPair[] {
   }
 
   const maxRevisions = result
-    .map((pair) => pair.revisions)
+    .map(pair => pair.revisions)
     .reduce((a, b) => Math.max(a, b), 0);
 
   const filteredCoupledPairsData = result
-    .filter((pair) => pair.revisions / maxRevisions > 0.02)
+    .filter(pair => pair.revisions / maxRevisions > 0.02)
     .sort((a, b) => b.percentage - a.percentage);
 
   return filteredCoupledPairsData;
@@ -98,12 +98,12 @@ export function significantCoupledPairs(
   revisionsPercentile: number,
   minCouplingPercentage: number
 ): CoupledPair[] {
-  const revisions = data.map((pair) => pair.revisions).sort((a, b) => a - b);
+  const revisions = data.map(pair => pair.revisions).sort((a, b) => a - b);
   const percentileIdx = Math.floor(revisions.length * revisionsPercentile);
   const revisionThreshold = revisions[percentileIdx] || 0;
 
   return data.filter(
-    (pair) =>
+    pair =>
       pair.percentage >= minCouplingPercentage ||
       pair.revisions >= revisionThreshold
   );

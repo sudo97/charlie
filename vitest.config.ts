@@ -1,13 +1,13 @@
-import { defineConfig } from "vitest/config";
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
     // Test environment
-    environment: "node",
+    environment: 'node',
 
     // File patterns
-    include: ["src/**/*.{test,spec}.{js,ts}"],
-    exclude: ["node_modules", "dist"],
+    include: ['src/**/*.{test,spec}.{js,ts}'],
+    exclude: ['node_modules', 'dist'],
 
     // Enable this for test-coverage
     //

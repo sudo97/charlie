@@ -1,4 +1,4 @@
-# Charlie 🕵️ 
+# Charlie 🕵️
 
 This is a tool for analyzing and visualizing your git history. Based on ideas from "[Your Code as a Crime Scene](https://pragprog.com/titles/atcrime2/your-code-as-a-crime-scene-second-edition/)" by Adam Tornhill. Highly recommended reading.
 
@@ -15,18 +15,23 @@ Building this tool has been the best way to truly understand the concepts from t
 ## Core Concepts
 
 ### Hotspots
+
 A **hotspot** is a file or module that is both frequently modified AND has high complexity. These represent the most problematic areas of your codebase - they change often (indicating active development or bug fixes) and are complex (making them risky to modify). Hotspots should be your top priority for refactoring.
 
 ### Coupled Pairs
+
 **Coupled pairs** are files that frequently appear together in the same commits. When two files are consistently modified together, it suggests they're more tightly coupled than your architecture might indicate. High coupling can lead to ripple effects where changes in one file require changes in another.
 
 ### Sum of Coupling (SOC)
+
 **SOC** is a metric calculated per file that counts how many times the file appears in commits with other files (i.e., it's not alone in the commit). Every time a file is committed alongside other files, we assume it might be coupled with them. A high SOC score indicates a file that's frequently involved in multi-file changes, which could signal architectural problems. When a file is both a hotspot AND has high SOC, it becomes a critical refactoring priority.
 
 ### The Power of Data Over Time
+
 These metrics might sound overly simplistic at first glance, but when you collect data over months or a full year, powerful patterns emerge. Individual commits might seem random, but aggregate behavior reveals the true structure and pain points of your codebase. **Data is king** - it shows you what's actually happening, not what you think is happening.
 
 ### Complexity Calculation
+
 Charlie calculates complexity using a simple but effective approach: it adds 1 to the complexity score for each line of code in the file, and adds another point whenever a line has more leading whitespace than the previous line (indicating nested code blocks). This method is language-agnostic and works well for identifying complex areas across different codebases. As long as the formatting is consistent, this approach will work.
 
 While cyclomatic complexity might be more academically accurate, this nested-based approach is sufficient for the behavioral analysis goals of this tool. For individual file analysis, I still recommend measuring cyclomatic complexity, but for understanding large-scale patterns and trends, this simpler metric serves us well.
@@ -38,6 +43,7 @@ The `.charlie.config.json` file allows you to customize Charlie's analysis behav
 ## Configuration Fields
 
 ### `include` (optional)
+
 **Type:** `string[]` (array of regex patterns)  
 **Default:** `[]` (includes all files)
 
@@ -50,6 +56,7 @@ An array of regular expression patterns to specify which files should be include
 ```
 
 ### `exclude` (optional)
+
 **Type:** `string[]` (array of regex patterns)  
 **Default:** `[]` (excludes no files)
 
@@ -62,6 +69,7 @@ An array of regular expression patterns to specify which files should be exclude
 ```
 
 ### `after` (optional)
+
 **Type:** `string` (ISO date format)  
 **Default:** One year ago from the current date
 
@@ -74,6 +82,7 @@ Specifies the earliest date for git commits to include in the analysis. Only com
 ```
 
 ### `architecturalGroups` (optional)
+
 **Type:** `Record<string, string>` (regex pattern → group name mapping)  
 **Default:** `undefined` (no grouping)
 
@@ -93,6 +102,7 @@ Allows you to group files into architectural components for analysis. The key is
 note: Currently, only works for hotspots.
 
 ### `socPercentile` (optional)
+
 **Type:** `number` (between 0 and 1)  
 **Default:** `0.8` (80th percentile)
 
@@ -105,6 +115,7 @@ Controls the percentile threshold for the Sum of Coupling (SOC) analysis. Only f
 ```
 
 ### `revisionsPercentile` (optional)
+
 **Type:** `number` (between 0 and 1)  
 **Default:** `0.8` (80th percentile)
 
@@ -117,6 +128,7 @@ Controls the percentile threshold for filtering coupled pairs based on revision 
 ```
 
 ### `minCouplingPercentage` (optional)
+
 **Type:** `number` (between 0 and 1)  
 **Default:** `0.5` (50%)
 
@@ -147,7 +159,7 @@ Here's a comprehensive example of a `.charlie.config.json` file:
   "after": "2023-06-01T00:00:00.000Z",
   "architecturalGroups": {
     "^src/components/": "UI Layer",
-    "^src/services/": "Service Layer", 
+    "^src/services/": "Service Layer",
     "^src/store/": "State Management",
     "^src/utils/": "Utilities",
     "^src/types/": "Type Definitions"
@@ -172,9 +184,8 @@ Here's a comprehensive example of a `.charlie.config.json` file:
 
 This configuration system allows you to focus your analysis on specific parts of your codebase and organize the results in a way that makes sense for your project's architecture.
 
-
-
 # TODO:
+
 - [x] Calculate the complexity of each file based on the number of lines and the number of peaks
 - [x] Retrieve number of revisions for each file
 - [x] Calculate the hotspots based on the complexity and the number of revisions

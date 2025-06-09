@@ -1,5 +1,5 @@
-import type { Revisions } from "./revisions.js";
-import { visualComplexity } from "./visual-complexity.js";
+import type { Revisions } from './revisions.js';
+import { visualComplexity } from './visual-complexity.js';
 
 export type Hotspot = {
   file: string;

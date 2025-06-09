@@ -5,10 +5,7 @@
     "moduleResolution": "node",
     "rootDir": "./src"
   },
-  "include": [
-    "src/cli/**/*.ts",
-    "src/core/**/*.ts"
-  ],
+  "include": ["src/cli/**/*.ts", "src/core/**/*.ts"],
   "exclude": [
     "node_modules",
     "dist",
@@ -16,4 +13,4 @@
     "**/*.spec.ts",
     "src/frontend/**/*"
   ]
-} 
+}

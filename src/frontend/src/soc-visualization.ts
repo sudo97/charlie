@@ -1,5 +1,5 @@
-import * as d3 from "d3";
-import type { Soc } from "../../core/soc.js";
+import * as d3 from 'd3';
+import type { Soc } from '../../core/soc.js';
 import {
   LOW_IMPORTANCE_COLOR,
   MID_IMPORTANCE_COLOR,
@@ -9,14 +9,14 @@ import {
   HOVER_COLOR,
   TEXT_COLOR,
   MUTED_TEXT_COLOR,
-} from "./colours.js";
+} from './colours.js';
 
 function getData(): Soc[] {
-  const dataElement = document.getElementById("soc-data");
+  const dataElement = document.getElementById('soc-data');
   if (!dataElement) {
-    throw new Error("SOC data element not found");
+    throw new Error('SOC data element not found');
   }
-  return JSON.parse(dataElement.textContent || "[]");
+  return JSON.parse(dataElement.textContent || '[]');
 }
 
 function createColorScale(maxSoc: number) {
@@ -28,23 +28,23 @@ function createColorScale(maxSoc: number) {
 }
 
 function createTitle(): HTMLElement {
-  const title = document.createElement("h2");
-  title.textContent = "Sum of Coupling (SOC)";
-  title.style.cssText = "margin: 0 0 20px 0; color: #333; font-size: 1.5em;";
+  const title = document.createElement('h2');
+  title.textContent = 'Sum of Coupling (SOC)';
+  title.style.cssText = 'margin: 0 0 20px 0; color: #333; font-size: 1.5em;';
   return title;
 }
 
 function createDescription(): HTMLElement {
-  const description = document.createElement("p");
+  const description = document.createElement('p');
   description.textContent =
-    "SOC measures how many times a file is included in commits with any other file. Higher scores indicate files that are sources of coupling. Connect this data to the hotspots visualization to see which files are the priority for refactoring.";
+    'SOC measures how many times a file is included in commits with any other file. Higher scores indicate files that are sources of coupling. Connect this data to the hotspots visualization to see which files are the priority for refactoring.';
   description.style.cssText =
-    "margin: 0 0 20px 0; color: #666; font-size: 0.9em;";
+    'margin: 0 0 20px 0; color: #666; font-size: 0.9em;';
   return description;
 }
 
 function createStatisticsPanel(data: Soc[]): HTMLElement {
-  const statsPanel = document.createElement("div");
+  const statsPanel = document.createElement('div');
   statsPanel.style.cssText = `
     margin-top: 20px;
     padding: 15px;
@@ -57,8 +57,8 @@ function createStatisticsPanel(data: Soc[]): HTMLElement {
   const avgSoc = Math.round(
     data.reduce((sum, d) => sum + d.soc, 0) / data.length
   );
-  const maxSoc = Math.max(...data.map((d) => d.soc));
-  const minSoc = Math.min(...data.map((d) => d.soc));
+  const maxSoc = Math.max(...data.map(d => d.soc));
+  const minSoc = Math.min(...data.map(d => d.soc));
 
   statsPanel.innerHTML = `
     <h3 style="margin: 0 0 10px 0; color: #333;">Coupling Statistics</h3>
@@ -86,7 +86,7 @@ function createStatisticsPanel(data: Soc[]): HTMLElement {
 }
 
 function createVisualizationContainer(data: Soc[]): HTMLElement {
-  const container = document.createElement("div");
+  const container = document.createElement('div');
   container.style.cssText = `
     background: ${BACKGROUND_COLOR};
     border-radius: 8px;
@@ -94,11 +94,11 @@ function createVisualizationContainer(data: Soc[]): HTMLElement {
     margin: 20px 0;
   `;
 
-  const maxSoc = Math.max(...data.map((d) => d.soc));
+  const maxSoc = Math.max(...data.map(d => d.soc));
   const colorScale = createColorScale(maxSoc);
 
   // Create header row
-  const headerRow = document.createElement("div");
+  const headerRow = document.createElement('div');
   headerRow.style.cssText = `
     display: flex;
     align-items: center;
@@ -109,21 +109,21 @@ function createVisualizationContainer(data: Soc[]): HTMLElement {
     color: ${TEXT_COLOR};
   `;
 
-  const fileHeader = document.createElement("div");
-  fileHeader.textContent = "File";
-  fileHeader.style.cssText = "flex: 0 0 300px; padding-right: 20px;";
+  const fileHeader = document.createElement('div');
+  fileHeader.textContent = 'File';
+  fileHeader.style.cssText = 'flex: 0 0 300px; padding-right: 20px;';
 
-  const socHeader = document.createElement("div");
-  socHeader.textContent = "SOC Score";
-  socHeader.style.cssText = "flex: 1;";
+  const socHeader = document.createElement('div');
+  socHeader.textContent = 'SOC Score';
+  socHeader.style.cssText = 'flex: 1;';
 
   headerRow.appendChild(fileHeader);
   headerRow.appendChild(socHeader);
   container.appendChild(headerRow);
 
   // Create bars for each file
-  data.forEach((d) => {
-    const row = document.createElement("div");
+  data.forEach(d => {
+    const row = document.createElement('div');
     row.style.cssText = `
       display: flex;
       align-items: center;
@@ -134,18 +134,18 @@ function createVisualizationContainer(data: Soc[]): HTMLElement {
     `;
 
     // Add hover effect
-    row.addEventListener("mouseenter", () => {
+    row.addEventListener('mouseenter', () => {
       row.style.backgroundColor = HOVER_COLOR;
     });
 
-    row.addEventListener("mouseleave", () => {
-      row.style.backgroundColor = "transparent";
+    row.addEventListener('mouseleave', () => {
+      row.style.backgroundColor = 'transparent';
     });
 
     // File name
-    const fileName = document.createElement("div");
+    const fileName = document.createElement('div');
     fileName.textContent =
-      d.file.length > 40 ? "..." + d.file.slice(-37) : d.file;
+      d.file.length > 40 ? '...' + d.file.slice(-37) : d.file;
     fileName.title = d.file; // Full path on hover
     fileName.style.cssText = `
       flex: 0 0 300px;
@@ -159,7 +159,7 @@ function createVisualizationContainer(data: Soc[]): HTMLElement {
     `;
 
     // Bar container
-    const barContainer = document.createElement("div");
+    const barContainer = document.createElement('div');
     barContainer.style.cssText = `
       flex: 1;
       display: flex;
@@ -168,7 +168,7 @@ function createVisualizationContainer(data: Soc[]): HTMLElement {
     `;
 
     // Bar
-    const bar = document.createElement("div");
+    const bar = document.createElement('div');
     const widthPercentage = (d.soc / maxSoc) * 100;
 
     bar.style.cssText = `
@@ -181,7 +181,7 @@ function createVisualizationContainer(data: Soc[]): HTMLElement {
     `;
 
     // SOC value label
-    const valueLabel = document.createElement("span");
+    const valueLabel = document.createElement('span');
     valueLabel.textContent = d.soc.toString();
     valueLabel.style.cssText = `
       margin-left: 10px;
@@ -197,7 +197,7 @@ function createVisualizationContainer(data: Soc[]): HTMLElement {
     row.appendChild(barContainer);
 
     // Click handler
-    row.addEventListener("click", () => {
+    row.addEventListener('click', () => {
       console.log(`Clicked on file: ${d.file} with SOC: ${d.soc}`);
     });
 
@@ -208,7 +208,7 @@ function createVisualizationContainer(data: Soc[]): HTMLElement {
 }
 
 function showError(message: string): HTMLElement {
-  const errorDiv = document.createElement("div");
+  const errorDiv = document.createElement('div');
   errorDiv.style.cssText = `
     padding: 20px;
     background: #f8d7da;
@@ -226,12 +226,12 @@ export function visualizeSoc(container: HTMLElement) {
     const data = getData();
 
     if (!data.length) {
-      container.appendChild(showError("No SOC data available"));
+      container.appendChild(showError('No SOC data available'));
       return;
     }
 
     // Clear previous content
-    container.innerHTML = "";
+    container.innerHTML = '';
 
     // Add components
     container.appendChild(createTitle());
@@ -240,7 +240,7 @@ export function visualizeSoc(container: HTMLElement) {
     container.appendChild(createStatisticsPanel(data));
   } catch (error) {
     container.appendChild(
-      showError("Error loading SOC data: " + (error as Error).message)
+      showError('Error loading SOC data: ' + (error as Error).message)
     );
   }
 }

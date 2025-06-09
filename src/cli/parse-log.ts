@@ -1,22 +1,22 @@
-import type { FileEntry, LogItem } from "@core/revisions";
+import type { FileEntry, LogItem } from '@core/revisions';
 
 export function parseHeader(line: string): {
   hash: string;
   date: string;
   author: string;
 } {
-  const [hash, date, author] = line.split("--").slice(1);
+  const [hash, date, author] = line.split('--').slice(1);
   if (!hash || !date || !author) {
-    throw new Error("Invalid log item");
+    throw new Error('Invalid log item');
   }
-  const cleanedAuthor = author.replace(/'$/g, "");
+  const cleanedAuthor = author.replace(/'$/g, '');
   return { hash, date, author: cleanedAuthor };
 }
 
 export function parseLogItem(logItem: string): LogItem {
-  const [firstLine, ...rest] = logItem.split("\n");
+  const [firstLine, ...rest] = logItem.split('\n');
   if (!firstLine) {
-    throw new Error("Invalid log item");
+    throw new Error('Invalid log item');
   }
   const { hash, date, author } = parseHeader(firstLine);
 

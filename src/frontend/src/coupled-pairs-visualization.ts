@@ -1,5 +1,5 @@
-import { type CoupledPair } from "@core/coupled-pairs";
-import * as d3 from "d3";
+import { type CoupledPair } from '@core/coupled-pairs';
+import * as d3 from 'd3';
 
 export interface HierarchicalEdgeBundlingConfig {
   width?: number;
@@ -61,25 +61,25 @@ function createVisualizationState(
   config: HierarchicalEdgeBundlingConfig = {}
 ): VisualizationState {
   const mergedConfig = { ...DEFAULT_CONFIG, ...config };
-  const container = document.getElementById("coupled-pairs") as HTMLElement;
+  const container = document.getElementById('coupled-pairs') as HTMLElement;
 
   if (!container) {
     throw new Error("Container element with ID 'coupled-pairs' not found");
   }
 
   // Clear any existing content
-  container.innerHTML = "";
+  container.innerHTML = '';
 
   const svg = d3
     .select(container)
-    .append("svg")
-    .attr("width", mergedConfig.width)
-    .attr("height", mergedConfig.height);
+    .append('svg')
+    .attr('width', mergedConfig.width)
+    .attr('height', mergedConfig.height);
 
   const containerGroup = svg
-    .append("g")
+    .append('g')
     .attr(
-      "transform",
+      'transform',
       `translate(${mergedConfig.width / 2}, ${mergedConfig.height / 2})`
     );
 
@@ -97,12 +97,12 @@ function createVisualizationState(
 
 function loadData(): CoupledPair[] | null {
   // Try to get data from script tag
-  const dataElement = document.getElementById("coupling-pairs");
+  const dataElement = document.getElementById('coupling-pairs');
   if (dataElement) {
     try {
-      return JSON.parse(dataElement.textContent || "[]");
+      return JSON.parse(dataElement.textContent || '[]');
     } catch (error) {
-      console.error("Failed to parse data from script tag:", error);
+      console.error('Failed to parse data from script tag:', error);
     }
   }
   return null;
@@ -117,8 +117,8 @@ function generateUniqueDisplayNames(files: string[]): Map<string, string> {
 
   // Group files by their filename
   const filesByName = new Map<string, string[]>();
-  files.forEach((file) => {
-    const filename = file.split("/").pop();
+  files.forEach(file => {
+    const filename = file.split('/').pop();
     if (!filename) return; // Skip files without valid names
 
     if (!filesByName.has(filename)) {
@@ -134,16 +134,16 @@ function generateUniqueDisplayNames(files: string[]): Map<string, string> {
       displayNames.set(filePaths[0]!, filename);
     } else {
       // Multiple files with same name, need to show more path
-      const pathSegments = filePaths.map((path) => path.split("/"));
+      const pathSegments = filePaths.map(path => path.split('/'));
 
       // Find minimum number of segments needed to distinguish all files
       let segmentsNeeded = 1;
-      while (segmentsNeeded <= Math.max(...pathSegments.map((p) => p.length))) {
+      while (segmentsNeeded <= Math.max(...pathSegments.map(p => p.length))) {
         const suffixes = new Set();
         let allUnique = true;
 
         for (const segments of pathSegments) {
-          const suffix = segments.slice(-segmentsNeeded).join("/");
+          const suffix = segments.slice(-segmentsNeeded).join('/');
           if (suffixes.has(suffix)) {
             allUnique = false;
             break;
@@ -154,8 +154,8 @@ function generateUniqueDisplayNames(files: string[]): Map<string, string> {
         if (allUnique) {
           // Found the minimum segments needed
           for (const path of filePaths) {
-            const segments = path.split("/");
-            const displayName = segments.slice(-segmentsNeeded).join("/");
+            const segments = path.split('/');
+            const displayName = segments.slice(-segmentsNeeded).join('/');
             displayNames.set(path, displayName);
           }
           break;
@@ -165,7 +165,7 @@ function generateUniqueDisplayNames(files: string[]): Map<string, string> {
       }
 
       // Fallback: if we still can't distinguish them, use full paths
-      if (segmentsNeeded > Math.max(...pathSegments.map((p) => p.length))) {
+      if (segmentsNeeded > Math.max(...pathSegments.map(p => p.length))) {
         for (const path of filePaths) {
           displayNames.set(path, path);
         }
@@ -182,12 +182,12 @@ function processData(
 ): void {
   // Filter pairs by threshold
   const filteredPairs = coupledPairs.filter(
-    (pair) => pair.percentage >= state.config.minPercentageThreshold
+    pair => pair.percentage >= state.config.minPercentageThreshold
   );
 
   // Extract unique files and group them by directory
   const fileSet = new Set<string>();
-  filteredPairs.forEach((pair) => {
+  filteredPairs.forEach(pair => {
     fileSet.add(pair.file1);
     fileSet.add(pair.file2);
   });
@@ -199,7 +199,7 @@ function processData(
 
   // Create links from coupled pairs
   state.links = filteredPairs
-    .map((pair) => {
+    .map(pair => {
       const source = state.nodeById.get(pair.file1);
       const target = state.nodeById.get(pair.file2);
       if (source && target) {
@@ -221,9 +221,9 @@ function createCircularLayout(
 ): void {
   // Group files by directory
   const groups = new Map<string, string[]>();
-  files.forEach((file) => {
-    const parts = file.split("/");
-    const group = parts.length > 1 && parts[0] ? parts[0] : "root";
+  files.forEach(file => {
+    const parts = file.split('/');
+    const group = parts.length > 1 && parts[0] ? parts[0] : 'root';
 
     if (!groups.has(group)) {
       groups.set(group, []);
@@ -245,7 +245,7 @@ function createCircularLayout(
   for (const [group, groupFiles] of groups) {
     for (const file of groupFiles) {
       const angle = currentIndex * angleStep;
-      const fileName = file.split("/").pop();
+      const fileName = file.split('/').pop();
       const displayName = displayNames.get(file) || fileName || file;
 
       const node: Node = {
@@ -270,17 +270,17 @@ function createCircularLayout(
 
 function showTooltip(event: MouseEvent, d: Link): void {
   const tooltip = d3
-    .select("body")
-    .append("div")
-    .attr("class", "coupled-pairs-tooltip")
-    .style("position", "absolute")
-    .style("background", "rgba(0, 0, 0, 0.8)")
-    .style("color", "white")
-    .style("padding", "8px")
-    .style("border-radius", "4px")
-    .style("font-size", "12px")
-    .style("pointer-events", "none")
-    .style("z-index", "1000");
+    .select('body')
+    .append('div')
+    .attr('class', 'coupled-pairs-tooltip')
+    .style('position', 'absolute')
+    .style('background', 'rgba(0, 0, 0, 0.8)')
+    .style('color', 'white')
+    .style('padding', '8px')
+    .style('border-radius', '4px')
+    .style('font-size', '12px')
+    .style('pointer-events', 'none')
+    .style('z-index', '1000');
 
   tooltip
     .html(
@@ -291,27 +291,27 @@ function showTooltip(event: MouseEvent, d: Link): void {
     Revisions: ${d.revisions}
   `
     )
-    .style("left", event.pageX + 10 + "px")
-    .style("top", event.pageY - 10 + "px");
+    .style('left', event.pageX + 10 + 'px')
+    .style('top', event.pageY - 10 + 'px');
 }
 
 function showNodeTooltip(event: MouseEvent, d: Node, links: Link[]): void {
   const connectedLinks = links.filter(
-    (link) => link.source === d || link.target === d
+    link => link.source === d || link.target === d
   );
 
   const tooltip = d3
-    .select("body")
-    .append("div")
-    .attr("class", "coupled-pairs-tooltip")
-    .style("position", "absolute")
-    .style("background", "rgba(0, 0, 0, 0.8)")
-    .style("color", "white")
-    .style("padding", "8px")
-    .style("border-radius", "4px")
-    .style("font-size", "12px")
-    .style("pointer-events", "none")
-    .style("z-index", "1000");
+    .select('body')
+    .append('div')
+    .attr('class', 'coupled-pairs-tooltip')
+    .style('position', 'absolute')
+    .style('background', 'rgba(0, 0, 0, 0.8)')
+    .style('color', 'white')
+    .style('padding', '8px')
+    .style('border-radius', '4px')
+    .style('font-size', '12px')
+    .style('pointer-events', 'none')
+    .style('z-index', '1000');
 
   tooltip
     .html(
@@ -321,70 +321,70 @@ function showNodeTooltip(event: MouseEvent, d: Node, links: Link[]): void {
     Connections: ${connectedLinks.length}
   `
     )
-    .style("left", event.pageX + 10 + "px")
-    .style("top", event.pageY - 10 + "px");
+    .style('left', event.pageX + 10 + 'px')
+    .style('top', event.pageY - 10 + 'px');
 }
 
 function hideTooltip(): void {
-  d3.selectAll(".coupled-pairs-tooltip").remove();
+  d3.selectAll('.coupled-pairs-tooltip').remove();
 }
 
 function renderLegend(state: VisualizationState): void {
   const legend = state.svg
-    .append("g")
-    .attr("class", "legend")
-    .attr("transform", `translate(20, 20)`);
+    .append('g')
+    .attr('class', 'legend')
+    .attr('transform', `translate(20, 20)`);
 
-  const groups = Array.from(new Set(state.nodes.map((d) => d.group)));
+  const groups = Array.from(new Set(state.nodes.map(d => d.group)));
 
   const legendItems = legend
-    .selectAll(".legend-item")
+    .selectAll('.legend-item')
     .data(groups)
-    .join("g")
-    .attr("class", "legend-item")
-    .attr("transform", (_d, i) => `translate(0, ${i * 20})`);
+    .join('g')
+    .attr('class', 'legend-item')
+    .attr('transform', (_d, i) => `translate(0, ${i * 20})`);
 
   legendItems
-    .append("circle")
-    .attr("r", 6)
-    .attr("fill", (d) => state.config.colorScale(d));
+    .append('circle')
+    .attr('r', 6)
+    .attr('fill', d => state.config.colorScale(d));
 
   legendItems
-    .append("text")
-    .attr("x", 15)
-    .attr("y", 0)
-    .attr("dy", "0.35em")
-    .attr("font-size", "12px")
-    .attr("font-family", "sans-serif")
-    .attr("fill", "#333")
-    .text((d) => d);
+    .append('text')
+    .attr('x', 15)
+    .attr('y', 0)
+    .attr('dy', '0.35em')
+    .attr('font-size', '12px')
+    .attr('font-family', 'sans-serif')
+    .attr('fill', '#333')
+    .text(d => d);
 }
 
 function renderVisualization(state: VisualizationState): void {
-  state.containerGroup.selectAll("*").remove();
+  state.containerGroup.selectAll('*').remove();
 
   // Create radial line generator for edges
   const line = d3
     .lineRadial<[number, number]>()
     .curve(d3.curveBundle.beta(state.config.tension))
-    .radius((d) => d[1])
-    .angle((d) => d[0]);
+    .radius(d => d[1])
+    .angle(d => d[0]);
 
   // Create links
   const linkGroup = state.containerGroup
-    .append("g")
-    .attr("class", "links")
-    .attr("stroke-opacity", 0.6)
-    .attr("fill", "none");
+    .append('g')
+    .attr('class', 'links')
+    .attr('stroke-opacity', 0.6)
+    .attr('fill', 'none');
 
   const linkSelection = linkGroup
-    .selectAll("path")
+    .selectAll('path')
     .data(state.links)
-    .join("path")
-    .attr("stroke", (d) => state.config.colorScale(d.source.group))
-    .attr("stroke-width", (d) => Math.max(1, d.value * 4))
-    .attr("stroke-opacity", (d) => Math.max(0.2, d.value))
-    .attr("d", (d) => {
+    .join('path')
+    .attr('stroke', d => state.config.colorScale(d.source.group))
+    .attr('stroke-width', d => Math.max(1, d.value * 4))
+    .attr('stroke-opacity', d => Math.max(0.2, d.value))
+    .attr('d', d => {
       const path: [number, number][] = [
         [d.source.x, d.source.y],
         [d.source.x, d.source.y],
@@ -396,68 +396,68 @@ function renderVisualization(state: VisualizationState): void {
     });
 
   // Create nodes
-  const nodeGroup = state.containerGroup.append("g").attr("class", "nodes");
+  const nodeGroup = state.containerGroup.append('g').attr('class', 'nodes');
 
   const nodeSelection = nodeGroup
-    .selectAll("circle")
+    .selectAll('circle')
     .data(state.nodes)
-    .join("circle")
+    .join('circle')
     .attr(
-      "transform",
-      (d) => `rotate(${(d.x * 180) / Math.PI - 90}) translate(${d.y}, 0)`
+      'transform',
+      d => `rotate(${(d.x * 180) / Math.PI - 90}) translate(${d.y}, 0)`
     )
-    .attr("r", 4)
-    .attr("fill", (d) => state.config.colorScale(d.group))
-    .attr("fill-opacity", 0.8)
-    .attr("stroke", "#fff")
-    .attr("stroke-width", 1.5);
+    .attr('r', 4)
+    .attr('fill', d => state.config.colorScale(d.group))
+    .attr('fill-opacity', 0.8)
+    .attr('stroke', '#fff')
+    .attr('stroke-width', 1.5);
 
   // Add interaction handlers
   linkSelection
-    .on("mouseover", (event, d) => {
-      linkSelection.attr("stroke-opacity", (link: Link) =>
+    .on('mouseover', (event, d) => {
+      linkSelection.attr('stroke-opacity', (link: Link) =>
         link === d ? 0.8 : 0.1
       );
-      nodeSelection.attr("fill-opacity", (node: Node) =>
+      nodeSelection.attr('fill-opacity', (node: Node) =>
         node === d.source || node === d.target ? 1 : 0.3
       );
       showTooltip(event, d);
     })
-    .on("mouseout", () => {
-      linkSelection.attr("stroke-opacity", (d: Link) => Math.max(0.2, d.value));
-      nodeSelection.attr("fill-opacity", 0.8);
+    .on('mouseout', () => {
+      linkSelection.attr('stroke-opacity', (d: Link) => Math.max(0.2, d.value));
+      nodeSelection.attr('fill-opacity', 0.8);
       hideTooltip();
     });
 
   nodeSelection
-    .on("mouseover", (event, d) => {
-      linkSelection.attr("stroke-opacity", (link: Link) =>
+    .on('mouseover', (event, d) => {
+      linkSelection.attr('stroke-opacity', (link: Link) =>
         link.source === d || link.target === d ? 0.8 : 0.1
       );
       showNodeTooltip(event, d, state.links);
     })
-    .on("mouseout", () => {
-      linkSelection.attr("stroke-opacity", (d: Link) => Math.max(0.2, d.value));
+    .on('mouseout', () => {
+      linkSelection.attr('stroke-opacity', (d: Link) => Math.max(0.2, d.value));
       hideTooltip();
     });
 
   // Add labels if enabled
   if (state.config.showLabels) {
     nodeGroup
-      .selectAll("text")
+      .selectAll('text')
       .data(state.nodes)
-      .join("text")
-      .attr("transform", (d) => {
+      .join('text')
+      .attr('transform', d => {
         const angle = (d.x * 180) / Math.PI - 90;
         return `rotate(${angle}) translate(${d.y + 8}, 0) ${
-          angle > 90 ? "rotate(180)" : ""
+          angle > 90 ? 'rotate(180)' : ''
         }`;
       })
-      .attr("text-anchor", (d) => (d.x > Math.PI ? "end" : "start"))
-      .attr("font-size", "10px")
-      .attr("font-family", "sans-serif")
-      .attr("fill", "#333")
-      .text((d) => d.data.name);
+      .attr('text-anchor', d => (d.x > Math.PI ? 'end' : 'start'))
+      .attr('font-size', '10px')
+      .attr('font-family', 'sans-serif')
+      .attr('fill', '#333')
+      .text(d => d.data.name);
   }
 
   // Add legend
@@ -466,7 +466,7 @@ function renderVisualization(state: VisualizationState): void {
 
 function render(state: VisualizationState): void {
   if (!state.data) {
-    showError(state.container, "Invalid data");
+    showError(state.container, 'Invalid data');
     return;
   }
 
@@ -474,8 +474,8 @@ function render(state: VisualizationState): void {
     processData(state.data, state);
     renderVisualization(state);
   } catch (error) {
-    console.error("Failed to render visualization:", error);
-    showError(state.container, "Failed to render visualization");
+    console.error('Failed to render visualization:', error);
+    showError(state.container, 'Failed to render visualization');
   }
 }
 
@@ -488,7 +488,7 @@ export function createHierarchicalEdgeBundlingVisualization(
   state.data = loadData();
 
   if (!state.data) {
-    showError(state.container, "No coupling pairs data found");
+    showError(state.container, 'No coupling pairs data found');
     return {
       updateConfig: () => {},
       resize: () => {},
@@ -509,10 +509,10 @@ export function createHierarchicalEdgeBundlingVisualization(
       state.config.width = width;
       state.config.height = height;
 
-      state.svg.attr("width", width).attr("height", height);
+      state.svg.attr('width', width).attr('height', height);
 
       state.containerGroup.attr(
-        "transform",
+        'transform',
         `translate(${width / 2}, ${height / 2})`
       );
 

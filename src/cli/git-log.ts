@@ -1,5 +1,5 @@
-import { parseFileEntry, parseHeader } from "./parse-log.js";
-import { type LogItem } from "../core/revisions.js";
+import { parseFileEntry, parseHeader } from './parse-log.js';
+import { type LogItem } from '../core/revisions.js';
 
 export type GitLogEmitter = {
   onData: (listener: (chunk: string) => void) => void;
@@ -20,20 +20,20 @@ export async function produceGitLog(
   return new Promise((res, rej) => {
     const logItems: LogItem[] = [];
 
-    let buffer = "";
+    let buffer = '';
 
-    gitLogEmitter.onData((chunk) => {
+    gitLogEmitter.onData(chunk => {
       // console.log("buffer", JSON.stringify(buffer));
       // Process each chunk of data as it comes in
       // console.log("--");
 
       buffer += chunk.toString();
 
-      if (buffer.includes("\n\n")) {
-        const [chunkStr, rest] = buffer.split("\n\n");
+      if (buffer.includes('\n\n')) {
+        const [chunkStr, rest] = buffer.split('\n\n');
         buffer = rest!;
 
-        const commitLines = chunkStr!.toString().trim().split("\n");
+        const commitLines = chunkStr!.toString().trim().split('\n');
 
         for (const line of commitLines) {
           // console.log(line);
@@ -56,17 +56,17 @@ export async function produceGitLog(
       // process.stdout.write(chunk);
     });
 
-    gitLogEmitter.onErrorData((chunk) => {
+    gitLogEmitter.onErrorData(chunk => {
       // Handle error output
       process.stderr.write(chunk);
     });
 
-    gitLogEmitter.onError((error) => {
+    gitLogEmitter.onError(error => {
       console.error(`spawn error: ${error}`);
       rej(error);
     });
 
-    gitLogEmitter.onClose((code) => {
+    gitLogEmitter.onClose(code => {
       if (code !== 0) {
         console.error(`git process exited with code ${code}`);
         rej(new Error(`git process exited with code ${code}`));

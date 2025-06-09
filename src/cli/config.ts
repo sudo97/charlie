@@ -1,4 +1,4 @@
-import { z } from "zod/v4-mini";
+import { z } from 'zod/v4-mini';
 
 const configSchema = z.object({
   include: z.optional(z.array(z.string())),
@@ -35,8 +35,8 @@ export function parseConfig(config: string): Config {
   }
 
   return {
-    include: (parsed.include ?? []).map((pattern) => new RegExp(pattern)),
-    exclude: (parsed.exclude ?? []).map((pattern) => new RegExp(pattern)),
+    include: (parsed.include ?? []).map(pattern => new RegExp(pattern)),
+    exclude: (parsed.exclude ?? []).map(pattern => new RegExp(pattern)),
     after,
     architecturalGroups: parsed.architecturalGroups,
     socPercentile: parsed.socPercentile ?? 0.8,

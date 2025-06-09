@@ -1,5 +1,5 @@
-import { spawn } from "child_process";
-import type { GitLogEmitter } from "./git-log.js";
+import { spawn } from 'child_process';
+import type { GitLogEmitter } from './git-log.js';
 
 export function createGitLogEmitter(
   repositoryPath: string,
@@ -10,29 +10,29 @@ export function createGitLogEmitter(
   lastYear.setFullYear(lastYear.getFullYear() - 1);
 
   const gitArgs = [
-    "log",
-    "--all",
-    "--numstat",
-    "--date=short",
+    'log',
+    '--all',
+    '--numstat',
+    '--date=short',
     "--pretty=format:'--%h--%ad--%aN'",
-    "--no-renames",
+    '--no-renames',
     `--after=${after ? after.toJSON() : lastYear.toJSON()}`,
   ];
 
-  const gitProcess = spawn("git", gitArgs, { cwd: repositoryPath });
+  const gitProcess = spawn('git', gitArgs, { cwd: repositoryPath });
 
   return {
-    onData: (listener) => {
-      gitProcess.stdout.on("data", listener);
+    onData: listener => {
+      gitProcess.stdout.on('data', listener);
     },
-    onError: (listener) => {
-      gitProcess.on("error", listener);
+    onError: listener => {
+      gitProcess.on('error', listener);
     },
-    onErrorData: (listener) => {
-      gitProcess.stderr.on("data", listener);
+    onErrorData: listener => {
+      gitProcess.stderr.on('data', listener);
     },
-    onClose: (listener) => {
-      gitProcess.on("close", listener);
+    onClose: listener => {
+      gitProcess.on('close', listener);
     },
   };
 }

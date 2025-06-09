@@ -1,4 +1,4 @@
-import type { LogItem } from "./revisions.js";
+import type { LogItem } from './revisions.js';
 
 export type Soc = {
   file: string;
