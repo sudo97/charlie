@@ -229,6 +229,7 @@ This creates an interesting paradox: the feature works best on codebases that ne
 - [x] Add .charlie.config.json file support. It should support a list of files that should be excluded from the analysis, and a list of files that should be included, and a list of files that should be grouped into "architectural components".
 - [x] Add a way to group files into "architectural components"
 - [x] Coupled pairs and SOC should show only significant data. This filtering should be implemented in the backend using `revisionsPercentile` and `minCouplingPercentage` configuration options.
+- [ ] Default date should be 1 year before the last commit in the repo
 - [ ] Make architectural groups work for all the data, not just hotspots.
 - [ ] Alternatively, maybe .charlie.config.json should be a starting point, but then in the webpage the user could change the config to see different slices of data.
 - [ ] Add a way to find file/module owners
