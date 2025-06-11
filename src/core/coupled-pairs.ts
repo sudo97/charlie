@@ -104,7 +104,7 @@ export function significantCoupledPairs(
 
   return data.filter(
     pair =>
-      pair.percentage >= minCouplingPercentage ||
+      pair.percentage >= minCouplingPercentage &&
       pair.revisions >= revisionThreshold
   );
 }

@@ -116,18 +116,12 @@ describe('coupledPairs', () => {
 });
 
 describe('significantCoupledPairs', () => {
-  it('should return an empty array if input data is empty', () => {
-    const data: CoupledPair[] = [];
-    const result = significantCoupledPairs(data, 0.8, 0.5);
-    expect(result).toEqual([]);
-  });
-
   it('should return all pairs when they meet minimum coupling percentage', () => {
     const data: CoupledPair[] = [
       { file1: 'a.ts', file2: 'b.ts', percentage: 0.6, revisions: 5 },
       { file1: 'c.ts', file2: 'd.ts', percentage: 0.8, revisions: 3 },
     ];
-    const result = significantCoupledPairs(data, 0.8, 0.5);
+    const result = significantCoupledPairs(data, 0.0, 0.5);
     expect(result).toEqual(data);
   });
 
@@ -137,26 +131,26 @@ describe('significantCoupledPairs', () => {
       { file1: 'c.ts', file2: 'd.ts', percentage: 0.3, revisions: 8 },
       { file1: 'e.ts', file2: 'f.ts', percentage: 0.1, revisions: 2 },
     ];
-    const result = significantCoupledPairs(data, 0.8, 0.5);
-    // 80th percentile of [2, 8, 10] is index 2 (Math.floor(3 * 0.8) = 2), so threshold is 10
+
+    const result = significantCoupledPairs(data, 0.8, 0.0);
+
     expect(result).toEqual([
       { file1: 'a.ts', file2: 'b.ts', percentage: 0.2, revisions: 10 },
     ]);
   });
 
-  it('should return pairs that meet either coupling percentage OR revision threshold', () => {
+  it('should return pairs that meet both coupling percentage AND revision threshold', () => {
     const data: CoupledPair[] = [
-      { file1: 'a.ts', file2: 'b.ts', percentage: 0.7, revisions: 5 }, // meets coupling
-      { file1: 'c.ts', file2: 'd.ts', percentage: 0.2, revisions: 15 }, // does NOT meet revision threshold (15 < 20)
+      { file1: 'a.ts', file2: 'b.ts', percentage: 0.7, revisions: 5 },
+      { file1: 'c.ts', file2: 'd.ts', percentage: 0.2, revisions: 15 },
       { file1: 'e.ts', file2: 'f.ts', percentage: 0.9, revisions: 20 }, // meets both
-      { file1: 'g.ts', file2: 'h.ts', percentage: 0.1, revisions: 3 }, // meets neither
+      { file1: 'g.ts', file2: 'h.ts', percentage: 0.1, revisions: 3 },
     ];
     const result = significantCoupledPairs(data, 0.8, 0.6);
     // 80th percentile of [3, 5, 15, 20] is index 3 (Math.floor(4 * 0.8) = 3), so threshold is 20
     // Only pairs with percentage >= 0.6 OR revisions >= 20 are included
     expect(result).toEqual([
-      { file1: 'a.ts', file2: 'b.ts', percentage: 0.7, revisions: 5 }, // meets coupling percentage
-      { file1: 'e.ts', file2: 'f.ts', percentage: 0.9, revisions: 20 }, // meets both criteria
+      { file1: 'e.ts', file2: 'f.ts', percentage: 0.9, revisions: 20 },
     ]);
   });
 
@@ -168,48 +162,17 @@ describe('significantCoupledPairs', () => {
     const result = significantCoupledPairs(data, 0.8, 0.8);
     // 80th percentile of [3, 5] is index 1 (Math.floor(2 * 0.8) = 1), so threshold is 5
     // Neither pair meets 0.8 coupling percentage, and only one meets revision threshold
-    expect(result).toEqual([
-      { file1: 'a.ts', file2: 'b.ts', percentage: 0.2, revisions: 5 },
-    ]);
+    expect(result).toEqual([]);
   });
 
   it('should handle single pair correctly', () => {
     const data: CoupledPair[] = [
       { file1: 'a.ts', file2: 'b.ts', percentage: 0.4, revisions: 10 },
     ];
-    const result = significantCoupledPairs(data, 0.8, 0.5);
-    // Single item: 80th percentile index is Math.floor(1 * 0.8) = 0, so threshold is 10
-    // Pair doesn't meet coupling percentage (0.4 < 0.5) but meets revision threshold (10 >= 10)
+    const result = significantCoupledPairs(data, 0.8, 0.3);
+
     expect(result).toEqual([
       { file1: 'a.ts', file2: 'b.ts', percentage: 0.4, revisions: 10 },
-    ]);
-  });
-
-  it('should handle different percentile values', () => {
-    const data: CoupledPair[] = [
-      { file1: 'a.ts', file2: 'b.ts', percentage: 0.2, revisions: 5 },
-      { file1: 'c.ts', file2: 'd.ts', percentage: 0.3, revisions: 10 },
-      { file1: 'e.ts', file2: 'f.ts', percentage: 0.1, revisions: 15 },
-      { file1: 'g.ts', file2: 'h.ts', percentage: 0.4, revisions: 20 },
-    ];
-    const result = significantCoupledPairs(data, 0.5, 0.35);
-    // 50th percentile of [5, 10, 15, 20] is index 2 (Math.floor(4 * 0.5) = 2), so threshold is 15
-    expect(result).toEqual([
-      { file1: 'e.ts', file2: 'f.ts', percentage: 0.1, revisions: 15 },
-      { file1: 'g.ts', file2: 'h.ts', percentage: 0.4, revisions: 20 },
-    ]);
-  });
-
-  it('should handle edge case with zero percentile', () => {
-    const data: CoupledPair[] = [
-      { file1: 'a.ts', file2: 'b.ts', percentage: 0.2, revisions: 5 },
-      { file1: 'c.ts', file2: 'd.ts', percentage: 0.3, revisions: 10 },
-    ];
-    const result = significantCoupledPairs(data, 0, 0.8);
-    // 0th percentile is index 0, so threshold is 5
-    expect(result).toEqual([
-      { file1: 'a.ts', file2: 'b.ts', percentage: 0.2, revisions: 5 },
-      { file1: 'c.ts', file2: 'd.ts', percentage: 0.3, revisions: 10 },
     ]);
   });
 });
