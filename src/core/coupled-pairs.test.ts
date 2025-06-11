@@ -144,7 +144,7 @@ describe('coupledPairs', () => {
 describe('significantCoupledPairs', () => {
   it('should return all pairs when they meet minimum coupling percentage', () => {
     const data: CoupledPair[] = [
-      { file1: 'a.ts', file2: 'b.ts', percentage: 0.6, revisions: 5 },
+      { file1: 'a.ts', file2: 'b.ts', percentage: 0.5, revisions: 5 },
       { file1: 'c.ts', file2: 'd.ts', percentage: 0.8, revisions: 3 },
     ];
     const result = significantCoupledPairs(data, 0.0, 0.5);

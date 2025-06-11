@@ -32,8 +32,7 @@ export function coupledPairs(revisions: LogItem[]): CoupledPair[] {
 
   const fileCommitSets = new Map<string, Set<number>>();
 
-  for (let i = 0; i < revisions.length; i++) {
-    const rev = revisions[i]!;
+  revisions.forEach((rev, i) => {
     const filesInCommit = rev.fileEntries.map(entry => entry.fileName);
 
     for (const file of filesInCommit) {
@@ -44,7 +43,7 @@ export function coupledPairs(revisions: LogItem[]): CoupledPair[] {
     }
 
     addPairToCommit(filesInCommit, pairCommitCounts, knownPairs);
-  }
+  });
 
   const result: CoupledPair[] = [];
 
@@ -67,15 +66,7 @@ export function coupledPairs(revisions: LogItem[]): CoupledPair[] {
     });
   }
 
-  const maxRevisions = result
-    .map(pair => pair.revisions)
-    .reduce((a, b) => Math.max(a, b), 0);
-
-  const filteredCoupledPairsData = result
-    .filter(pair => pair.revisions / maxRevisions > 0.02)
-    .sort((a, b) => b.percentage - a.percentage);
-
-  return filteredCoupledPairsData;
+  return result;
 }
 
 export function significantCoupledPairs(
