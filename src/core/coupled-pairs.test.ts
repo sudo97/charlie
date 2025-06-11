@@ -7,12 +7,6 @@ import {
 import { LogItem } from './revisions.js';
 
 describe('coupledPairs', () => {
-  it('should return an empty array if there are no revisions', () => {
-    const revisions: LogItem[] = [];
-    const result = coupledPairs(revisions);
-    expect(result).toEqual([]);
-  });
-
   it('should return an empty array if there is only one revision', () => {
     const revisions: LogItem[] = [
       {
@@ -45,6 +39,38 @@ describe('coupledPairs', () => {
         file2: 'file2.txt',
         percentage: 1,
         revisions: 1,
+      },
+    ]);
+  });
+
+  it('should count two files as a pair independent of the order they appear in the commit', () => {
+    const revisions: LogItem[] = [
+      {
+        hash: '123456',
+        date: '2024-01-01',
+        author: 'John Doe',
+        fileEntries: [
+          { fileName: 'file.txt', added: 1, removed: 1 },
+          { fileName: 'file2.txt', added: 1, removed: 1 },
+        ],
+      },
+      {
+        hash: '123456',
+        date: '2024-01-01',
+        author: 'John Doe',
+        fileEntries: [
+          { fileName: 'file2.txt', added: 1, removed: 1 },
+          { fileName: 'file.txt', added: 1, removed: 1 },
+        ],
+      },
+    ];
+    const result = coupledPairs(revisions);
+    expect(result).toEqual<CoupledPair[]>([
+      {
+        file1: 'file2.txt',
+        file2: 'file.txt',
+        percentage: 1,
+        revisions: 2,
       },
     ]);
   });

@@ -8,7 +8,7 @@ export type CoupledPair = {
 };
 
 function createPairKey(file1: string, file2: string): string {
-  return [file1, file2].sort().join('');
+  return [file1, file2].sort().join();
 }
 
 function addPairToCommit(
@@ -16,22 +16,16 @@ function addPairToCommit(
   pairCommitCounts: Map<string, number>,
   knownPairs: Map<string, { file1: string; file2: string }>
 ): void {
-  for (let j = 0; j < filesInCommit.length; j++) {
-    for (let k = j + 1; k < filesInCommit.length; k++) {
-      const file1 = filesInCommit[j]!;
-      const file2 = filesInCommit[k]!;
+  filesInCommit.forEach((file1, idx) => {
+    filesInCommit.slice(idx + 1).forEach(file2 => {
       const pairKey = createPairKey(file1, file2);
       knownPairs.set(pairKey, { file1, file2 });
       pairCommitCounts.set(pairKey, (pairCommitCounts.get(pairKey) ?? 0) + 1);
-    }
-  }
+    });
+  });
 }
 
 export function coupledPairs(revisions: LogItem[]): CoupledPair[] {
-  if (revisions.length === 0) {
-    return [];
-  }
-
   const knownPairs = new Map<string, { file1: string; file2: string }>();
 
   const pairCommitCounts = new Map<string, number>();
@@ -55,21 +49,12 @@ export function coupledPairs(revisions: LogItem[]): CoupledPair[] {
   const result: CoupledPair[] = [];
 
   for (const [pairKey, bothCount] of pairCommitCounts.entries()) {
-    const pair = knownPairs.get(pairKey);
-    if (!pair) {
-      throw new Error(`Pair not found for key: ${pairKey}`);
-    }
+    const pair = knownPairs.get(pairKey)!;
 
     const { file1, file2 } = pair;
 
-    const file1Commits = fileCommitSets.get(file1);
-    if (!file1Commits) {
-      throw new Error(`File ${file1} not found in fileCommitSets`);
-    }
-    const file2Commits = fileCommitSets.get(file2);
-    if (!file2Commits) {
-      throw new Error(`File ${file2} not found in fileCommitSets`);
-    }
+    const file1Commits = fileCommitSets.get(file1)!;
+    const file2Commits = fileCommitSets.get(file2)!;
 
     const eitherCommits = new Set([...file1Commits, ...file2Commits]);
     const eitherCount = eitherCommits.size;
