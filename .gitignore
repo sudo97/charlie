@@ -68,3 +68,8 @@ temp/
 
 html
 templates/report.mustache
+
+# stryker temp files
+.stryker-tmp
+
+reports/mutation
