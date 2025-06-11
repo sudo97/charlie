@@ -16,9 +16,7 @@ export function soc(gitRevisions: LogItem[]): Soc[] {
     }
   }
 
-  return Array.from(socs.entries())
-    .map(([file, soc]) => ({ file, soc }))
-    .sort((a, b) => b.soc - a.soc);
+  return Array.from(socs.entries()).map(([file, soc]) => ({ file, soc }));
 }
 
 export function socPercentile(data: Soc[], percentile: number): Soc[] {

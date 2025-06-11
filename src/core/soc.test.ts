@@ -77,4 +77,28 @@ describe('socPercentile', () => {
       }
     }
   });
+
+  it('should return data sorted by soc in descending order', () => {
+    // Create unsorted test data
+    const data: Soc[] = [
+      { file: 'file1.txt', soc: 5 },
+      { file: 'file2.txt', soc: 10 },
+      { file: 'file3.txt', soc: 2 },
+      { file: 'file4.txt', soc: 8 },
+      { file: 'file5.txt', soc: 1 },
+    ];
+
+    const result = socPercentile(data, 0.6); // Get top 60%
+
+    // Verify that the result is sorted in descending order by soc
+    for (let i = 1; i < result.length; i++) {
+      expect(result[i - 1].soc).toBeGreaterThanOrEqual(result[i].soc);
+    }
+
+    // Also verify the actual sorting is correct
+    expect(result).toEqual([
+      { file: 'file2.txt', soc: 10 },
+      { file: 'file4.txt', soc: 8 },
+    ]);
+  });
 });
