@@ -40,7 +40,7 @@ Building this tool has been the best way to truly understand the concepts from t
 
 ### Hotspots
 
-A **hotspot** is a file or module that is both frequently modified AND has high complexity. These represent the most problematic areas of your codebase - they change often (indicating active development or bug fixes) and are complex (making them risky to modify). Hotspots should be your top priority for refactoring. The circle size represents the frequency of the file being changed. Colors represent the complexity of the file (from gray i.e. low complexity, to blue-ish, to red-ish i.e. high complexity).
+A **hotspot** is a file or module that is both frequently modified AND has high complexity. These represent the most problematic areas of your codebase - they change often (indicating active development or bug fixes) and are complex (making them risky to modify). Hotspots should be your top priority for refactoring. The circle size represents the complexity of the file being changed. Colors represent the frequency of the file being changed (from gray i.e. low frequency, to blue-ish, to red-ish i.e. high frequency).
 
 ### Coupled Pairs
 
