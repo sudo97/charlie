@@ -35,20 +35,20 @@ const mkColor = (root: d3.HierarchyCircularNode<TreeData>) => {
 
 const mkColorForFocus = (focusNode: d3.HierarchyCircularNode<TreeData>) => {
   const descendants = focusNode.descendants();
-  const complexities = descendants
-    .filter(d => 'complexity' in d.data)
-    .map(d => (d.data as any).complexity);
+  const revisions = descendants
+    .filter(d => 'revisions' in d.data)
+    .map(d => (d.data as any).revisions);
 
-  if (complexities.length === 0) {
-    // If no complexity data, return a default scale
+  if (revisions.length === 0) {
+    // If no revisions data, return a default scale
     return d3
       .scaleLinear()
       .domain([0, 1])
       .range([LOW_IMPORTANCE_COLOR, LOW_IMPORTANCE_COLOR] as any);
   }
 
-  const min = Math.min(...complexities);
-  const max = Math.max(...complexities);
+  const min = Math.min(...revisions);
+  const max = Math.max(...revisions);
   const mid = (min + max) / 2;
 
   return d3
@@ -81,13 +81,13 @@ const packData = (
   data: TreeData,
   { width, height }: { width: number; height: number }
 ) => {
-  function getRevisions(node: d3.HierarchyNode<TreeData>): number {
-    if ('revisions' in node.data) {
-      return node.data.revisions;
+  function getComplexity(node: d3.HierarchyNode<TreeData>): number {
+    if ('complexity' in node.data) {
+      return node.data.complexity;
     }
     if ('children' in node.data) {
       return node.data.children.reduce(
-        (acc, child) => acc + getRevisions({ data: child } as any),
+        (acc, child) => acc + getComplexity({ data: child } as any),
         0
       );
     }
@@ -97,27 +97,27 @@ const packData = (
   return d3.pack<TreeData>().size([width, height]).padding(3)(
     d3
       .hierarchy<TreeData>(data)
-      .sum(d => ('revisions' in d ? d.revisions : 0))
-      .sort((a, b) => getRevisions(b) - getRevisions(a))
+      .sum(d => ('complexity' in d ? d.complexity : 0))
+      .sort((a, b) => getComplexity(b) - getComplexity(a))
   );
 };
 
 const getColorDomain = (
   root: d3.HierarchyCircularNode<TreeData>
 ): [number, number] => {
-  const minComplexity = root
+  const minRevisions = root
     .descendants()
     .reduce(
-      (min, d) => Math.min(min, 'complexity' in d.data ? d.data.complexity : 0),
+      (min, d) => Math.min(min, 'revisions' in d.data ? d.data.revisions : 0),
       Infinity
     );
-  const maxComplexity = root
+  const maxRevisions = root
     .descendants()
     .reduce(
-      (max, d) => Math.max(max, 'complexity' in d.data ? d.data.complexity : 0),
+      (max, d) => Math.max(max, 'revisions' in d.data ? d.data.revisions : 0),
       -Infinity
     );
-  return [minComplexity, maxComplexity];
+  return [minRevisions, maxRevisions];
 };
 
 function getSvg(data: TreeData) {
@@ -136,8 +136,8 @@ function getSvg(data: TreeData) {
     .join('circle')
     .attr('fill', d => {
       if (d.children) return BG_COLOR;
-      const complexity = 'complexity' in d.data ? d.data.complexity : 0;
-      return originalColor(complexity);
+      const revisions = 'revisions' in d.data ? d.data.revisions : 0;
+      return originalColor(revisions);
     })
     .attr('pointer-events', d => (!d.children ? 'none' : null))
     .attr('cx', d => d.x - width / 2)
@@ -209,13 +209,13 @@ function getSvg(data: TreeData) {
     node.transition(transition as any).attr('fill', d => {
       if (d.children) return BG_COLOR;
 
-      // If the node is not a descendant of focus, make it low complexity color
+      // If the node is not a descendant of focus, make it low revisions color
       if (!focusDescendants.has(d)) {
         return LOW_IMPORTANCE_COLOR;
       }
 
-      const complexity = 'complexity' in d.data ? d.data.complexity : 0;
-      return focusColor(complexity);
+      const revisions = 'revisions' in d.data ? d.data.revisions : 0;
+      return focusColor(revisions);
     });
 
     label
