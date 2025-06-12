@@ -35,6 +35,22 @@ describe('Hotspots', () => {
     ]);
   });
 
+  it('should ignore files with complexity 0', async () => {
+    const fileSystem = {
+      'file1.txt': '',
+      'file2.txt': 'line1\nline2\nline3',
+    };
+
+    const result = await hotspots(
+      { 'file1.txt': 1, 'file2.txt': 1 },
+      async file => fileSystem[file]
+    );
+
+    expect(result).toEqual([
+      { file: 'file2.txt', complexity: 3, revisions: 1 },
+    ]);
+  });
+
   it('should sort hotspots by complexity * revisions in descending order', async () => {
     const fileSystem = {
       'low-complexity-high-revisions.txt': 'line1\nline2', // complexity: 2, revisions: 10 -> score: 20

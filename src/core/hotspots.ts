@@ -17,7 +17,7 @@ export async function hotspots(
     const complexity = visualComplexity(contents);
     hotspots.push({ file, complexity, revisions: revisions[file]! });
   }
-  return hotspots.sort(
-    (a, b) => b.complexity * b.revisions - a.complexity * a.revisions
-  );
+  return hotspots
+    .sort((a, b) => b.complexity * b.revisions - a.complexity * a.revisions)
+    .filter(h => h.complexity > 0);
 }
