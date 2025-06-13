@@ -15,6 +15,7 @@ import { soc, socPercentile } from '../core/soc.js';
 import { parseConfig } from './config.js';
 import { applyFilters } from '../core/filters.js';
 import { groupHotspots } from '../core/group-hotspots.js';
+import { gitHistoryWordCount } from '../core/word-count.js';
 
 const repositoryPath = path.resolve(process.argv[2] ?? '.');
 
@@ -74,6 +75,7 @@ await generateReport({
   data: treeData(hotspotsData),
   coupledPairs: coupledPairsData,
   socData: socData,
+  wordCount: gitHistoryWordCount(logItems),
 });
 
 console.log(`Report generated successfully at: ${outputPath}`);

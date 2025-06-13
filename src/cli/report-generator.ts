@@ -12,6 +12,7 @@ export interface ReportOptions {
   data: TreeData;
   coupledPairs: CoupledPair[];
   socData: Soc[];
+  wordCount: Record<string, number>;
 }
 
 // Get the directory of this module file
@@ -37,6 +38,7 @@ export async function generateReport(options: ReportOptions) {
       reportDataJson: JSON.stringify(options.data),
       coupledPairsJson: JSON.stringify(options.coupledPairs),
       socDataJson: JSON.stringify(options.socData),
+      wordCountJson: JSON.stringify(options.wordCount),
     };
 
     const html = mustache.render(template, templateData);
