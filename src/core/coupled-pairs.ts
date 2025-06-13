@@ -1,4 +1,4 @@
-import type { LogItem } from './revisions.js';
+import type { LogItem } from './git-log.js';
 
 export type CoupledPair = {
   file1: string;

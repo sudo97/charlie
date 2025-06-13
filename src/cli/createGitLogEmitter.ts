@@ -1,5 +1,5 @@
 import { spawn } from 'child_process';
-import type { GitLogEmitter } from './git-log.js';
+import type { GitLogEmitter } from './git-log-parser.js';
 
 export function createGitLogEmitter(
   repositoryPath: string,

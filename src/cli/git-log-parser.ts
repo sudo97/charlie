@@ -1,5 +1,5 @@
+import type { LogItem } from '@core/git-log.js';
 import { parseFileEntry, parseHeader } from './parse-log.js';
-import { type LogItem } from '../core/revisions.js';
 
 export type GitLogEmitter = {
   onData: (listener: (chunk: string) => void) => void;

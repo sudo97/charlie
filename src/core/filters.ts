@@ -1,4 +1,4 @@
-import { type LogItem } from './revisions.js';
+import type { LogItem } from './git-log.js';
 import { type Config } from '../cli/config.js';
 
 export function applyFilters(items: LogItem[], config: Config): LogItem[] {

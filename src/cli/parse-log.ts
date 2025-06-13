@@ -1,4 +1,4 @@
-import type { FileEntry, LogItem } from '@core/revisions';
+import type { FileEntry, LogItem } from '../core/git-log.js';
 
 export function parseHeader(line: string): {
   hash: string;
