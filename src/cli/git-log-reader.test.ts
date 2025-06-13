@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { GitLogEmitter, produceGitLog } from './git-log-parser.js';
+import { GitLogEmitter, produceGitLog } from './git-log-reader.js';
 import type { LogItem } from '../core/git-log.js';
 
 describe('git-log parser', () => {

@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs/promises';
 import { revisions } from '../core/revisions.js';
 import { hotspots } from '../core/hotspots.js';
-import { produceGitLog } from './git-log-parser.js';
+import { produceGitLog } from './git-log-reader.js';
 import { generateReport } from './report-generator.js';
 import { treeData } from '../core/tree-data.js';
 import { createGitLogEmitter } from './createGitLogEmitter.js';
