@@ -30,7 +30,7 @@ export function visualizeWordCount(element: HTMLElement) {
     .size([width, height])
     .words(words)
     .padding(5)
-    .rotate(() => ~~(Math.random() * 2) * 90) // Random rotation: 0 or 90 degrees
+    .rotate(() => 0)
     .font(
       "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif"
     )
