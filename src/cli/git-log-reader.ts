@@ -38,8 +38,8 @@ export async function produceGitLog(
         for (const line of commitLines) {
           // console.log(line);
           if (line.startsWith("'--")) {
-            const { hash, date, author } = parseHeader(line);
-            logItems.push({ hash, date, author, fileEntries: [] });
+            const { hash, date, author, message } = parseHeader(line);
+            logItems.push({ hash, date, author, fileEntries: [], message });
           } else if (line.length > 0) {
             try {
               const fileEntry = parseFileEntry(line);

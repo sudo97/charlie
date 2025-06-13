@@ -14,7 +14,7 @@ export function createGitLogEmitter(
     '--all',
     '--numstat',
     '--date=short',
-    "--pretty=format:'--%h--%ad--%aN'",
+    "--pretty=format:'--%h--%ad--%aN--%s'",
     '--no-renames',
     `--after=${after ? after.toJSON() : lastYear.toJSON()}`,
   ];

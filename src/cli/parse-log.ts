@@ -4,13 +4,19 @@ export function parseHeader(line: string): {
   hash: string;
   date: string;
   author: string;
+  message: string;
 } {
-  const [hash, date, author] = line.split('--').slice(1);
-  if (!hash || !date || !author) {
+  const [hash, date, author, message] = line.split('--').slice(1);
+  if (!hash || !date || !author || !message) {
     throw new Error('Invalid log item');
   }
   const cleanedAuthor = author.replace(/'$/g, '');
-  return { hash, date, author: cleanedAuthor };
+  return {
+    hash,
+    date,
+    author: cleanedAuthor,
+    message: message.replace(/'$/g, ''),
+  };
 }
 
 export function parseLogItem(logItem: string): LogItem {
@@ -18,7 +24,7 @@ export function parseLogItem(logItem: string): LogItem {
   if (!firstLine) {
     throw new Error('Invalid log item');
   }
-  const { hash, date, author } = parseHeader(firstLine);
+  const { hash, date, author, message } = parseHeader(firstLine);
 
   const fileEntries = rest.map(parseFileEntry);
 
@@ -27,6 +33,7 @@ export function parseLogItem(logItem: string): LogItem {
     date,
     author,
     fileEntries,
+    message,
   };
 }
 

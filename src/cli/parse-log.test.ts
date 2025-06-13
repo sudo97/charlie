@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { parseLogItem } from './parse-log.js';
 
 const sampleLog1 = `
-'--6d0f6d10a--2024-06-03--John Doe'
+'--6d0f6d10a--2024-06-03--John Doe--some message'
 1       0       .docker/backend/file
 17      0       backend/src/app/api.ts
 17      0       backend/src/app/config/dashboard.ts
@@ -13,7 +13,7 @@ const sampleLog1 = `
 `.trim();
 
 const sampleLog2 = `
-'--6d0f6d14b--2024-06-04--Jededaia'
+'--6d0f6d14b--2024-06-04--Jededaia--some other message'
 `.trim();
 
 describe('parse logitem', () => {
@@ -50,5 +50,10 @@ describe('parse logitem', () => {
       { added: 1, removed: 1, fileName: 'frontend/src/package.json' },
       { added: 48, removed: 45, fileName: 'package-lock.json' },
     ]);
+  });
+
+  it('parses message', () => {
+    expect(parseLogItem(sampleLog1).message).toEqual('some message');
+    expect(parseLogItem(sampleLog2).message).toEqual('some other message');
   });
 });

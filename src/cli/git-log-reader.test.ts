@@ -39,12 +39,14 @@ describe('git-log parser', () => {
         date: '2024-01-01',
         author: 'John Doe',
         fileEntries: [{ fileName: 'file.txt', added: 1, removed: 1 }],
+        message: 'some message',
       },
       {
         hash: 'abcdef',
         date: '2024-01-02',
         author: 'Dohn Joe',
         fileEntries: [{ fileName: 'file2.txt', added: 1, removed: 1 }],
+        message: 'some other message',
       },
     ];
 
@@ -53,7 +55,7 @@ describe('git-log parser', () => {
         .map(item => {
           return `'--${item.hash}--${item.date}--${
             item.author
-          }'\n${item.fileEntries
+          }--${item.message}'\n${item.fileEntries
             .map(file => `${file.added} ${file.removed} ${file.fileName}`)
             .join('\n')}`;
         })
