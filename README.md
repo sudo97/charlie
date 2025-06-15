@@ -110,11 +110,12 @@ Specifies the earliest date for git commits to include in the analysis. Only com
 **Type:** `Record<string, string>` (regex pattern → group name mapping)  
 **Default:** `undefined` (no grouping)
 
-Allows you to group files into architectural components for analysis. The key is a regex pattern that matches file paths, and the value is the name of the architectural group. Files matching the same group will be consolidated into a single hotspot entry. Only the first group that matches a file is used.
+Allows you to group files into architectural components for analysis. The key is a regex pattern that matches file paths, and the value is the name of the architectural group. Files matching the same group will be consolidated into single entries. Only the first group that matches a file is used.
 
-When `architecturalGroups` is specified, Charlie generates two hotspot visualizations in the report:
+When `architecturalGroups` is specified, Charlie generates both file-level and grouped visualizations in the report:
 1. **File-level Hotspots** - Shows individual files as separate hotspots
 2. **Grouped Hotspots** - Shows architectural groups as consolidated hotspots
+3. **Grouped Coupled Pairs** - Shows coupling relationships between architectural groups
 
 This allows you to see both the detailed file-level view and the higher-level architectural view simultaneously.
 
@@ -234,7 +235,7 @@ This creates an interesting paradox: the feature works best on codebases that ne
 - [x] Add a way to group files into "architectural components"
 - [x] Coupled pairs and SOC should show only significant data. This filtering should be implemented in the backend using `revisionsPercentile` and `minCouplingPercentage` configuration options.
 - [ ] Default date should be 1 year before the last commit in the repo
-- [ ] Architectural groups should produce 1. hotpsots 2. coupled pairs 3. SOC
+- [ ] Architectural groups should produce 1. hotpsots 2. coupled pairs 3. SOC?
 - [ ] Alternatively, maybe .charlie.config.json should be a starting point, but then in the webpage the user could change the config to see different slices of data.
 - [ ] Add a way to find file/module owners
 - [ ] Add a way to find teams that happen to form by analyzing authors

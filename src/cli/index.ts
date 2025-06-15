@@ -16,6 +16,7 @@ import { parseConfig } from './config.js';
 import { applyFilters } from '../core/filters.js';
 import { groupHotspots } from '../core/group-hotspots.js';
 import { gitHistoryWordCount } from '../core/word-count.js';
+import { groupGitLog } from '../core/group-git-log.js';
 
 const repositoryPath = path.resolve(process.argv[2] ?? '.');
 
@@ -52,7 +53,7 @@ const groupedHotspotsData: Hotspot[] = config.architecturalGroups
   : [];
 
 const coupledPairsData = significantCoupledPairs(
-  coupledPairs(logItems),
+  coupledPairs(groupGitLog(logItems, config.architecturalGroups)),
   config.revisionsPercentile,
   config.minCouplingPercentage
 );
