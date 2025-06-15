@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { groupHotspots } from './group-hotspots.js';
-import { Hotspot } from './hotspots.js';
+import { groupHotspots } from '../../core/group-hotspots.js';
+import { Hotspot } from '../../core/hotspots.js';
 
 describe('groupHotspots', () => {
   function createHotspot(

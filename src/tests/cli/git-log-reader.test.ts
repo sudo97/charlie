@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { GitLogEmitter, produceGitLog } from './git-log-reader.js';
-import type { LogItem } from '../core/git-log.js';
+import { GitLogEmitter, produceGitLog } from '../../cli/git-log-reader.js';
+import type { LogItem } from '../../core/git-log.js';
 
 describe('git-log parser', () => {
   it('should reject if the git log emits an error', async () => {

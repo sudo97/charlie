@@ -3,14 +3,15 @@ import {
   CoupledPair,
   coupledPairs,
   significantCoupledPairs,
-} from './coupled-pairs.js';
-import { LogItem } from './revisions.js';
+} from '../../core/coupled-pairs.js';
+import { LogItem } from '../../core/git-log.js';
 
 describe('coupledPairs', () => {
   it('should return an empty array if there is only one revision', () => {
     const revisions: LogItem[] = [
       {
         hash: '123456',
+        message: 'Initial commit',
         date: '2024-01-01',
         author: 'John Doe',
         fileEntries: [{ fileName: 'file.txt', added: 1, removed: 1 }],
@@ -24,6 +25,7 @@ describe('coupledPairs', () => {
     const revisions: LogItem[] = [
       {
         hash: '123456',
+        message: 'Initial commit',
         date: '2024-01-01',
         author: 'John Doe',
         fileEntries: [
@@ -47,6 +49,7 @@ describe('coupledPairs', () => {
     const revisions: LogItem[] = [
       {
         hash: '123456',
+        message: 'Initial commit',
         date: '2024-01-01',
         author: 'John Doe',
         fileEntries: [
@@ -56,6 +59,7 @@ describe('coupledPairs', () => {
       },
       {
         hash: '123456',
+        message: 'Initial commit',
         date: '2024-01-01',
         author: 'John Doe',
         fileEntries: [
@@ -81,6 +85,7 @@ describe('coupledPairs', () => {
         hash: '123456',
         date: '2024-01-01',
         author: 'John Doe',
+        message: 'Initial commit',
         fileEntries: [
           { fileName: 'file.txt', added: 1, removed: 1 },
           { fileName: 'file2.txt', added: 1, removed: 1 },
@@ -117,12 +122,14 @@ describe('coupledPairs', () => {
         hash: '123456',
         date: '2024-01-01',
         author: 'John Doe',
+        message: 'Initial commit',
         fileEntries: [{ fileName: 'file.txt', added: 1, removed: 1 }],
       },
       {
         hash: '123456',
         date: '2024-01-01',
         author: 'John Doe',
+        message: 'Initial commit',
         fileEntries: [
           { fileName: 'file.txt', added: 1, removed: 1 },
           { fileName: 'file2.txt', added: 1, removed: 1 },

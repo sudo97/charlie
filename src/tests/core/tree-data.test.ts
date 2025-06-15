@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { treeData } from './tree-data';
-import { Hotspot } from './hotspots';
+import { treeData } from '../../core/tree-data';
+import { Hotspot } from '../../core/hotspots';
 
 describe('treeData', () => {
   it('should return the tree data', () => {

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { Soc, soc, socPercentile } from './soc.js';
-import { LogItem } from './revisions.js';
+import { Soc, soc, socPercentile } from '../../core/soc.js';
+import { LogItem } from '../../core/git-log.js';
 
 describe('soc', () => {
   it('should not count the soc if there are no revisions', () => {
@@ -15,6 +15,7 @@ describe('soc', () => {
         hash: '123456',
         date: '2024-01-01',
         author: 'John Doe',
+        message: 'Initial commit',
         fileEntries: [
           { fileName: 'file.txt', added: 1, removed: 1 },
           { fileName: 'file2.txt', added: 1, removed: 1 },
@@ -24,12 +25,14 @@ describe('soc', () => {
         hash: '123456',
         date: '2024-01-01',
         author: 'John Doe',
+        message: 'Initial commit',
         fileEntries: [{ fileName: 'file3.txt', added: 1, removed: 1 }],
       },
       {
         hash: '123456',
         date: '2024-01-01',
         author: 'John Doe',
+        message: 'Initial commit',
         fileEntries: [
           { fileName: 'file.txt', added: 1, removed: 1 },
           { fileName: 'file3.txt', added: 1, removed: 1 },
@@ -39,6 +42,7 @@ describe('soc', () => {
         hash: '123456',
         date: '2024-01-01',
         author: 'John Doe',
+        message: 'Initial commit',
         fileEntries: [{ fileName: 'file4.txt', added: 1, removed: 1 }],
       },
     ];

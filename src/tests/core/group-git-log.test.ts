@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { groupGitLog } from './group-git-log.js';
-import { type LogItem } from './git-log.js';
+import { groupGitLog } from '../../core/group-git-log.js';
+import { type LogItem } from '../../core/git-log.js';
 
 describe('groupGitLog', () => {
   const gitLogItems: LogItem[] = [

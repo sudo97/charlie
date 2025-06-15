@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseLogItem } from './parse-log.js';
+import { parseLogItem } from '../../cli/parse-log.js';
 
 const sampleLog1 = `
 '--6d0f6d10a--2024-06-03--John Doe--some message'

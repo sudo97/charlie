@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 
-import { revisions } from './revisions';
+import { revisions } from '../../core/revisions';
 
 describe('Revisions', () => {
   it('should return an empty array if there are no revisions', () => {
@@ -14,6 +14,7 @@ describe('Revisions', () => {
         hash: '123',
         date: '2021-01-01',
         author: 'John Doe',
+        message: 'Initial commit',
         fileEntries: [
           { fileName: 'file1.txt', added: 1, removed: 0 },
           { fileName: 'file2.txt', added: 1, removed: 0 },
@@ -36,12 +37,14 @@ describe('Revisions', () => {
         hash: '123',
         date: '2021-01-01',
         author: 'John Doe',
+        message: 'Initial commit',
       },
       {
         fileEntries: [{ fileName: 'file1.txt', added: 1, removed: 0 }],
         hash: '123',
         date: '2021-01-01',
         author: 'John Doe',
+        message: 'Initial commit',
       },
     ]);
     expect(result).toEqual({

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseConfig, Config } from './config.js';
+import { parseConfig, Config } from '../../cli/config.js';
 
 describe('parseConfig', () => {
   it('should parse a config', () => {

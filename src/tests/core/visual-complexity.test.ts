@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { visualComplexity } from './visual-complexity';
+import { visualComplexity } from '../../core/visual-complexity';
 
 describe('Visual Complexity', () => {
   it('should return 0 if the file is empty', () => {

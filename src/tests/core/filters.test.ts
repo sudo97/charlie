@@ -1,14 +1,15 @@
 import { describe, it, expect } from 'vitest';
 
-import { applyFilters } from './filters';
-import { type LogItem } from './revisions';
-import { type Config } from '../cli/config';
+import { applyFilters } from '../../core/filters';
+import { type Config } from '../../cli/config';
+import { LogItem } from '../../core/git-log';
 
 describe('applyFilters', () => {
   const createLogItem = (fileNames: string[]): LogItem => ({
     hash: 'abc123',
     date: '2021-01-01',
     author: 'John Doe',
+    message: 'Initial commit',
     fileEntries: fileNames.map(fileName => ({
       fileName,
       added: 10,
@@ -246,6 +247,7 @@ describe('applyFilters', () => {
           hash: 'abc123',
           date: '2021-01-01',
           author: 'John Doe',
+          message: 'Initial commit',
           fileEntries: [],
         },
       ];
@@ -258,6 +260,7 @@ describe('applyFilters', () => {
     it('should preserve other log item properties', () => {
       const items = [
         {
+          message: 'Initial commit',
           hash: 'abc123',
           date: '2021-01-01',
           author: 'John Doe',

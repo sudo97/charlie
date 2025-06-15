@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { gitHistoryWordCount, wordCount } from './word-count.ts';
-import { LogItem } from './git-log.ts';
+import { gitHistoryWordCount, wordCount } from '../../core/word-count.ts';
+import { LogItem } from '../../core/git-log.ts';
 
 describe('word count', () => {
   it('should return an empty object if the text is empty', () => {

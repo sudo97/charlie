@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { hotspots } from './hotspots';
+import { hotspots } from '../../core/hotspots';
 
 describe('Hotspots', () => {
   it('should return an empty array if there are no hotspots', async () => {
