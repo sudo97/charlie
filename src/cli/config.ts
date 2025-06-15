@@ -16,7 +16,7 @@ export type Config = {
   include: RegExp[];
   exclude: RegExp[];
   after: Date;
-  architecturalGroups: Record<string, string> | undefined;
+  architecturalGroups: Record<string, string>;
   socPercentile: number;
   revisionsPercentile: number;
   minCouplingPercentage: number;
@@ -38,7 +38,7 @@ export function parseConfig(config: string): Config {
     include: (parsed.include ?? []).map(pattern => new RegExp(pattern)),
     exclude: (parsed.exclude ?? []).map(pattern => new RegExp(pattern)),
     after,
-    architecturalGroups: parsed.architecturalGroups,
+    architecturalGroups: parsed.architecturalGroups ?? {},
     socPercentile: parsed.socPercentile ?? 0.8,
     revisionsPercentile: parsed.revisionsPercentile ?? 0.8,
     minCouplingPercentage: parsed.minCouplingPercentage ?? 0.5,

@@ -48,9 +48,10 @@ const hotspotsData = await hotspots(revisionsData, async file => {
   return '';
 });
 
-const groupedHotspotsData: Hotspot[] = config.architecturalGroups
-  ? groupHotspots(hotspotsData, config.architecturalGroups)
-  : [];
+const groupedHotspotsData: Hotspot[] = groupHotspots(
+  hotspotsData,
+  config.architecturalGroups
+);
 
 const coupledPairsData = significantCoupledPairs(
   coupledPairs(groupGitLog(logItems, config.architecturalGroups)),

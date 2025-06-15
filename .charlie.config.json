@@ -1,3 +1,5 @@
 {
-  "include": ["^src"]
+  "include": ["^src"],
+  "minCouplingPercentage": 0.3,
+  "revisionsPercentile": 0.3
 }
