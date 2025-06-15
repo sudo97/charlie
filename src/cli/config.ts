@@ -1,4 +1,6 @@
 import { z } from 'zod/v4-mini';
+import * as path from 'path';
+import * as fs from 'fs/promises';
 
 const configSchema = z.object({
   include: z.optional(z.array(z.string())),
@@ -43,4 +45,12 @@ export function parseConfig(config: string): Config {
     revisionsPercentile: parsed.revisionsPercentile ?? 0.8,
     minCouplingPercentage: parsed.minCouplingPercentage ?? 0.5,
   };
+}
+
+export async function readConfigFile(repositoryPath: string): Promise<Config> {
+  return parseConfig(
+    await fs
+      .readFile(path.join(repositoryPath, '.charlie.config.json'), 'utf8')
+      .catch(() => '{}')
+  );
 }

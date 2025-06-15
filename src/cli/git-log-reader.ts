@@ -1,5 +1,8 @@
 import type { LogItem } from '@core/git-log.js';
 import { parseFileEntry, parseHeader } from './parse-log.js';
+import { createGitLogEmitter } from './createGitLogEmitter.js';
+import { applyFilters } from '../core/filters.js';
+import type { Config } from './config.js';
 
 export type GitLogEmitter = {
   onData: (listener: (chunk: string) => void) => void;
@@ -75,4 +78,11 @@ export async function produceGitLog(
       }
     });
   });
+}
+
+export async function getLogItems(repositoryPath: string, config: Config) {
+  return applyFilters(
+    await produceGitLog(createGitLogEmitter(repositoryPath, config.after)),
+    config
+  );
 }
