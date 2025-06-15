@@ -1,4 +1,5 @@
 import type { Config } from '../cli/config.js';
+import { compileGroups, filenameToGroup } from './architectural-groups.js';
 import type { FileEntry, LogItem } from './git-log.js';
 
 export function groupGitLog(
@@ -13,24 +14,11 @@ export function groupGitLog(
   }));
 }
 
-function compileGroups(
-  architecturalGroups: Record<string, string> | undefined
-) {
-  return Object.entries(architecturalGroups ?? {}).map(([pattern, group]) => {
-    return {
-      pattern: new RegExp(pattern),
-      group,
-    };
-  });
-}
-
 function matchToGroup(groups: { pattern: RegExp; group: string }[]) {
   return (file: FileEntry): FileEntry => {
     return {
       ...file,
-      fileName:
-        groups.find(group => group.pattern.test(file.fileName))?.group ??
-        file.fileName,
+      fileName: filenameToGroup(file.fileName, groups),
     };
   };
 }
