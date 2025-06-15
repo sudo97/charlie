@@ -23,6 +23,11 @@ export function groupHotspots(
         }
         acc[key].revisions += curr.revisions;
         acc[key].complexity += curr.complexity;
+      } else {
+        acc[curr.file] = {
+          revisions: curr.revisions,
+          complexity: curr.complexity,
+        };
       }
       return acc;
     },

@@ -26,6 +26,7 @@ describe('groupHotspots', () => {
       createHotspot('src/moduleA/Button.tsx', 10, 1),
       createHotspot('src/moduleA/Input.tsx', 20, 2),
       createHotspot('src/moduleB/Text.tsx', 30, 3),
+      createHotspot('src/moduleC/index.tsx', 1, 1),
     ];
     const grouped = groupHotspots(hotspots, {
       ['^src/moduleA/']: 'moduleA',
@@ -41,6 +42,11 @@ describe('groupHotspots', () => {
         file: 'moduleB',
         complexity: 30,
         revisions: 3,
+      },
+      {
+        file: 'src/moduleC/index.tsx',
+        complexity: 1,
+        revisions: 1,
       },
     ]);
   });
