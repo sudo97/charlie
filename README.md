@@ -112,6 +112,12 @@ Specifies the earliest date for git commits to include in the analysis. Only com
 
 Allows you to group files into architectural components for analysis. The key is a regex pattern that matches file paths, and the value is the name of the architectural group. Files matching the same group will be consolidated into a single hotspot entry. Only the first group that matches a file is used.
 
+When `architecturalGroups` is specified, Charlie generates two hotspot visualizations in the report:
+1. **File-level Hotspots** - Shows individual files as separate hotspots
+2. **Grouped Hotspots** - Shows architectural groups as consolidated hotspots
+
+This allows you to see both the detailed file-level view and the higher-level architectural view simultaneously.
+
 ```json
 {
   "architecturalGroups": {
@@ -122,8 +128,6 @@ Allows you to group files into architectural components for analysis. The key is
   }
 }
 ```
-
-note: Currently, only works for hotspots. Please see [notes](#on-architectural-grouping) for more details.
 
 ### `socPercentile` (optional)
 
@@ -200,7 +204,7 @@ Here's a comprehensive example of a `.charlie.config.json` file:
 
 2. **Date Filtering**: Git commits are filtered to only include those made after the specified `after` date.
 
-3. **Architectural Grouping**: If `architecturalGroups` is specified, files matching the regex patterns are grouped together and their complexity/revision metrics are combined.
+3. **Architectural Grouping**: If `architecturalGroups` is specified, files matching the regex patterns are grouped together and their complexity/revision metrics are combined. Both the original file-level hotspots and the grouped architectural hotspots are displayed in separate visualizations.
 
 4. **SOC Filtering**: The SOC (Sum of Coupling) analysis shows only files above the specified percentile threshold to focus on the most problematic coupling relationships.
 
@@ -230,7 +234,7 @@ This creates an interesting paradox: the feature works best on codebases that ne
 - [x] Add a way to group files into "architectural components"
 - [x] Coupled pairs and SOC should show only significant data. This filtering should be implemented in the backend using `revisionsPercentile` and `minCouplingPercentage` configuration options.
 - [ ] Default date should be 1 year before the last commit in the repo
-- [ ] Make architectural groups work for all the data, not just hotspots.
+- [ ] Architectural groups should produce 1. hotpsots 2. coupled pairs 3. SOC
 - [ ] Alternatively, maybe .charlie.config.json should be a starting point, but then in the webpage the user could change the config to see different slices of data.
 - [ ] Add a way to find file/module owners
 - [ ] Add a way to find teams that happen to form by analyzing authors
