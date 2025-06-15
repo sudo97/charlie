@@ -10,6 +10,7 @@ export interface ReportOptions {
   title: string;
   outputPath: string;
   data: TreeData;
+  groupedHotspots: TreeData;
   coupledPairs: CoupledPair[];
   socData: Soc[];
   wordCount: Record<string, number>;
@@ -39,6 +40,7 @@ export async function generateReport(options: ReportOptions) {
       coupledPairsJson: JSON.stringify(options.coupledPairs),
       socDataJson: JSON.stringify(options.socData),
       wordCountJson: JSON.stringify(options.wordCount),
+      groupedHotspotsJson: JSON.stringify(options.groupedHotspots),
     };
 
     const html = mustache.render(template, templateData);

@@ -2,7 +2,7 @@
 import * as path from 'path';
 import * as fs from 'fs/promises';
 import { revisions } from '../core/revisions.js';
-import { hotspots } from '../core/hotspots.js';
+import { hotspots, type Hotspot } from '../core/hotspots.js';
 import { produceGitLog } from './git-log-reader.js';
 import { generateReport } from './report-generator.js';
 import { treeData } from '../core/tree-data.js';
@@ -32,7 +32,7 @@ const logItems = applyFilters(
 
 const revisionsData = revisions(logItems);
 
-let hotspotsData = await hotspots(revisionsData, async file => {
+const hotspotsData = await hotspots(revisionsData, async file => {
   const filepath = path.join(repositoryPath, file);
   console.log('reading', filepath);
   if (
@@ -47,9 +47,9 @@ let hotspotsData = await hotspots(revisionsData, async file => {
   return '';
 });
 
-if (config.architecturalGroups) {
-  hotspotsData = groupHotspots(hotspotsData, config.architecturalGroups);
-}
+const groupedHotspotsData: Hotspot[] = config.architecturalGroups
+  ? groupHotspots(hotspotsData, config.architecturalGroups)
+  : [];
 
 const coupledPairsData = significantCoupledPairs(
   coupledPairs(logItems),
@@ -76,6 +76,7 @@ await generateReport({
   coupledPairs: coupledPairsData,
   socData: socData,
   wordCount: gitHistoryWordCount(logItems),
+  groupedHotspots: treeData(groupedHotspotsData),
 });
 
 console.log(`Report generated successfully at: ${outputPath}`);

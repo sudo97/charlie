@@ -9,10 +9,16 @@
   <body>
     <div class="container">
       <h1>{{title}}</h1>
+      <h2>File-level Hotspots</h2>
       <div id="visualization" class="visualization">
         <!-- D3 visualization will be inserted here -->
       </div>
 
+      <h2>Grouped Hotspots</h2>
+      <div id="grouped-hotspots" class="visualization">
+      </div>
+
+      <h2>File-level Coupled Pairs</h2>
       <div id="coupled-pairs" class="visualization">
       </div>
 
@@ -27,6 +33,10 @@
     <!-- Inject report data -->
     <script id="data" type="application/json">
       {{{reportDataJson}}}
+    </script>
+
+    <script id="grouped-hotspots-data" type="application/json">
+      {{{groupedHotspotsJson}}}
     </script>
 
     <script id="coupling-pairs" type="application/json">

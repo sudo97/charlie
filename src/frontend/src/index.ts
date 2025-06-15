@@ -6,7 +6,11 @@ import { visualizeWordCount } from './visualizeWordCount';
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-  visualizeHotspots(document.getElementById('visualization')!);
+  visualizeHotspots(document.getElementById('visualization')!, 'data');
+  visualizeHotspots(
+    document.getElementById('grouped-hotspots')!,
+    'grouped-hotspots-data'
+  );
   createHierarchicalEdgeBundlingVisualization();
   visualizeSoc(document.getElementById('soc')!);
   visualizeWordCount(document.getElementById('word-count')!);

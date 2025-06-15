@@ -11,8 +11,8 @@ import {
   HIGH_IMPORTANCE_COLOR,
 } from './colours.js';
 
-function getData(): TreeData {
-  const dataElement = document.getElementById('data');
+function getData(dataElt: string): TreeData {
+  const dataElement = document.getElementById(dataElt);
   if (!dataElement) {
     throw new Error('Data element not found');
   }
@@ -239,8 +239,8 @@ function getSvg(data: TreeData) {
   return svg.node();
 }
 
-export function visualizeHotspots(container: HTMLElement) {
-  const data = getData();
+export function visualizeHotspots(container: HTMLElement, dataElt: string) {
+  const data = getData(dataElt);
   const svg = getSvg(data);
   if (svg === null) throw new Error('Failed to create SVG');
   container.appendChild(svg);
