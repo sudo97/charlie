@@ -11,10 +11,9 @@ import { useMemo, useState } from 'react';
 import { HotspotItem } from './hotspot-item';
 import { Label } from './hotspot-label';
 
-const svgWidth = 800;
-const svgHeight = 800;
-
 export function Hotspots({ data }: { data: TreeData }) {
+  const svgWidth = 800;
+  const svgHeight = 800;
   const root = useMemo(
     () => packData(data, { width: svgWidth, height: svgHeight }),
     [data]
