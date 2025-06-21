@@ -23,11 +23,11 @@ export function Hotspots({ data }: { data: TreeData }) {
     () => root
   );
 
-  const [view, setView] = useState<[number, number, number]>(() => [
-    root.x,
-    root.y,
-    root.r * 2,
-  ]);
+  const [view, setView] = useState(() => ({
+    width: root.x,
+    height: root.y,
+    radius: root.r * 2,
+  }));
 
   const color = useMemo(
     () => (focus === root ? mkColor(root) : mkColorForFocus(focus)),
@@ -37,23 +37,35 @@ export function Hotspots({ data }: { data: TreeData }) {
   const handleNodeClick = (node: d3.HierarchyCircularNode<TreeData>) => {
     if (focus !== node && node.children) {
       setFocus(node);
-      setView([node.x, node.y, node.r * 2 + 10]);
+      setView({
+        width: node.x,
+        height: node.y,
+        radius: node.r * 2 + 10,
+      });
     } else {
       setFocus(root);
-      setView([root.x, root.y, root.r * 2]);
+      setView({
+        width: root.x,
+        height: root.y,
+        radius: root.r * 2,
+      });
     }
   };
 
   const handleSvgClick = () => {
     if (focus !== root) {
       setFocus(root);
-      setView([root.x, root.y, root.r * 2]);
+      setView({
+        width: root.x,
+        height: root.y,
+        radius: root.r * 2,
+      });
     }
   };
 
-  const zoomScale = svgWidth / view[2];
-  const viewX = view[0];
-  const viewY = view[1];
+  const zoomScale = svgWidth / view.radius;
+  const viewX = view.width;
+  const viewY = view.height;
 
   return (
     <svg
