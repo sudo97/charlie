@@ -51,7 +51,6 @@ export function Hotspots({ data }: { data: TreeData }) {
     }
   };
 
-  // Calculate zoom transformation
   const zoomScale = svgWidth / view[2];
   const viewX = view[0];
   const viewY = view[1];
