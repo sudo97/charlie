@@ -1,11 +1,13 @@
 import type { Hotspot } from './hotspots.js';
 
 export type Folder = {
+  path: string;
   name: string;
   children: TreeData[];
 };
 
 export type File = {
+  path: string;
   name: string;
   complexity: number;
   revisions: number;
@@ -15,6 +17,7 @@ export type TreeData = Folder | File;
 
 export function treeData(hotspots: Hotspot[]): TreeData {
   const root: TreeData = {
+    path: '',
     name: 'Root',
     children: [],
   };
@@ -32,6 +35,7 @@ export function treeData(hotspots: Hotspot[]): TreeData {
       if (!nextSubTree) {
         nextSubTree = {
           name: folderName,
+          path: subTree.path + '/' + folderName,
           children: [],
         };
         subTree.children.push(nextSubTree);
@@ -40,6 +44,7 @@ export function treeData(hotspots: Hotspot[]): TreeData {
     }
     subTree.children.push({
       name: lastItem,
+      path: subTree.path + '/' + lastItem,
       complexity: hotspot.complexity,
       revisions: hotspot.revisions,
     });

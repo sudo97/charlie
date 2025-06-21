@@ -239,6 +239,9 @@ function getSvg(data: TreeData) {
   return svg.node();
 }
 
+/**
+ * @deprecated
+ */
 export function visualizeHotspots(container: HTMLElement, dataElt: string) {
   const data = getData(dataElt);
   const svg = getSvg(data);

@@ -13,9 +13,20 @@ describe('treeData', () => {
 
       expect(result).toEqual({
         name: 'Root',
+        path: '',
         children: [
-          { name: 'file1.txt', complexity: 1, revisions: 1 },
-          { name: 'file2.txt', complexity: 2, revisions: 2 },
+          {
+            name: 'file1.txt',
+            path: '/file1.txt',
+            complexity: 1,
+            revisions: 1,
+          },
+          {
+            name: 'file2.txt',
+            path: '/file2.txt',
+            complexity: 2,
+            revisions: 2,
+          },
         ],
       });
     }
@@ -27,7 +38,15 @@ describe('treeData', () => {
 
       expect(result).toEqual({
         name: 'Root',
-        children: [{ name: 'file1.txt', complexity: 1, revisions: 1 }],
+        path: '',
+        children: [
+          {
+            name: 'file1.txt',
+            complexity: 1,
+            revisions: 1,
+            path: '/file1.txt',
+          },
+        ],
       });
     }
   });
@@ -44,28 +63,56 @@ describe('treeData', () => {
 
     expect(result).toEqual({
       name: 'Root',
+      path: '',
       children: [
         {
           name: 'src',
+          path: '/src',
           children: [
-            { name: 'file1.txt', complexity: 1, revisions: 1 },
-            { name: 'file2.txt', complexity: 2, revisions: 2 },
+            {
+              name: 'file1.txt',
+              complexity: 1,
+              revisions: 1,
+              path: '/src/file1.txt',
+            },
+            {
+              name: 'file2.txt',
+              complexity: 2,
+              revisions: 2,
+              path: '/src/file2.txt',
+            },
             {
               name: 'other',
-              children: [{ name: 'file3.txt', complexity: 3, revisions: 3 }],
+              path: '/src/other',
+              children: [
+                {
+                  name: 'file3.txt',
+                  complexity: 3,
+                  revisions: 3,
+                  path: '/src/other/file3.txt',
+                },
+              ],
             },
           ],
         },
         {
           name: 'entirely',
+          path: '/entirely',
           children: [
             {
               name: 'other',
+              path: '/entirely/other',
               children: [
                 {
                   name: 'folder',
+                  path: '/entirely/other/folder',
                   children: [
-                    { name: 'file4.txt', complexity: 4, revisions: 4 },
+                    {
+                      name: 'file4.txt',
+                      complexity: 4,
+                      revisions: 4,
+                      path: '/entirely/other/folder/file4.txt',
+                    },
                   ],
                 },
               ],
