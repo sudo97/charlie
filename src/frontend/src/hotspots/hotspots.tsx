@@ -18,6 +18,7 @@ export function Hotspots({ data }: { data: TreeData }) {
     () => packData(data, { width: svgWidth, height: svgHeight }),
     [data]
   );
+  const items = useMemo(() => root.descendants(), [root]);
 
   const [focus, setFocus] = useState<d3.HierarchyCircularNode<TreeData>>(root);
 
@@ -57,24 +58,21 @@ export function Hotspots({ data }: { data: TreeData }) {
       onClick={handleSvgClick}
     >
       <g>
-        {root
-          .descendants()
-          .slice(1)
-          .map(node => (
-            <HotspotItem
-              key={node.data.path}
-              node={node}
-              color={color}
-              focus={focus}
-              onNodeClick={handleNodeClick}
-              zoomScale={zoomScale}
-              viewX={viewX}
-              viewY={viewY}
-            />
-          ))}
+        {items.map(node => (
+          <HotspotItem
+            key={node.data.path}
+            node={node}
+            color={color}
+            focus={focus}
+            onNodeClick={handleNodeClick}
+            zoomScale={zoomScale}
+            viewX={viewX}
+            viewY={viewY}
+          />
+        ))}
       </g>
       <g>
-        {root.descendants().map(node => (
+        {items.map(node => (
           <Label
             key={node.data.path}
             node={node}
