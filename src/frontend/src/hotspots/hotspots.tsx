@@ -99,7 +99,8 @@ const packData = (
     }
     if ('children' in node.data) {
       return node.data.children.reduce(
-        (acc, child) => acc + getComplexity({ data: child } as any),
+        (acc, child) =>
+          acc + getComplexity({ data: child } as d3.HierarchyNode<TreeData>),
         0
       );
     }
