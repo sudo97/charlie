@@ -28,6 +28,7 @@ export function createCoupledPairsTable(
   const table = tableContainer
     .append('table')
     .style('width', '100%')
+    .style('table-layout', 'fixed')
     .style('border-collapse', 'collapse')
     .style('font-family', 'system-ui, -apple-system, sans-serif');
 
@@ -39,16 +40,26 @@ export function createCoupledPairsTable(
 
   headerRow
     .selectAll('th')
-    .data(['File 1', 'File 2', 'Coupling %', 'Revisions', 'Proximity'])
+    .data([
+      { text: 'File 1', width: '30%' },
+      { text: 'File 2', width: '30%' },
+      { text: 'Coupling %', width: '15%' },
+      { text: 'Revisions', width: '12%' },
+      { text: 'Proximity', width: '13%' },
+    ])
     .enter()
     .append('th')
-    .text(d => d)
+    .text(d => d.text)
     .style('padding', '12px 8px')
     .style('text-align', 'left')
     .style('font-weight', 'bold')
     .style('color', TEXT_COLOR)
     .style('font-size', '14px')
-    .style('background', 'transparent');
+    .style('background', 'transparent')
+    .style('width', d => d.width)
+    .style('overflow', 'hidden')
+    .style('text-overflow', 'ellipsis')
+    .style('white-space', 'nowrap');
 
   // Sort data by combined score of proximity * coupling * revisions
   const sortedData = data.sort((a, b) => {
@@ -99,6 +110,9 @@ export function createCoupledPairsTable(
     .style('font-weight', d => {
       return d.type === 'percentage' ? 'bold' : 'normal';
     })
+    .style('overflow', 'hidden')
+    .style('text-overflow', 'ellipsis')
+    .style('white-space', 'nowrap')
     .attr('title', d => {
       return d.type === 'file' ? d.value : null;
     });
