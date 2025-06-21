@@ -16,13 +16,9 @@ export function Label({
   viewX: number;
   viewY: number;
 }) {
-  // Apply zoom transformation to label position
-  const targetX = (node.x - viewX) * zoomScale;
-  const targetY = (node.y - viewY) * zoomScale;
-
-  const springProps = useSpring({
-    x: targetX,
-    y: targetY,
+  const { x, y } = useSpring({
+    x: (node.x - viewX) * zoomScale,
+    y: (node.y - viewY) * zoomScale,
     config: springConfig,
   });
 
@@ -34,8 +30,8 @@ export function Label({
       }}
       pointerEvents="none"
       textAnchor="middle"
-      x={springProps.x}
-      y={springProps.y}
+      x={x}
+      y={y}
       display={node.parent === focus ? 'inline' : 'none'}
     >
       {node.data.name}
