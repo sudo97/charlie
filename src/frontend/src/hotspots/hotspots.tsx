@@ -7,7 +7,7 @@ import {
   MID_IMPORTANCE_COLOR,
   ROOT_COLOR,
 } from '../colours';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { HotspotItem } from './hotspot-item';
 import { Label } from './hotspot-label';
 
@@ -19,49 +19,23 @@ export function Hotspots({ data }: { data: TreeData }) {
     [data]
   );
 
-  const [focus, setFocus] = useState<d3.HierarchyCircularNode<TreeData>>(
-    () => root
-  );
+  const [focus, setFocus] = useState<d3.HierarchyCircularNode<TreeData>>(root);
 
-  const [view, setView] = useState(() => ({
-    width: root.x,
-    height: root.y,
-    radius: root.r * 2,
-  }));
-
-  const color = useMemo(
-    () => (focus === root ? mkColor(root) : mkColorForFocus(focus)),
-    [root, focus]
-  );
-
-  const handleNodeClick = (node: d3.HierarchyCircularNode<TreeData>) => {
-    if (focus !== node && node.children) {
-      setFocus(node);
-      setView({
-        width: node.x,
-        height: node.y,
-        radius: node.r * 2 + 10,
-      });
-    } else {
-      setFocus(root);
-      setView({
-        width: root.x,
-        height: root.y,
-        radius: root.r * 2,
-      });
-    }
+  const view = {
+    width: focus.x,
+    height: focus.y,
+    radius: focus.r * 2 + 10,
   };
 
-  const handleSvgClick = () => {
-    if (focus !== root) {
-      setFocus(root);
-      setView({
-        width: root.x,
-        height: root.y,
-        radius: root.r * 2,
-      });
-    }
-  };
+  const color = focus === root ? mkColor(root) : mkColorForFocus(focus);
+
+  const handleNodeClick = useCallback(
+    (node: d3.HierarchyCircularNode<TreeData>) =>
+      setFocus(focus !== node && node.children ? node : root),
+    [focus, root]
+  );
+
+  const handleSvgClick = useCallback(() => setFocus(root), []);
 
   const zoomScale = svgWidth / view.radius;
   const viewX = view.width;
