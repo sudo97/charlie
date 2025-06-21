@@ -12,6 +12,7 @@ import {
   STROKE_COLOR,
 } from '../colours';
 import { useMemo, useState } from 'react';
+import { useSpring, animated } from '@react-spring/web';
 
 const svgWidth = 800;
 const svgHeight = 800;
@@ -161,8 +162,8 @@ function HotspotItem({
 }) {
   const [strokeColor, setStrokeColor] = useState(STROKE_COLOR);
 
-  // Calculate fill color based on focus
-  const fillColor = useMemo(() => {
+  // Calculate target fill color based on focus
+  const targetFillColor = useMemo(() => {
     if (node.children) return BG_COLOR;
 
     // If focus is not root, check if this node is a descendant of focus
@@ -178,6 +179,15 @@ function HotspotItem({
     return `${color(revisions)}`;
   }, [node, color, focus]);
 
+  // Use spring animation for smooth color transitions
+  const springProps = useSpring({
+    fillColor: targetFillColor,
+    config: {
+      tension: 120,
+      friction: 14,
+    },
+  });
+
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onNodeClick(node);
@@ -189,13 +199,13 @@ function HotspotItem({
   const transformedR = node.r * zoomScale;
 
   return (
-    <circle
+    <animated.circle
       key={node.data.name}
       cx={transformedX}
       cy={transformedY}
       r={transformedR}
       stroke={strokeColor}
-      fill={fillColor}
+      fill={springProps.fillColor}
       style={{
         cursor: node.children ? 'pointer' : 'default',
         pointerEvents: node.children ? 'auto' : 'none',
