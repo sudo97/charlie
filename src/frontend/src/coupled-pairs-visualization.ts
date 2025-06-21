@@ -10,6 +10,8 @@ export interface HierarchicalEdgeBundlingConfig {
   showLabels?: boolean;
   colorScale?: d3.ScaleOrdinal<string, string>;
   minPercentageThreshold?: number; // Only show edges above this threshold
+  container: HTMLElement;
+  data: string;
 }
 
 interface Node {
@@ -46,7 +48,9 @@ interface VisualizationState {
 // TODO: show not only file names, but directory names too.
 // TODO: Possibly group by directory with different colors.
 
-const DEFAULT_CONFIG: Required<HierarchicalEdgeBundlingConfig> = {
+const DEFAULT_CONFIG: Required<
+  Omit<HierarchicalEdgeBundlingConfig, 'container' | 'data'>
+> = {
   width: 800,
   height: 800,
   innerRadius: 200,
@@ -58,13 +62,16 @@ const DEFAULT_CONFIG: Required<HierarchicalEdgeBundlingConfig> = {
 };
 
 function createVisualizationState(
-  config: HierarchicalEdgeBundlingConfig = {}
+  config: HierarchicalEdgeBundlingConfig
 ): VisualizationState {
-  const mergedConfig = { ...DEFAULT_CONFIG, ...config };
-  const container = document.getElementById('coupled-pairs') as HTMLElement;
+  const mergedConfig: Required<HierarchicalEdgeBundlingConfig> = {
+    ...DEFAULT_CONFIG,
+    ...config,
+  };
+  const container = config.container;
 
   if (!container) {
-    throw new Error("Container element with ID 'coupled-pairs' not found");
+    throw new Error('Container element not found');
   }
 
   // Clear any existing content
@@ -95,9 +102,9 @@ function createVisualizationState(
   };
 }
 
-function loadData(): CoupledPair[] | null {
+function loadData(dataEltId: string): CoupledPair[] | null {
   // Try to get data from script tag
-  const dataElement = document.getElementById('coupling-pairs');
+  const dataElement = document.getElementById(dataEltId);
   if (dataElement) {
     try {
       return JSON.parse(dataElement.textContent || '[]');
@@ -480,12 +487,12 @@ function render(state: VisualizationState): void {
 }
 
 export function createHierarchicalEdgeBundlingVisualization(
-  config: HierarchicalEdgeBundlingConfig = {}
+  config: HierarchicalEdgeBundlingConfig
 ) {
   const state = createVisualizationState(config);
 
   // Load data
-  state.data = loadData();
+  state.data = loadData(config.data);
 
   if (!state.data) {
     showError(state.container, 'No coupling pairs data found');

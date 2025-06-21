@@ -12,6 +12,7 @@ export interface ReportOptions {
   data: TreeData;
   groupedHotspots: TreeData;
   coupledPairs: CoupledPair[];
+  coupledPairsGrouped: CoupledPair[];
   socData: Soc[];
   wordCount: Record<string, number>;
 }
@@ -38,6 +39,7 @@ export async function generateReport(options: ReportOptions) {
       js: js,
       reportDataJson: JSON.stringify(options.data),
       coupledPairsJson: JSON.stringify(options.coupledPairs),
+      coupledPairsGroupedJson: JSON.stringify(options.coupledPairsGrouped),
       socDataJson: JSON.stringify(options.socData),
       wordCountJson: JSON.stringify(options.wordCount),
       groupedHotspotsJson: JSON.stringify(options.groupedHotspots),

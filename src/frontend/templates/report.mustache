@@ -14,18 +14,37 @@
         <!-- D3 visualization will be inserted here -->
       </div>
 
-      <h2>Grouped Hotspots</h2>
-      <div id="grouped-hotspots" class="visualization">
-      </div>
 
       <h2>Coupled Pairs</h2>
       <div id="coupled-pairs" class="visualization">
       </div>
 
+      <div id="coupled-pairs-table" class="visualization">
+      </div>
+
+
       <div id="soc">
       </div>
 
-      <h2>Word Count</h2>
+      <hr/>
+      
+      <h1>Architectural Groups</h1>
+      <p style="color: #666; font-size: 0.9em; margin: 20px 0;">
+        Note: If no architectural groups were provided in the configuration, the grouped hotspots and coupled pairs visualizations below will look similar to the file-level graphs above, as files will not be aggregated into higher-level groups.
+      </p>
+      <h2>Grouped Hotspots</h2>
+      <div id="grouped-hotspots" class="visualization">
+      </div>
+
+      <h2>Coupled Pairs Grouped</h2>
+      <div id="coupled-pairs-grouped" class="visualization">
+      </div>
+
+
+      <h1>Word Count</h2>
+      <p style="color: #666; font-size: 0.9em; margin: 20px 0;">
+        Your team's modus operandi. Not really a metric, but if you see that FIX is the most common word by far, it should make you think.
+      </p>
       <div id="word-count">
       </div>
     </div>
@@ -39,8 +58,12 @@
       {{{groupedHotspotsJson}}}
     </script>
 
-    <script id="coupling-pairs" type="application/json">
+    <script id="coupled-pairs-data" type="application/json">
       {{{coupledPairsJson}}}
+    </script>
+
+    <script id="coupled-pairs-grouped-data" type="application/json">
+      {{{coupledPairsGroupedJson}}}
     </script>
 
     <script id="soc-data" type="application/json">

@@ -13,6 +13,7 @@ import { groupHotspots } from '../core/group-hotspots.js';
 import { gitHistoryWordCount } from '../core/word-count.js';
 import { groupGitLog } from '../core/group-git-log.js';
 import { readHotspots } from './readHotspots.js';
+import { calculateFileProximity } from '../core/file-proximity.js';
 
 const repositoryPath = path.resolve(process.argv[2] ?? '.');
 
@@ -28,6 +29,15 @@ const groupedHotspotsData = groupHotspots(
 );
 
 const coupledPairsData = significantCoupledPairs(
+  coupledPairs(logItems),
+  config.revisionsPercentile,
+  config.minCouplingPercentage
+).map(pair => ({
+  ...pair,
+  proximity: calculateFileProximity(pair.file1, pair.file2),
+}));
+
+const coupledPairsDataGrouped = significantCoupledPairs(
   coupledPairs(groupGitLog(logItems, config.architecturalGroups)),
   config.revisionsPercentile,
   config.minCouplingPercentage
@@ -54,6 +64,7 @@ await generateReport({
   outputPath,
   data: treeData(hotspotsData),
   coupledPairs: coupledPairsData,
+  coupledPairsGrouped: coupledPairsDataGrouped,
   socData: socData,
   wordCount: gitHistoryWordCount(logItems),
   groupedHotspots: treeData(groupedHotspotsData),
