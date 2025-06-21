@@ -6,7 +6,7 @@ import {
   LOW_IMPORTANCE_COLOR,
   STROKE_COLOR,
 } from '../colours';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useSpring, animated } from '@react-spring/web';
 import { springConfig } from './spring-config';
 
@@ -27,55 +27,55 @@ export function HotspotItem({
   viewX: number;
   viewY: number;
 }) {
-  const [strokeColor, setStrokeColor] = useState(STROKE_COLOR);
-
-  const targetFillColor = useMemo(() => {
-    if (node.children) return BG_COLOR;
-
-    if (focus !== focus.ancestors()[focus.ancestors().length - 1]) {
-      const focusDescendants = new Set(focus.descendants());
-      if (!focusDescendants.has(node)) {
-        return LOW_IMPORTANCE_COLOR;
-      }
-    }
-
-    const revisions = 'revisions' in node.data ? node.data.revisions : 0;
-
-    return `${color(revisions)}`;
-  }, [node, color, focus]);
+  const [isHovering, setIsHovering] = useState(false);
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onNodeClick(node);
   };
 
-  const targetX = (node.x - viewX) * zoomScale;
-  const targetY = (node.y - viewY) * zoomScale;
-  const targetR = node.r * zoomScale;
-
-  const springProps = useSpring({
-    x: targetX,
-    y: targetY,
-    r: targetR,
-    fillColor: targetFillColor,
+  const { x, y, r, fillColor } = useSpring({
+    x: (node.x - viewX) * zoomScale,
+    y: (node.y - viewY) * zoomScale,
+    r: node.r * zoomScale,
+    fillColor: getTargetFillColor(node, focus, color),
     config: springConfig,
   });
 
   return (
     <animated.circle
       key={node.data.name}
-      cx={springProps.x}
-      cy={springProps.y}
-      r={springProps.r}
-      stroke={strokeColor}
-      fill={springProps.fillColor}
+      cx={x}
+      cy={y}
+      r={r}
+      stroke={isHovering ? HOVER_STROKE_COLOR : STROKE_COLOR}
+      fill={fillColor}
       style={{
         cursor: node.children ? 'pointer' : 'default',
         pointerEvents: node.children ? 'auto' : 'none',
       }}
-      onMouseOver={() => setStrokeColor(HOVER_STROKE_COLOR)}
-      onMouseOut={() => setStrokeColor(STROKE_COLOR)}
+      onMouseOver={() => setIsHovering(true)}
+      onMouseOut={() => setIsHovering(false)}
       onClick={handleClick}
     />
   );
+}
+
+function getTargetFillColor(
+  node: d3.HierarchyCircularNode<TreeData>,
+  focus: d3.HierarchyCircularNode<TreeData>,
+  color: d3.ScaleLinear<number, number, never>
+) {
+  if (node.children) return BG_COLOR;
+
+  if (focus !== focus.ancestors()[focus.ancestors().length - 1]) {
+    const focusDescendants = new Set(focus.descendants());
+    if (!focusDescendants.has(node)) {
+      return LOW_IMPORTANCE_COLOR;
+    }
+  }
+
+  const revisions = 'revisions' in node.data ? node.data.revisions : 0;
+
+  return `${color(revisions)}`;
 }
