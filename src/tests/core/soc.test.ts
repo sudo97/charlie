@@ -62,6 +62,30 @@ describe('soc', () => {
       },
     ]);
   });
+
+  it('should calculate coupling strength correctly - each file should be coupled with n-1 other files', () => {
+    const gitRevisions: LogItem[] = [
+      {
+        hash: '123456',
+        date: '2024-01-01',
+        author: 'John Doe',
+        message: 'Change three files together',
+        fileEntries: [
+          { fileName: 'fileA.txt', added: 1, removed: 1 },
+          { fileName: 'fileB.txt', added: 1, removed: 1 },
+          { fileName: 'fileC.txt', added: 1, removed: 1 },
+        ],
+      },
+    ];
+
+    const result = soc(gitRevisions);
+
+    expect(result).toEqual<Soc[]>([
+      { file: 'fileA.txt', soc: 2 },
+      { file: 'fileB.txt', soc: 2 },
+      { file: 'fileC.txt', soc: 2 },
+    ]);
+  });
 });
 
 describe('socPercentile', () => {

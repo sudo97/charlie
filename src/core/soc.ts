@@ -10,8 +10,9 @@ export function soc(gitRevisions: LogItem[]): Soc[] {
 
   for (const revision of gitRevisions) {
     if (revision.fileEntries.length > 1) {
+      const couplingCount = revision.fileEntries.length - 1;
       for (const file of revision.fileEntries) {
-        socs.set(file.fileName, (socs.get(file.fileName) || 0) + 1);
+        socs.set(file.fileName, (socs.get(file.fileName) || 0) + couplingCount);
       }
     }
   }
