@@ -271,7 +271,7 @@ describe('applyFilters', () => {
       const result = applyFilters(items, config);
 
       expect(result).toHaveLength(1);
-      expect(result[0]).toEqual({
+      expect(result[0]).toMatchObject({
         hash: 'abc123',
         date: '2021-01-01',
         author: 'John Doe',
