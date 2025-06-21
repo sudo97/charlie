@@ -17,41 +17,45 @@ import { useSpring, animated } from '@react-spring/web';
 const svgWidth = 800;
 const svgHeight = 800;
 
+const springConfig = {
+  tension: 150,
+  friction: 20,
+};
+
 function Hotspot({ data }: { data: TreeData }) {
   const root = useMemo(
     () => packData(data, { width: svgWidth, height: svgHeight }),
     [data]
   );
 
-  // Add focus state for tracking which node is currently focused
   const [focus, setFocus] = useState<d3.HierarchyCircularNode<TreeData>>(
     () => root
   );
 
-  // Add view state for zoom transformation [x, y, radius]
   const [view, setView] = useState<[number, number, number]>(() => [
     root.x,
     root.y,
     root.r * 2,
   ]);
 
-  const color = useMemo(() => {
-    // Use focus-based coloring when not at root, otherwise use global coloring
-    return focus === root ? mkColor(root) : mkColorForFocus(focus);
-  }, [root, focus]);
+  const color = useMemo(
+    () => (focus === root ? mkColor(root) : mkColorForFocus(focus)),
+    [root, focus]
+  );
 
   const handleNodeClick = (node: d3.HierarchyCircularNode<TreeData>) => {
     if (focus !== node && node.children) {
       setFocus(node);
-      // Update view to zoom to the clicked node
       setView([node.x, node.y, node.r * 2 + 10]);
+    } else {
+      setFocus(root);
+      setView([root.x, root.y, root.r * 2]);
     }
   };
 
   const handleSvgClick = () => {
     if (focus !== root) {
       setFocus(root);
-      // Reset view to show entire root
       setView([root.x, root.y, root.r * 2]);
     }
   };
@@ -123,23 +127,29 @@ function Label({
   viewY: number;
 }) {
   // Apply zoom transformation to label position
-  const transformedX = (node.x - viewX) * zoomScale;
-  const transformedY = (node.y - viewY) * zoomScale;
+  const targetX = (node.x - viewX) * zoomScale;
+  const targetY = (node.y - viewY) * zoomScale;
+
+  const springProps = useSpring({
+    x: targetX,
+    y: targetY,
+    config: springConfig,
+  });
 
   return (
-    <text
+    <animated.text
       style={{
         font: '10px sans-serif',
         fill: 'black',
       }}
       pointerEvents="none"
       textAnchor="middle"
-      x={transformedX}
-      y={transformedY}
+      x={springProps.x}
+      y={springProps.y}
       display={node.parent === focus ? 'inline' : 'none'}
     >
       {node.data.name}
-    </text>
+    </animated.text>
   );
 }
 
@@ -162,11 +172,9 @@ function HotspotItem({
 }) {
   const [strokeColor, setStrokeColor] = useState(STROKE_COLOR);
 
-  // Calculate target fill color based on focus
   const targetFillColor = useMemo(() => {
     if (node.children) return BG_COLOR;
 
-    // If focus is not root, check if this node is a descendant of focus
     if (focus !== focus.ancestors()[focus.ancestors().length - 1]) {
       const focusDescendants = new Set(focus.descendants());
       if (!focusDescendants.has(node)) {
@@ -179,31 +187,29 @@ function HotspotItem({
     return `${color(revisions)}`;
   }, [node, color, focus]);
 
-  // Use spring animation for smooth color transitions
-  const springProps = useSpring({
-    fillColor: targetFillColor,
-    config: {
-      tension: 120,
-      friction: 14,
-    },
-  });
-
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onNodeClick(node);
   };
 
-  // Apply zoom transformation to circle position and radius
-  const transformedX = (node.x - viewX) * zoomScale;
-  const transformedY = (node.y - viewY) * zoomScale;
-  const transformedR = node.r * zoomScale;
+  const targetX = (node.x - viewX) * zoomScale;
+  const targetY = (node.y - viewY) * zoomScale;
+  const targetR = node.r * zoomScale;
+
+  const springProps = useSpring({
+    x: targetX,
+    y: targetY,
+    r: targetR,
+    fillColor: targetFillColor,
+    config: springConfig,
+  });
 
   return (
     <animated.circle
       key={node.data.name}
-      cx={transformedX}
-      cy={transformedY}
-      r={transformedR}
+      cx={springProps.x}
+      cy={springProps.y}
+      r={springProps.r}
       stroke={strokeColor}
       fill={springProps.fillColor}
       style={{
