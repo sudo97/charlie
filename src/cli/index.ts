@@ -6,7 +6,7 @@ import {
   coupledPairs,
   significantCoupledPairs,
 } from '../core/coupled-pairs.js';
-import { soc, socPercentile } from '../core/soc.js';
+import { soc } from '../core/soc.js';
 import { readConfigFile } from './config.js';
 import { gitHistoryWordCount } from '../core/word-count.js';
 import { groupGitLog } from '../core/group-git-log.js';
@@ -36,7 +36,7 @@ const coupledPairsDataGrouped = significantCoupledPairs(
   config.minCouplingPercentage
 );
 
-const socData = socPercentile(soc(logItems), config.socPercentile);
+const socData = soc(logItems);
 
 /* 
 TBD. Maybe I don't need this.
