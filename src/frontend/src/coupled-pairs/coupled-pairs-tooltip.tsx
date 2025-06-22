@@ -76,7 +76,7 @@ export function CoupledPairsTooltip({
         <text
           key={index}
           x={adjustedX + padding}
-          y={adjustedY - rectHeight + padding + (index + 1) * lineHeight}
+          y={adjustedY - rectHeight + padding + fontSize + index * lineHeight}
           fill="white"
           fontSize={fontSize}
           fontFamily="sans-serif"
