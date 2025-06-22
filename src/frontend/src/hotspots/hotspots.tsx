@@ -7,14 +7,20 @@ import {
   MID_IMPORTANCE_COLOR,
   ROOT_COLOR,
 } from '../colours';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { HotspotItem } from './hotspot-item';
 import { Label } from './hotspot-label';
 import type { Hotspot } from '@core/hotspots.js';
 import { treeData } from '@core/tree-data.js';
 import { groupHotspots } from '@core/group-hotspots';
 
-function HotspotsGrouped({ hotspots }: { hotspots: Hotspot[] }) {
+function HotspotsGrouped({
+  hotspots,
+  isGrouped,
+}: {
+  hotspots: Hotspot[];
+  isGrouped: boolean;
+}) {
   const svgWidth = 800;
   const svgHeight = 800;
 
@@ -27,6 +33,10 @@ function HotspotsGrouped({ hotspots }: { hotspots: Hotspot[] }) {
   const items = useMemo(() => root.descendants(), [root]);
 
   const [focus, setFocus] = useState<d3.HierarchyCircularNode<TreeData>>(root);
+
+  useEffect(() => {
+    setFocus(root);
+  }, [isGrouped]);
 
   const view = {
     width: focus.x,
@@ -121,7 +131,7 @@ export function Hotspots({
           <label>Grouped</label>
         </div>
       )}
-      <HotspotsGrouped hotspots={hotspots} />
+      <HotspotsGrouped hotspots={hotspots} isGrouped={grouped} />
     </div>
   );
 }
