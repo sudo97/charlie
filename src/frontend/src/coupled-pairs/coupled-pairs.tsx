@@ -60,11 +60,15 @@ export function CoupledPairsVisualization({
   }, [data, mergedConfig]);
 
   const handleLinkHover = (link: Link, event: React.MouseEvent) => {
-    setTooltip({
-      x: event.pageX,
-      y: event.pageY,
-      link,
-    });
+    const svgElement = event.currentTarget.closest('svg');
+    if (svgElement) {
+      const rect = svgElement.getBoundingClientRect();
+      setTooltip({
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top,
+        link,
+      });
+    }
   };
 
   const handleNodeHover = (node: Node, event: React.MouseEvent) => {
@@ -72,12 +76,16 @@ export function CoupledPairsVisualization({
       link => link.source === node || link.target === node
     ).length;
 
-    setTooltip({
-      x: event.pageX,
-      y: event.pageY,
-      node,
-      connections,
-    });
+    const svgElement = event.currentTarget.closest('svg');
+    if (svgElement) {
+      const rect = svgElement.getBoundingClientRect();
+      setTooltip({
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top,
+        node,
+        connections,
+      });
+    }
   };
 
   const handleMouseLeave = () => {
@@ -128,8 +136,14 @@ export function CoupledPairsVisualization({
             />
           ))}
         </g>
+        {tooltip && (
+          <CoupledPairsTooltip
+            tooltip={tooltip}
+            svgWidth={mergedConfig.width}
+            svgHeight={mergedConfig.height}
+          />
+        )}
       </svg>
-      {tooltip && <CoupledPairsTooltip tooltip={tooltip} />}
     </div>
   );
 }
