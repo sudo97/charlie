@@ -1,0 +1,256 @@
+import { type CoupledPair } from '@core/coupled-pairs';
+import { useMemo, useState } from 'react';
+import { CoupledPairsNode } from './coupled-pairs-node';
+import { CoupledPairsLink } from './coupled-pairs-link';
+import { CoupledPairsTooltip } from './coupled-pairs-tooltip';
+import type { HierarchicalEdgeBundlingConfig } from '../coupled-pairs-visualization';
+
+export interface Node {
+  id: string;
+  filePath: string;
+  x: number;
+  y: number;
+  data: {
+    name: string;
+    path: string;
+  };
+}
+
+export interface Link {
+  source: Node;
+  target: Node;
+  value: number;
+  revisions: number;
+}
+
+export interface TooltipData {
+  x: number;
+  y: number;
+  link?: Link;
+  node?: Node;
+  connections?: number;
+}
+
+const DEFAULT_CONFIG = {
+  width: 800,
+  height: 800,
+  innerRadius: 200,
+  outerRadius: 350,
+  tension: 0.85,
+  showLabels: true,
+  minPercentageThreshold: 0.1,
+};
+
+export function CoupledPairsVisualization({
+  data,
+  config,
+}: {
+  data: CoupledPair[];
+  config: HierarchicalEdgeBundlingConfig;
+}) {
+  const [tooltip, setTooltip] = useState<TooltipData | null>(null);
+
+  const mergedConfig = useMemo(
+    () => ({ ...DEFAULT_CONFIG, ...config }),
+    [config]
+  );
+
+  const { nodes, links } = useMemo(() => {
+    return processData(data, mergedConfig);
+  }, [data, mergedConfig]);
+
+  const handleLinkHover = (link: Link, event: React.MouseEvent) => {
+    setTooltip({
+      x: event.pageX,
+      y: event.pageY,
+      link,
+    });
+  };
+
+  const handleNodeHover = (node: Node, event: React.MouseEvent) => {
+    const connections = links.filter(
+      link => link.source === node || link.target === node
+    ).length;
+
+    setTooltip({
+      x: event.pageX,
+      y: event.pageY,
+      node,
+      connections,
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setTooltip(null);
+  };
+
+  return (
+    <div>
+      <svg
+        width={mergedConfig.width}
+        height={mergedConfig.height}
+        viewBox={`-${mergedConfig.width / 2} -${mergedConfig.height / 2} ${mergedConfig.width} ${mergedConfig.height}`}
+        style={{
+          maxWidth: '100%',
+          height: 'auto',
+          display: 'block',
+          background: '#fafafa',
+        }}
+      >
+        <g>
+          {links.map((link, index) => (
+            <CoupledPairsLink
+              key={`${link.source.id}-${link.target.id}-${index}`}
+              link={link}
+              tension={mergedConfig.tension}
+              onHover={handleLinkHover}
+              onMouseLeave={handleMouseLeave}
+              isHighlighted={tooltip?.link === link}
+              isDimmed={tooltip?.link ? tooltip.link !== link : false}
+            />
+          ))}
+        </g>
+        <g>
+          {nodes.map(node => (
+            <CoupledPairsNode
+              key={node.id}
+              node={node}
+              showLabels={mergedConfig.showLabels}
+              onHover={handleNodeHover}
+              onMouseLeave={handleMouseLeave}
+              isHighlighted={tooltip?.node === node}
+              isDimmed={tooltip?.node ? tooltip.node !== node : false}
+              connectedToHighlighted={
+                tooltip?.link
+                  ? tooltip.link.source === node || tooltip.link.target === node
+                  : false
+              }
+            />
+          ))}
+        </g>
+      </svg>
+      {tooltip && <CoupledPairsTooltip tooltip={tooltip} />}
+    </div>
+  );
+}
+
+function generateUniqueDisplayNames(files: string[]): Map<string, string> {
+  const displayNames = new Map<string, string>();
+
+  // Group files by their filename
+  const filesByName = new Map<string, string[]>();
+  files.forEach(file => {
+    const filename = file.split('/').pop();
+    if (!filename) return;
+
+    if (!filesByName.has(filename)) {
+      filesByName.set(filename, []);
+    }
+    filesByName.get(filename)!.push(file);
+  });
+
+  // For each group, determine the minimum path needed to make them unique
+  for (const [filename, filePaths] of filesByName) {
+    if (filePaths.length === 1) {
+      displayNames.set(filePaths[0]!, filename);
+    } else {
+      const pathSegments = filePaths.map(path => path.split('/'));
+      let segmentsNeeded = 1;
+
+      while (segmentsNeeded <= Math.max(...pathSegments.map(p => p.length))) {
+        const suffixes = new Set();
+        let allUnique = true;
+
+        for (const segments of pathSegments) {
+          const suffix = segments.slice(-segmentsNeeded).join('/');
+          if (suffixes.has(suffix)) {
+            allUnique = false;
+            break;
+          }
+          suffixes.add(suffix);
+        }
+
+        if (allUnique) {
+          for (const path of filePaths) {
+            const segments = path.split('/');
+            const displayName = segments.slice(-segmentsNeeded).join('/');
+            displayNames.set(path, displayName);
+          }
+          break;
+        }
+
+        segmentsNeeded++;
+      }
+
+      if (segmentsNeeded > Math.max(...pathSegments.map(p => p.length))) {
+        for (const path of filePaths) {
+          displayNames.set(path, path);
+        }
+      }
+    }
+  }
+
+  return displayNames;
+}
+
+function processData(
+  coupledPairs: CoupledPair[],
+  config: typeof DEFAULT_CONFIG
+): { nodes: Node[]; links: Link[] } {
+  // Filter pairs by threshold
+  const filteredPairs = coupledPairs.filter(
+    pair => pair.percentage >= config.minPercentageThreshold
+  );
+
+  // Extract unique files
+  const fileSet = new Set<string>();
+  filteredPairs.forEach(pair => {
+    fileSet.add(pair.file1);
+    fileSet.add(pair.file2);
+  });
+
+  const files = Array.from(fileSet);
+  const displayNames = generateUniqueDisplayNames(files);
+
+  // Create nodes in circular layout
+  const totalFiles = files.length;
+  const angleStep = (2 * Math.PI) / totalFiles;
+
+  const nodes: Node[] = files.map((file, index) => {
+    const angle = index * angleStep;
+    const fileName = file.split('/').pop();
+    const displayName = displayNames.get(file) || fileName || file;
+
+    return {
+      id: file,
+      filePath: file,
+      x: angle,
+      y: config.innerRadius,
+      data: {
+        name: displayName,
+        path: file,
+      },
+    };
+  });
+
+  const nodeById = new Map(nodes.map(node => [node.id, node]));
+
+  // Create links from coupled pairs
+  const links: Link[] = filteredPairs
+    .map(pair => {
+      const source = nodeById.get(pair.file1);
+      const target = nodeById.get(pair.file2);
+      if (source && target) {
+        return {
+          source,
+          target,
+          value: pair.percentage,
+          revisions: pair.revisions,
+        };
+      }
+      return null;
+    })
+    .filter((link): link is Link => link !== null);
+
+  return { nodes, links };
+}
