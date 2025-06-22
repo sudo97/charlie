@@ -10,10 +10,16 @@ import {
 import { useCallback, useMemo, useState } from 'react';
 import { HotspotItem } from './hotspot-item';
 import { Label } from './hotspot-label';
+import type { Hotspot } from '@core/hotspots.js';
+import { treeData } from '@core/tree-data.js';
+import { groupHotspots } from '@core/group-hotspots';
 
-export function Hotspots({ data }: { data: TreeData }) {
+function HotspotsGrouped({ hotspots }: { hotspots: Hotspot[] }) {
   const svgWidth = 800;
   const svgHeight = 800;
+
+  const data = useMemo(() => treeData(hotspots), [hotspots]);
+
   const root = useMemo(
     () => packData(data, { width: svgWidth, height: svgHeight }),
     [data]
@@ -84,6 +90,39 @@ export function Hotspots({ data }: { data: TreeData }) {
         ))}
       </g>
     </svg>
+  );
+}
+
+export function Hotspots({
+  hotspots: data,
+  architecturalGroups,
+}: {
+  hotspots: Hotspot[];
+  architecturalGroups: Record<string, string>;
+}) {
+  const [grouped, setGrouped] = useState(false);
+
+  const hotspots = useMemo(() => {
+    if (grouped) {
+      return groupHotspots(data, architecturalGroups);
+    }
+    return data;
+  }, [grouped, data, architecturalGroups]);
+
+  return (
+    <div>
+      {Object.keys(architecturalGroups).length > 0 && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <input
+            type="checkbox"
+            checked={grouped}
+            onChange={() => setGrouped(!grouped)}
+          />
+          <label>Grouped</label>
+        </div>
+      )}
+      <HotspotsGrouped hotspots={hotspots} />
+    </div>
   );
 }
 

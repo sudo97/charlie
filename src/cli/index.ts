@@ -2,14 +2,12 @@
 import * as path from 'path';
 import { getLogItems } from './git-log-reader.js';
 import { generateReport } from './report-generator.js';
-import { treeData } from '../core/tree-data.js';
 import {
   coupledPairs,
   significantCoupledPairs,
 } from '../core/coupled-pairs.js';
 import { soc, socPercentile } from '../core/soc.js';
 import { readConfigFile } from './config.js';
-import { groupHotspots } from '../core/group-hotspots.js';
 import { gitHistoryWordCount } from '../core/word-count.js';
 import { groupGitLog } from '../core/group-git-log.js';
 import { readHotspots } from './readHotspots.js';
@@ -22,11 +20,6 @@ const config = await readConfigFile(repositoryPath);
 const logItems = await getLogItems(repositoryPath, config);
 
 const hotspotsData = await readHotspots(repositoryPath, logItems);
-
-const groupedHotspotsData = groupHotspots(
-  hotspotsData,
-  config.architecturalGroups
-);
 
 const coupledPairsData = significantCoupledPairs(
   coupledPairs(logItems),
@@ -62,12 +55,12 @@ const outputPath = path.join(repositoryPath, 'charlie-report.html');
 await generateReport({
   title: repositoryPath.split('/').pop() ?? 'Charlie Code Hotspots Report',
   outputPath,
-  data: treeData(hotspotsData),
+  hotspots: hotspotsData,
   coupledPairs: coupledPairsData,
   coupledPairsGrouped: coupledPairsDataGrouped,
   socData: socData,
   wordCount: gitHistoryWordCount(logItems),
-  groupedHotspots: treeData(groupedHotspotsData),
+  architecturalGroups: config.architecturalGroups,
 });
 
 console.log(`Report generated successfully at: ${outputPath}`);

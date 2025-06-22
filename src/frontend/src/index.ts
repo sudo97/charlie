@@ -7,10 +7,10 @@ import { createCoupledPairsTable } from './coupled-pairs-table.js';
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-  visualizeHotspots(document.getElementById('visualization')!, 'data');
   visualizeHotspots(
-    document.getElementById('grouped-hotspots')!,
-    'grouped-hotspots-data'
+    document.getElementById('visualization')!,
+    'data',
+    'architectural-groups'
   );
 
   createHierarchicalEdgeBundlingVisualization({

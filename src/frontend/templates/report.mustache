@@ -16,7 +16,6 @@
         <!-- D3 visualization will be inserted here -->
       </div>
 
-
       <h2>Coupled Pairs</h2>
       <div id="coupled-pairs" class="visualization">
       </div>
@@ -29,14 +28,6 @@
       </div>
 
       <hr/>
-      
-      <h1>Architectural Groups</h1>
-      <p style="color: #666; font-size: 0.9em; margin: 20px 0;">
-        Note: If no architectural groups were provided in the configuration, the grouped hotspots and coupled pairs visualizations below will look similar to the file-level graphs above, as files will not be aggregated into higher-level groups.
-      </p>
-      <h2>Grouped Hotspots</h2>
-      <div id="grouped-hotspots" class="visualization">
-      </div>
 
       <h2>Coupled Pairs Grouped</h2>
       <div id="coupled-pairs-grouped" class="visualization">
@@ -56,10 +47,6 @@
       {{{reportDataJson}}}
     </script>
 
-    <script id="grouped-hotspots-data" type="application/json">
-      {{{groupedHotspotsJson}}}
-    </script>
-
     <script id="coupled-pairs-data" type="application/json">
       {{{coupledPairsJson}}}
     </script>
@@ -74,6 +61,10 @@
 
     <script id="word-count-data" type="application/json">
       {{{wordCountJson}}}
+    </script>
+
+    <script id="architectural-groups" type="application/json">
+      {{{architecturalGroupsJson}}}
     </script>
     
     <!-- Load the built frontend bundle -->
