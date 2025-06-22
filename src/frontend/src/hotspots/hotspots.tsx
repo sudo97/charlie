@@ -11,24 +11,33 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { HotspotItem } from './hotspot-item';
 import { Label } from './hotspot-label';
 import type { Hotspot } from '@core/hotspots.js';
-import { treeData } from '@core/tree-data.js';
+import { treeData as toTreeData } from '@core/tree-data.js';
 import { groupHotspots } from '@core/group-hotspots';
 
-function HotspotsGrouped({
-  hotspots,
-  isGrouped,
+export function Hotspots({
+  hotspots: data,
+  architecturalGroups,
 }: {
   hotspots: Hotspot[];
-  isGrouped: boolean;
+  architecturalGroups: Record<string, string>;
 }) {
+  const [grouped, setGrouped] = useState(false);
+
+  const hotspots = useMemo(() => {
+    if (grouped) {
+      return groupHotspots(data, architecturalGroups);
+    }
+    return data;
+  }, [grouped, data, architecturalGroups]);
+
   const svgWidth = 800;
   const svgHeight = 800;
 
-  const data = useMemo(() => treeData(hotspots), [hotspots]);
+  const treedata = useMemo(() => toTreeData(hotspots), [hotspots]);
 
   const root = useMemo(
-    () => packData(data, { width: svgWidth, height: svgHeight }),
-    [data]
+    () => packData(treedata, { width: svgWidth, height: svgHeight }),
+    [treedata]
   );
   const items = useMemo(() => root.descendants(), [root]);
 
@@ -36,7 +45,7 @@ function HotspotsGrouped({
 
   useEffect(() => {
     setFocus(root);
-  }, [isGrouped]);
+  }, [grouped]);
 
   const view = {
     width: focus.x,
@@ -59,67 +68,6 @@ function HotspotsGrouped({
   const viewY = view.height;
 
   return (
-    <svg
-      width={svgWidth}
-      height={svgHeight}
-      viewBox={`-${svgWidth / 2} -${svgHeight / 2} ${svgWidth} ${svgHeight}`}
-      style={{
-        maxWidth: '100%',
-        height: 'auto',
-        display: 'block',
-        margin: '0 -14px',
-        background: ROOT_COLOR,
-        cursor: 'pointer',
-      }}
-      onClick={handleSvgClick}
-    >
-      <g>
-        {items.map(node => (
-          <HotspotItem
-            key={node.data.path}
-            node={node}
-            color={color}
-            focus={focus}
-            onNodeClick={handleNodeClick}
-            zoomScale={zoomScale}
-            viewX={viewX}
-            viewY={viewY}
-          />
-        ))}
-      </g>
-      <g>
-        {items.map(node => (
-          <Label
-            key={node.data.path}
-            node={node}
-            focus={focus}
-            zoomScale={zoomScale}
-            viewX={viewX}
-            viewY={viewY}
-          />
-        ))}
-      </g>
-    </svg>
-  );
-}
-
-export function Hotspots({
-  hotspots: data,
-  architecturalGroups,
-}: {
-  hotspots: Hotspot[];
-  architecturalGroups: Record<string, string>;
-}) {
-  const [grouped, setGrouped] = useState(false);
-
-  const hotspots = useMemo(() => {
-    if (grouped) {
-      return groupHotspots(data, architecturalGroups);
-    }
-    return data;
-  }, [grouped, data, architecturalGroups]);
-
-  return (
     <div>
       {Object.keys(architecturalGroups).length > 0 && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -131,7 +79,47 @@ export function Hotspots({
           <label>Grouped</label>
         </div>
       )}
-      <HotspotsGrouped hotspots={hotspots} isGrouped={grouped} />
+      <svg
+        width={svgWidth}
+        height={svgHeight}
+        viewBox={`-${svgWidth / 2} -${svgHeight / 2} ${svgWidth} ${svgHeight}`}
+        style={{
+          maxWidth: '100%',
+          height: 'auto',
+          display: 'block',
+          margin: '0 -14px',
+          background: ROOT_COLOR,
+          cursor: 'pointer',
+        }}
+        onClick={handleSvgClick}
+      >
+        <g>
+          {items.map(node => (
+            <HotspotItem
+              key={node.data.path}
+              node={node}
+              color={color}
+              focus={focus}
+              onNodeClick={handleNodeClick}
+              zoomScale={zoomScale}
+              viewX={viewX}
+              viewY={viewY}
+            />
+          ))}
+        </g>
+        <g>
+          {items.map(node => (
+            <Label
+              key={node.data.path}
+              node={node}
+              focus={focus}
+              zoomScale={zoomScale}
+              viewX={viewX}
+              viewY={viewY}
+            />
+          ))}
+        </g>
+      </svg>
     </div>
   );
 }
