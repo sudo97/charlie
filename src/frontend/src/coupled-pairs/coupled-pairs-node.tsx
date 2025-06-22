@@ -1,4 +1,5 @@
 import type { Node } from './coupled-pairs';
+import { useSpring, animated } from '@react-spring/web';
 
 export function CoupledPairsNode({
   node,
@@ -30,13 +31,23 @@ export function CoupledPairsNode({
     onHover(node, event);
   };
 
+  const animatedProps = useSpring({
+    opacity: getOpacity(),
+    transform: transform,
+    textX: angle > 90 ? -8 : 8,
+    config: {
+      tension: 170,
+      friction: 26,
+    },
+  });
+
   return (
     <g>
-      <circle
-        transform={transform}
+      <animated.circle
+        transform={animatedProps.transform}
         r={4}
         fill="#4f81bd"
-        fillOpacity={getOpacity()}
+        fillOpacity={animatedProps.opacity}
         stroke="#fff"
         strokeWidth={1.5}
         style={{ cursor: 'pointer' }}
@@ -44,20 +55,20 @@ export function CoupledPairsNode({
         onMouseLeave={onMouseLeave}
       />
       {showLabels && (
-        <text
+        <animated.text
           transform={`${transform} ${angle > 90 ? 'rotate(180)' : ''}`}
           textAnchor={node.x > Math.PI ? 'end' : 'start'}
-          x={angle > 90 ? -8 : 8}
+          x={animatedProps.textX}
           y={0}
           dy="0.35em"
           fontSize="10px"
           fontFamily="sans-serif"
           fill="#333"
-          fillOpacity={getOpacity()}
+          fillOpacity={animatedProps.opacity}
           style={{ pointerEvents: 'none' }}
         >
           {node.data.name}
-        </text>
+        </animated.text>
       )}
     </g>
   );
