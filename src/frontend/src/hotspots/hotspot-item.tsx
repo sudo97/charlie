@@ -15,6 +15,7 @@ export function HotspotItem({
   color,
   focus,
   onNodeClick,
+  onNodeHover,
   zoomScale,
   viewX,
   viewY,
@@ -23,6 +24,7 @@ export function HotspotItem({
   color: d3.ScaleLinear<number, number, never>;
   focus: d3.HierarchyCircularNode<TreeData>;
   onNodeClick: (node: d3.HierarchyCircularNode<TreeData>) => void;
+  onNodeHover: (node: d3.HierarchyCircularNode<TreeData> | null) => void;
   zoomScale: number;
   viewX: number;
   viewY: number;
@@ -52,10 +54,19 @@ export function HotspotItem({
       fill={fillColor}
       style={{
         cursor: node.children ? 'pointer' : 'default',
-        pointerEvents: node.children ? 'auto' : 'none',
       }}
-      onMouseOver={() => setIsHovering(true)}
-      onMouseOut={() => setIsHovering(false)}
+      onMouseOver={() => {
+        setIsHovering(true);
+        if (!node.children) {
+          onNodeHover(node);
+        }
+      }}
+      onMouseOut={() => {
+        setIsHovering(false);
+        if (!node.children) {
+          onNodeHover(null);
+        }
+      }}
       onClick={handleClick}
     />
   );

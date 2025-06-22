@@ -13,6 +13,7 @@ import { Label } from './hotspot-label';
 import type { Hotspot } from '@core/hotspots.js';
 import { treeData as toTreeData } from '@core/tree-data.js';
 import { groupHotspots } from '@core/group-hotspots';
+import { HotspotTooltip } from './hotspot-tooltip';
 
 export function Hotspots({
   hotspots: data,
@@ -56,9 +57,20 @@ export function Hotspots({
   const color = focus === root ? mkColor(root) : mkColorForFocus(focus);
 
   const handleNodeClick = useCallback(
-    (node: d3.HierarchyCircularNode<TreeData>) =>
-      setFocus(focus !== node && node.children ? node : root),
+    (node: d3.HierarchyCircularNode<TreeData>) => {
+      const clickedFolder = node.children ? node : (node.parent ?? root);
+      setFocus(clickedFolder === focus ? root : clickedFolder);
+    },
     [focus, root]
+  );
+
+  const [hover, setHover] = useState<d3.HierarchyCircularNode<TreeData> | null>(
+    null
+  );
+
+  const handleNodeHover = useCallback(
+    (node: d3.HierarchyCircularNode<TreeData> | null) => setHover(node),
+    []
   );
 
   const handleSvgClick = useCallback(() => setFocus(root), []);
@@ -101,6 +113,7 @@ export function Hotspots({
               color={color}
               focus={focus}
               onNodeClick={handleNodeClick}
+              onNodeHover={handleNodeHover}
               zoomScale={zoomScale}
               viewX={viewX}
               viewY={viewY}
@@ -119,6 +132,14 @@ export function Hotspots({
             />
           ))}
         </g>
+        {hover && (
+          <HotspotTooltip
+            node={hover}
+            zoomScale={zoomScale}
+            viewX={viewX}
+            viewY={viewY}
+          />
+        )}
       </svg>
     </div>
   );
