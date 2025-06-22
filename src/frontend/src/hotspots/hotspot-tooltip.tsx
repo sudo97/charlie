@@ -12,17 +12,35 @@ export function HotspotTooltip({
   viewX: number;
   viewY: number;
 }) {
+  const x = (node.x - viewX) * zoomScale;
+  const y = (node.y - viewY) * zoomScale;
+  const padding = 4;
+  const fontSize = 7;
+
+  // Estimate text width (rough approximation)
+  const textWidth = node.data.path.length * fontSize * 0.6;
+  const textHeight = fontSize;
+
   return (
-    <text
-      x={(node.x - viewX) * zoomScale}
-      y={(node.y - viewY) * zoomScale}
-      fill="black"
-      display="inline"
-      pointerEvents="none"
-      textAnchor="middle"
-      fontSize="10px"
-    >
-      {node.data.path}
-    </text>
+    <g pointerEvents="none">
+      <rect
+        x={x - textWidth / 2 - padding}
+        y={y - textHeight / 2 - padding}
+        width={textWidth + padding * 2}
+        height={textHeight + padding * 2}
+        fill="black"
+        fillOpacity="0.7"
+        rx="3"
+      />
+      <text
+        x={x}
+        y={y + fontSize / 3}
+        fill="white"
+        textAnchor="middle"
+        fontSize={`${fontSize}px`}
+      >
+        {node.data.path}
+      </text>
+    </g>
   );
 }
