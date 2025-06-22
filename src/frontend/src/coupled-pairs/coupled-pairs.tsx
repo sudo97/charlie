@@ -1,9 +1,15 @@
-import { significantCoupledPairs, type CoupledPair } from '@core/coupled-pairs';
+import {
+  coupledPairs,
+  significantCoupledPairs,
+  type CoupledPair,
+} from '@core/coupled-pairs';
 import { useMemo, useState } from 'react';
 import { CoupledPairsNode } from './coupled-pairs-node';
 import { CoupledPairsLink } from './coupled-pairs-link';
 import { CoupledPairsTooltip } from './coupled-pairs-tooltip';
 import type { HierarchicalEdgeBundlingConfig } from '../coupled-pairs-visualization';
+import type { LogItem } from '@core/git-log';
+import { groupGitLog } from '@core/group-git-log';
 
 export interface Node {
   id: string;
@@ -44,12 +50,15 @@ const DEFAULT_CONFIG = {
 export function CoupledPairsVisualization({
   data,
   config,
+  architecturalGroups,
 }: {
-  data: CoupledPair[];
+  data: LogItem[];
   config: HierarchicalEdgeBundlingConfig;
+  architecturalGroups: Record<string, string>;
 }) {
   const [couplingThreshold, setCouplingThreshold] = useState(0.5);
   const [revisionsThreshold, setRevisionsThreshold] = useState(0.5);
+  const [grouped, setGrouped] = useState(false);
 
   const [tooltip, setTooltip] = useState<TooltipData | null>(null);
 
@@ -58,14 +67,16 @@ export function CoupledPairsVisualization({
     [config]
   );
 
-  const { nodes, links } = useMemo(
-    () =>
-      processData(
-        significantCoupledPairs(data, couplingThreshold, revisionsThreshold),
-        mergedConfig
+  const { nodes, links } = useMemo(() => {
+    return processData(
+      significantCoupledPairs(
+        coupledPairs(grouped ? groupGitLog(data, architecturalGroups) : data),
+        couplingThreshold,
+        revisionsThreshold
       ),
-    [data, mergedConfig, couplingThreshold, revisionsThreshold]
-  );
+      mergedConfig
+    );
+  }, [data, mergedConfig, couplingThreshold, revisionsThreshold, grouped]);
 
   const handleLinkHover = (link: Link, event: React.MouseEvent) => {
     const svgElement = event.currentTarget.closest('svg');
@@ -137,6 +148,14 @@ export function CoupledPairsVisualization({
           <span style={{ marginLeft: '0.5rem' }}>
             {Math.round(revisionsThreshold * 100)}%
           </span>
+        </div>
+        <div>
+          <label style={{ marginRight: '0.5rem' }}>Grouped:</label>
+          <input
+            type="checkbox"
+            checked={grouped}
+            onChange={() => setGrouped(!grouped)}
+          />
         </div>
       </div>
       <svg

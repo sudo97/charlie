@@ -2,18 +2,15 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import mustache from 'mustache';
-import type { CoupledPair } from '../core/coupled-pairs.js';
-import type { Soc } from '../core/soc.js';
 import type { Hotspot } from '../core/hotspots.js';
+import type { LogItem } from '../core/git-log.js';
 
 export interface ReportOptions {
   title: string;
   outputPath: string;
   hotspots: Hotspot[];
   architecturalGroups: Record<string, string>;
-  coupledPairs: CoupledPair[];
-  coupledPairsGrouped: CoupledPair[];
-  socData: Soc[];
+  logItems: LogItem[];
   wordCount: Record<string, number>;
 }
 
@@ -38,9 +35,7 @@ export async function generateReport(options: ReportOptions) {
       css: css,
       js: js,
       reportDataJson: JSON.stringify(options.hotspots),
-      coupledPairsJson: JSON.stringify(options.coupledPairs),
-      coupledPairsGroupedJson: JSON.stringify(options.coupledPairsGrouped),
-      socDataJson: JSON.stringify(options.socData),
+      logItemsJson: JSON.stringify(options.logItems),
       wordCountJson: JSON.stringify(options.wordCount),
       architecturalGroupsJson: JSON.stringify(options.architecturalGroups),
     };

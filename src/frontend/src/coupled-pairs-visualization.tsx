@@ -1,6 +1,6 @@
-import { type CoupledPair } from '@core/coupled-pairs';
 import { createRoot } from 'react-dom/client';
 import { CoupledPairsVisualization } from './coupled-pairs/coupled-pairs';
+import type { LogItem } from '@core/git-log';
 
 export interface HierarchicalEdgeBundlingConfig {
   width?: number;
@@ -12,6 +12,7 @@ export interface HierarchicalEdgeBundlingConfig {
   minPercentageThreshold?: number; // Only show edges above this threshold
   container: HTMLElement;
   data: string;
+  groups: string;
 }
 
 export function createHierarchicalEdgeBundlingVisualization(
@@ -21,14 +22,22 @@ export function createHierarchicalEdgeBundlingVisualization(
 
   const root = createRoot(config.container);
 
+  const groupsData = getGroups(config.groups);
+
   if (!data) {
     root.render(<div className="error">No coupling pairs data found</div>);
   } else {
-    root.render(<CoupledPairsVisualization data={data} config={config} />);
+    root.render(
+      <CoupledPairsVisualization
+        data={data}
+        config={config}
+        architecturalGroups={groupsData}
+      />
+    );
   }
 }
 
-function loadData(dataEltId: string): CoupledPair[] | null {
+function loadData(dataEltId: string): LogItem[] | null {
   const dataElement = document.getElementById(dataEltId);
   if (dataElement) {
     try {
@@ -38,4 +47,12 @@ function loadData(dataEltId: string): CoupledPair[] | null {
     }
   }
   return null;
+}
+
+function getGroups(groupsElt: string): Record<string, string> {
+  const groupsElement = document.getElementById(groupsElt);
+  if (!groupsElement) {
+    throw new Error('Groups element not found');
+  }
+  return JSON.parse(groupsElement.textContent || '{}');
 }

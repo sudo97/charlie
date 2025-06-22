@@ -1,17 +1,19 @@
 import type { Hotspot } from '@core/hotspots.js';
 import { createRoot } from 'react-dom/client';
 import { Hotspots } from './hotspots';
-import type { Soc } from '@core/soc';
+import { type Soc, soc } from '@core/soc';
 
 export function visualizeHotspots(
   container: HTMLElement,
-  dataElt: string,
-  groupsElt: string,
-  socElt: string
+  {
+    dataElt,
+    groupsElt,
+    socElt,
+  }: { dataElt: string; groupsElt: string; socElt: string }
 ) {
   const data = getData(dataElt);
   const groups = getGroups(groupsElt);
-  const soc = getSoc(socElt);
+  const soc = getLogItemsData(socElt);
   createRoot(container).render(
     <Hotspots hotspots={data} architecturalGroups={groups} soc={soc} />
   );
@@ -33,10 +35,11 @@ function getGroups(groupsElt: string): Record<string, string> {
   return JSON.parse(groupsElement.textContent || '{}');
 }
 
-function getSoc(socElt: string): Soc[] {
-  const dataElement = document.getElementById(socElt);
+function getLogItemsData(logItemsElt: string): Soc[] {
+  const dataElement = document.getElementById(logItemsElt);
+
   if (!dataElement) {
-    throw new Error('SOC data element not found');
+    throw new Error('Log items data element not found');
   }
-  return JSON.parse(dataElement.textContent || '[]');
+  return soc(JSON.parse(dataElement.textContent || '[]'));
 }

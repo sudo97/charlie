@@ -1,4 +1,4 @@
-import type { CoupledPair } from '@core/coupled-pairs';
+import { coupledPairs, type CoupledPair } from '@core/coupled-pairs';
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
@@ -106,7 +106,7 @@ const CoupledPairsTable: React.FC<CoupledPairsTableProps> = ({ data }) => {
 function loadData(dataEltId: string): CoupledPair[] {
   const dataElement = document.getElementById(dataEltId);
   if (dataElement) {
-    return JSON.parse(dataElement.textContent || '[]');
+    return coupledPairs(JSON.parse(dataElement.textContent || '[]'));
   }
   return [];
 }

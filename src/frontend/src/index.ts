@@ -7,28 +7,23 @@ import { createCoupledPairsTable } from './coupled-pairs-table.js';
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-  visualizeHotspots(
-    document.getElementById('visualization')!,
-    'data',
-    'architectural-groups',
-    'soc-data'
-  );
+  visualizeHotspots(document.getElementById('visualization')!, {
+    dataElt: 'data',
+    groupsElt: 'architectural-groups',
+    socElt: 'log-items-data',
+  });
 
   createHierarchicalEdgeBundlingVisualization({
     container: document.getElementById('coupled-pairs')!,
-    data: 'coupled-pairs-data',
+    data: 'log-items-data',
+    groups: 'architectural-groups',
   });
 
   createCoupledPairsTable(
     document.getElementById('coupled-pairs-table')!,
-    'coupled-pairs-data'
+    'log-items-data'
   );
 
-  createHierarchicalEdgeBundlingVisualization({
-    container: document.getElementById('coupled-pairs-grouped')!,
-    data: 'coupled-pairs-grouped-data',
-  });
-
-  visualizeSoc(document.getElementById('soc')!);
+  visualizeSoc(document.getElementById('soc')!, 'log-items-data');
   visualizeWordCount(document.getElementById('word-count')!);
 });
