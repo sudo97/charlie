@@ -10,7 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
   visualizeHotspots(
     document.getElementById('visualization')!,
     'data',
-    'architectural-groups'
+    'architectural-groups',
+    'soc-data'
   );
 
   createHierarchicalEdgeBundlingVisualization({

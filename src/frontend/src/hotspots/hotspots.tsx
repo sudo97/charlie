@@ -14,13 +14,16 @@ import type { Hotspot } from '@core/hotspots.js';
 import { treeData as toTreeData } from '@core/tree-data.js';
 import { groupHotspots } from '@core/group-hotspots';
 import { HotspotTooltip } from './hotspot-tooltip';
+import type { Soc } from '@core/soc';
 
 export function Hotspots({
   hotspots: data,
   architecturalGroups,
+  soc,
 }: {
   hotspots: Hotspot[];
   architecturalGroups: Record<string, string>;
+  soc: Soc[];
 }) {
   const [grouped, setGrouped] = useState(false);
 
@@ -138,6 +141,7 @@ export function Hotspots({
             zoomScale={zoomScale}
             viewX={viewX}
             viewY={viewY}
+            soc={soc}
           />
         )}
       </svg>
