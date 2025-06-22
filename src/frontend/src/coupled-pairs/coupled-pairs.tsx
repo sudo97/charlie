@@ -1,4 +1,4 @@
-import { type CoupledPair } from '@core/coupled-pairs';
+import { significantCoupledPairs, type CoupledPair } from '@core/coupled-pairs';
 import { useMemo, useState } from 'react';
 import { CoupledPairsNode } from './coupled-pairs-node';
 import { CoupledPairsLink } from './coupled-pairs-link';
@@ -48,6 +48,9 @@ export function CoupledPairsVisualization({
   data: CoupledPair[];
   config: HierarchicalEdgeBundlingConfig;
 }) {
+  const [couplingThreshold, setCouplingThreshold] = useState(0.5);
+  const [revisionsThreshold, setRevisionsThreshold] = useState(0.5);
+
   const [tooltip, setTooltip] = useState<TooltipData | null>(null);
 
   const mergedConfig = useMemo(
@@ -55,9 +58,14 @@ export function CoupledPairsVisualization({
     [config]
   );
 
-  const { nodes, links } = useMemo(() => {
-    return processData(data, mergedConfig);
-  }, [data, mergedConfig]);
+  const { nodes, links } = useMemo(
+    () =>
+      processData(
+        significantCoupledPairs(data, couplingThreshold, revisionsThreshold),
+        mergedConfig
+      ),
+    [data, mergedConfig, couplingThreshold, revisionsThreshold]
+  );
 
   const handleLinkHover = (link: Link, event: React.MouseEvent) => {
     const svgElement = event.currentTarget.closest('svg');
@@ -94,6 +102,43 @@ export function CoupledPairsVisualization({
 
   return (
     <div>
+      <div style={{ marginBottom: '1rem' }}>
+        <div style={{ marginBottom: '0.5rem' }}>
+          <label style={{ marginRight: '0.5rem' }}>
+            Coupling Strength Threshold:
+          </label>
+          <input
+            type="range"
+            min="1"
+            max="100"
+            defaultValue="50"
+            style={{ width: '200px' }}
+            onChange={e => {
+              setCouplingThreshold(Number(e.target.value) / 100);
+            }}
+          />
+          <span style={{ marginLeft: '0.5rem' }}>
+            {Math.round(couplingThreshold * 100)}%
+          </span>
+        </div>
+
+        <div>
+          <label style={{ marginRight: '0.5rem' }}>Revisions Threshold:</label>
+          <input
+            type="range"
+            min="1"
+            max="100"
+            defaultValue="50"
+            style={{ width: '200px' }}
+            onChange={e => {
+              setRevisionsThreshold(Number(e.target.value) / 100);
+            }}
+          />
+          <span style={{ marginLeft: '0.5rem' }}>
+            {Math.round(revisionsThreshold * 100)}%
+          </span>
+        </div>
+      </div>
       <svg
         width={mergedConfig.width}
         height={mergedConfig.height}
@@ -211,14 +256,9 @@ function processData(
   coupledPairs: CoupledPair[],
   config: typeof DEFAULT_CONFIG
 ): { nodes: Node[]; links: Link[] } {
-  // Filter pairs by threshold
-  const filteredPairs = coupledPairs.filter(
-    pair => pair.percentage >= config.minPercentageThreshold
-  );
-
   // Extract unique files
   const fileSet = new Set<string>();
-  filteredPairs.forEach(pair => {
+  coupledPairs.forEach(pair => {
     fileSet.add(pair.file1);
     fileSet.add(pair.file2);
   });
@@ -250,7 +290,7 @@ function processData(
   const nodeById = new Map(nodes.map(node => [node.id, node]));
 
   // Create links from coupled pairs
-  const links: Link[] = filteredPairs
+  const links: Link[] = coupledPairs
     .map(pair => {
       const source = nodeById.get(pair.file1);
       const target = nodeById.get(pair.file2);

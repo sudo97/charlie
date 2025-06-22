@@ -20,11 +20,11 @@ const logItems = await getLogItems(repositoryPath, config);
 
 const hotspotsData = await readHotspots(repositoryPath, logItems);
 
-const coupledPairsData = significantCoupledPairs(
+const coupledPairsData = coupledPairs(logItems); /* significantCoupledPairs(
   coupledPairs(logItems),
   config.revisionsPercentile,
   config.minCouplingPercentage
-);
+); */
 
 const coupledPairsDataGrouped = significantCoupledPairs(
   coupledPairs(groupGitLog(logItems, config.architecturalGroups)),
