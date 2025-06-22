@@ -1,7 +1,7 @@
 import '../styles/main.css';
 import { createHierarchicalEdgeBundlingVisualization } from './coupled-pairs-visualization';
 import { visualizeHotspots } from './hotspots/index.js';
-import { visualizeSoc } from './soc-visualization.js';
+import { visualizeSoc } from './soc/soc-visualization.js';
 import { visualizeWordCount } from './visualizeWordCount';
 import { createCoupledPairsTable } from './coupled-pairs-table.js';
 
