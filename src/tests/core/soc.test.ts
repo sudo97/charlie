@@ -86,6 +86,49 @@ describe('soc', () => {
       { file: 'fileC.txt', soc: 2 },
     ]);
   });
+
+  it('should return results sorted by soc score in descending order', () => {
+    const gitRevisions: LogItem[] = [
+      {
+        hash: '123456',
+        date: '2024-01-01',
+        author: 'John Doe',
+        message: 'First commit',
+        fileEntries: [
+          { fileName: 'fileA.txt', added: 1, removed: 1 },
+          { fileName: 'fileB.txt', added: 1, removed: 1 },
+        ],
+      },
+      {
+        hash: '234567',
+        date: '2024-01-02',
+        author: 'John Doe',
+        message: 'Second commit',
+        fileEntries: [
+          { fileName: 'fileB.txt', added: 1, removed: 1 },
+          { fileName: 'fileC.txt', added: 1, removed: 1 },
+        ],
+      },
+      {
+        hash: '345678',
+        date: '2024-01-03',
+        author: 'John Doe',
+        message: 'Third commit',
+        fileEntries: [
+          { fileName: 'fileB.txt', added: 1, removed: 1 },
+          { fileName: 'fileC.txt', added: 1, removed: 1 },
+        ],
+      },
+    ];
+
+    const result = soc(gitRevisions);
+
+    expect(result).toEqual<Soc[]>([
+      { file: 'fileB.txt', soc: 3 },
+      { file: 'fileC.txt', soc: 2 },
+      { file: 'fileA.txt', soc: 1 },
+    ]);
+  });
 });
 
 describe('socPercentile', () => {
