@@ -241,8 +241,8 @@ This creates an interesting paradox: the feature works best on codebases that ne
     - [ ] Add filtering on the frontend
     - [ ] Rewrite coupled pairs diagram
   - [ ] Add some form of routing
-  - [ ] Rewrite SOC
-  - [ ] Rewrite word count
+  - [x] Rewrite SOC
+  - [x] Rewrite word count
   - [ ] Add Social info
 - [ ] Default date should be 1 year before the last commit in the repo
 - [ ] Architectural groups should produce 1. hotpsots 2. coupled pairs 3. SOC?
