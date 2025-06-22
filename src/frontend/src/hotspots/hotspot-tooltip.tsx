@@ -17,8 +17,22 @@ export function HotspotTooltip({
 }) {
   const x = (node.x - viewX) * zoomScale;
   const y = (node.y - viewY) * zoomScale;
+
   const padding = 4;
   const fontSize = 7;
+
+  // Calculate direction from circle center to viewport center (0, 0)
+  const directionX = -x;
+  const directionY = -y;
+  const magnitude = Math.sqrt(
+    directionX * directionX + directionY * directionY
+  );
+
+  // Normalize direction and multiply by radius to get offset
+  const offsetX =
+    magnitude > 0 ? (directionX / magnitude) * node.r * zoomScale : 0;
+  const offsetY =
+    magnitude > 0 ? (directionY / magnitude) * node.r * zoomScale : 0;
 
   const socInfo = soc.find(s => `/${s.file}` === node.data.path);
 
@@ -36,8 +50,8 @@ export function HotspotTooltip({
   return (
     <g pointerEvents="none">
       <rect
-        x={x - maxLineWidth / 2 - padding}
-        y={y - totalHeight / 2 - padding}
+        x={x + offsetX - maxLineWidth / 2 - padding}
+        y={y + offsetY - totalHeight / 2 - padding}
         width={maxLineWidth + padding * 2}
         height={totalHeight + padding * 2}
         fill="black"
@@ -47,8 +61,8 @@ export function HotspotTooltip({
       {lines.map((line, index) => (
         <text
           key={index}
-          x={x}
-          y={y - totalHeight / 2 + (index + 1) * (textHeight + 2) - 2}
+          x={x + offsetX}
+          y={y + offsetY - totalHeight / 2 + (index + 1) * (textHeight + 2) - 2}
           fill="white"
           textAnchor="middle"
           fontSize={`${fontSize}px`}
