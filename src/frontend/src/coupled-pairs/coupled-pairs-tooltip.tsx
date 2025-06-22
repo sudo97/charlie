@@ -18,7 +18,8 @@ export function CoupledPairsTooltip({
   if (tooltip.link) {
     content = [
       'Coupling',
-      `${tooltip.link.source.data.path} ↔ ${tooltip.link.target.data.path}`,
+      `${tooltip.link.source.data.path}`,
+      `${tooltip.link.target.data.path}`,
       `Strength: ${(tooltip.link.value * 100).toFixed(1)}%`,
       `Revisions: ${tooltip.link.revisions}`,
     ];
@@ -40,7 +41,7 @@ export function CoupledPairsTooltip({
   // Estimate text width (rough approximation)
   const textWidth = Math.min(
     maxWidth,
-    Math.max(...content.map(line => line.length * 7))
+    Math.max(...content.map(line => line.length * fontSize))
   );
   const rectWidth = textWidth + padding * 2;
   const rectHeight = content.length * lineHeight + padding * 2;
