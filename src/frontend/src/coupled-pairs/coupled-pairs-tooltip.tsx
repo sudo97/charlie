@@ -18,14 +18,14 @@ export function CoupledPairsTooltip({
   if (tooltip.link) {
     content = [
       'Coupling',
-      `${tooltip.link.source.data.name} ↔ ${tooltip.link.target.data.name}`,
+      `${tooltip.link.source.data.path} ↔ ${tooltip.link.target.data.path}`,
       `Strength: ${(tooltip.link.value * 100).toFixed(1)}%`,
       `Revisions: ${tooltip.link.revisions}`,
     ];
   } else if (tooltip.node) {
     content = [
       tooltip.node.data.name,
-      `Path: ${tooltip.node.data.path}`,
+      `Path: ${tooltip.node.filePath}`,
       `Connections: ${tooltip.connections || 0}`,
     ];
   }
