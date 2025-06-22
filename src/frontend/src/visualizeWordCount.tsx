@@ -14,14 +14,15 @@ interface CloudWord extends WordData {
   rotate?: number;
 }
 
-const WordCloudComponent: React.FC = () => {
+const WordCloudComponent: React.FC<{ data: Record<string, number> }> = ({
+  data,
+}) => {
   const [words, setWords] = useState<CloudWord[]>([]);
 
   const width = 800;
   const height = 600;
 
   useEffect(() => {
-    const data = getData();
     const maxCount = Math.max(...Object.values(data));
 
     // Convert the word count data to the format expected by d3-cloud
@@ -94,7 +95,8 @@ const WordCloudComponent: React.FC = () => {
 
 export function visualizeWordCount(element: HTMLElement) {
   const root = createRoot(element);
-  root.render(<WordCloudComponent />);
+  const data = getData();
+  root.render(<WordCloudComponent data={data} />);
 }
 
 function getData(): Record<string, number> {
