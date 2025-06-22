@@ -237,6 +237,9 @@ This creates an interesting paradox: the feature works best on codebases that ne
 - [ ] Rewrite frontend in react or similar, add dynamic filtering and grouping. Consider rendering svg directly instead of d3, consider using `react-spring` for animations.
   - [x] Rewrite hotspots
   - [ ] Rewrite coupled pairs
+    - [x] Rewrite coupled pairs table
+    - [ ] Add filtering on the frontend
+    - [ ] Rewrite coupled pairs diagram
   - [ ] Add some form of routing
   - [ ] Rewrite SOC
   - [ ] Rewrite word count
