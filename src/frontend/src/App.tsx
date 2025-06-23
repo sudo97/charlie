@@ -1,4 +1,3 @@
-import React from 'react';
 import { Hotspots } from './hotspots/hotspots';
 import { CoupledPairsVisualization } from './coupled-pairs/coupled-pairs';
 import { CoupledPairsTable } from './coupled-pairs-table';
@@ -34,11 +33,6 @@ export function App({ data }: AppProps) {
         <div id="coupled-pairs" className="visualization">
           <CoupledPairsVisualization
             data={data.logItems}
-            config={{
-              container: document.createElement('div'), // Placeholder, won't be used
-              data: '',
-              groups: '',
-            }}
             architecturalGroups={data.architecturalGroups}
           />
         </div>

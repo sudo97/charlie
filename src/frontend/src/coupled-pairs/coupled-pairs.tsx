@@ -7,7 +7,6 @@ import { useMemo, useState } from 'react';
 import { CoupledPairsNode } from './coupled-pairs-node';
 import { CoupledPairsLink } from './coupled-pairs-link';
 import { CoupledPairsTooltip } from './coupled-pairs-tooltip';
-import type { HierarchicalEdgeBundlingConfig } from '../coupled-pairs-visualization';
 import type { LogItem } from '@core/git-log';
 import { groupGitLog } from '@core/group-git-log';
 
@@ -41,19 +40,14 @@ const DEFAULT_CONFIG = {
   width: 800,
   height: 800,
   innerRadius: 200,
-  outerRadius: 350,
   tension: 0.85,
-  showLabels: true,
-  minPercentageThreshold: 0.1,
 };
 
 export function CoupledPairsVisualization({
   data,
-  config,
   architecturalGroups,
 }: {
   data: LogItem[];
-  config: HierarchicalEdgeBundlingConfig;
   architecturalGroups: Record<string, string>;
 }) {
   const [couplingThreshold, setCouplingThreshold] = useState(0.5);
@@ -62,21 +56,15 @@ export function CoupledPairsVisualization({
 
   const [tooltip, setTooltip] = useState<TooltipData | null>(null);
 
-  const mergedConfig = useMemo(
-    () => ({ ...DEFAULT_CONFIG, ...config }),
-    [config]
-  );
-
   const { nodes, links } = useMemo(() => {
     return processData(
       significantCoupledPairs(
         coupledPairs(grouped ? groupGitLog(data, architecturalGroups) : data),
         couplingThreshold,
         revisionsThreshold
-      ),
-      mergedConfig
+      )
     );
-  }, [data, mergedConfig, couplingThreshold, revisionsThreshold, grouped]);
+  }, [data, couplingThreshold, revisionsThreshold, grouped]);
 
   const handleLinkHover = (link: Link, event: React.MouseEvent) => {
     const svgElement = event.currentTarget.closest('svg');
@@ -159,9 +147,9 @@ export function CoupledPairsVisualization({
         </div>
       </div>
       <svg
-        width={mergedConfig.width}
-        height={mergedConfig.height}
-        viewBox={`-${mergedConfig.width / 2} -${mergedConfig.height / 2} ${mergedConfig.width} ${mergedConfig.height}`}
+        width={DEFAULT_CONFIG.width}
+        height={DEFAULT_CONFIG.height}
+        viewBox={`-${DEFAULT_CONFIG.width / 2} -${DEFAULT_CONFIG.height / 2} ${DEFAULT_CONFIG.width} ${DEFAULT_CONFIG.height}`}
         style={{
           maxWidth: '100%',
           height: 'auto',
@@ -174,7 +162,7 @@ export function CoupledPairsVisualization({
             <CoupledPairsLink
               key={`${link.source.id}-${link.target.id}-${index}`}
               link={link}
-              tension={mergedConfig.tension}
+              tension={DEFAULT_CONFIG.tension}
               onHover={handleLinkHover}
               onMouseLeave={handleMouseLeave}
               isHighlighted={tooltip?.link === link}
@@ -187,7 +175,6 @@ export function CoupledPairsVisualization({
             <CoupledPairsNode
               key={node.id}
               node={node}
-              showLabels={mergedConfig.showLabels}
               onHover={handleNodeHover}
               onMouseLeave={handleMouseLeave}
               isHighlighted={tooltip?.node === node}
@@ -203,8 +190,8 @@ export function CoupledPairsVisualization({
         {tooltip && (
           <CoupledPairsTooltip
             tooltip={tooltip}
-            svgWidth={mergedConfig.width}
-            svgHeight={mergedConfig.height}
+            svgWidth={DEFAULT_CONFIG.width}
+            svgHeight={DEFAULT_CONFIG.height}
           />
         )}
       </svg>
@@ -271,10 +258,10 @@ function generateUniqueDisplayNames(files: string[]): Map<string, string> {
   return displayNames;
 }
 
-function processData(
-  coupledPairs: CoupledPair[],
-  config: typeof DEFAULT_CONFIG
-): { nodes: Node[]; links: Link[] } {
+function processData(coupledPairs: CoupledPair[]): {
+  nodes: Node[];
+  links: Link[];
+} {
   // Extract unique files
   const fileSet = new Set<string>();
   coupledPairs.forEach(pair => {
@@ -298,7 +285,7 @@ function processData(
       id: file,
       filePath: file,
       x: angle,
-      y: config.innerRadius,
+      y: DEFAULT_CONFIG.innerRadius,
       data: {
         name: displayName,
         path: file,

@@ -3,7 +3,7 @@ import { useSpring, animated } from '@react-spring/web';
 
 export function CoupledPairsNode({
   node,
-  showLabels,
+  // showLabels,
   onHover,
   onMouseLeave,
   isHighlighted,
@@ -11,7 +11,7 @@ export function CoupledPairsNode({
   connectedToHighlighted,
 }: {
   node: Node;
-  showLabels: boolean;
+  // showLabels: boolean;
   onHover: (node: Node, event: React.MouseEvent) => void;
   onMouseLeave: () => void;
   isHighlighted?: boolean;
@@ -54,22 +54,21 @@ export function CoupledPairsNode({
         onMouseEnter={handleMouseEnter}
         onMouseLeave={onMouseLeave}
       />
-      {showLabels && (
-        <animated.text
-          transform={`${transform} ${angle > 90 ? 'rotate(180)' : ''}`}
-          textAnchor={node.x > Math.PI ? 'end' : 'start'}
-          x={animatedProps.textX}
-          y={0}
-          dy="0.35em"
-          fontSize="10px"
-          fontFamily="sans-serif"
-          fill="#333"
-          fillOpacity={animatedProps.opacity}
-          style={{ pointerEvents: 'none' }}
-        >
-          {node.data.name}
-        </animated.text>
-      )}
+      <animated.text
+        transform={`${transform} ${angle > 90 ? 'rotate(180)' : ''}`}
+        textAnchor={node.x > Math.PI ? 'end' : 'start'}
+        x={animatedProps.textX}
+        y={0}
+        dy="0.35em"
+        fontSize="10px"
+        fontFamily="sans-serif"
+        fill="#333"
+        fillOpacity={animatedProps.opacity}
+        style={{ pointerEvents: 'none' }}
+      >
+        {node.data.name}
+      </animated.text>
+      )
     </g>
   );
 }
