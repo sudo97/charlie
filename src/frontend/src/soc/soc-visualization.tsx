@@ -1,31 +1,7 @@
-import { soc, type Soc } from '@core/soc';
-import { createRoot } from 'react-dom/client';
+import { type Soc } from '@core/soc';
 import { StatisticsPanel } from './statistics-panel.js';
 import { VisualizationContainer } from './soc-table.js';
 import { ErrorDisplay } from './soc-error.js';
-
-function getData(dataElt: string): Soc[] {
-  const dataElement = document.getElementById(dataElt);
-  if (!dataElement) {
-    throw new Error('Log items data element not found');
-  }
-  return soc(JSON.parse(dataElement.textContent || '[]'));
-}
-
-export function visualizeSoc(container: HTMLElement, dataElt: string) {
-  try {
-    const data = getData(dataElt);
-    const root = createRoot(container);
-    root.render(<SocVisualization data={data} />);
-  } catch (error) {
-    const root = createRoot(container);
-    root.render(
-      <ErrorDisplay
-        message={'Error loading SOC data: ' + (error as Error).message}
-      />
-    );
-  }
-}
 
 interface SocVisualizationProps {
   data: Soc[];
