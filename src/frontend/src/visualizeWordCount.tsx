@@ -14,7 +14,7 @@ interface CloudWord extends WordData {
   rotate?: number;
 }
 
-const WordCloudComponent: React.FC<{ data: Record<string, number> }> = ({
+export const WordCloudComponent: React.FC<{ data: Record<string, number> }> = ({
   data,
 }) => {
   const [words, setWords] = useState<CloudWord[]>([]);

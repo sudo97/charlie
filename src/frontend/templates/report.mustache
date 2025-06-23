@@ -8,31 +8,7 @@
   </head>
   <body>
     <div id="app">
-    </div>
-    <div class="container">
-      <h1>{{title}}</h1>
-      <h2>File-level Hotspots</h2>
-      <div id="visualization" class="visualization">
-        <!-- D3 visualization will be inserted here -->
-      </div>
-
-      <h2>Coupled Pairs</h2>
-      <div id="coupled-pairs" class="visualization">
-      </div>
-
-      <div id="coupled-pairs-table" class="visualization">
-      </div>
-
-
-      <div id="soc">
-      </div>
-
-      <h1>Word Count</h2>
-      <p style="color: #666; font-size: 0.9em; margin: 20px 0;">
-        Your team's modus operandi. Not really a metric, but if you see that FIX is the most common word by far, it should make you think.
-      </p>
-      <div id="word-count">
-      </div>
+      <!-- React app will be mounted here -->
     </div>
 
     <!-- Inject report data -->
@@ -53,6 +29,9 @@
     </script>
     
     <!-- Load the built frontend bundle -->
+    <script>
+      window.reportTitle = "{{title}}";
+    </script>
     <script type="module">
       {{{js}}}
     </script>

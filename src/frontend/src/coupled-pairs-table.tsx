@@ -14,7 +14,9 @@ interface CoupledPairsTableProps {
   data: CoupledPair[];
 }
 
-const CoupledPairsTable: React.FC<CoupledPairsTableProps> = ({ data }) => {
+export const CoupledPairsTable: React.FC<CoupledPairsTableProps> = ({
+  data,
+}) => {
   const [hoveredRow, setHoveredRow] = useState<number | null>(null);
 
   const headers = [
