@@ -17,9 +17,6 @@ This is a tool for analyzing and visualizing your git history. Based on ideas fr
     - [`exclude` (optional)](#exclude-optional)
     - [`after` (optional)](#after-optional)
     - [`architecturalGroups` (optional)](#architecturalgroups-optional)
-    - [`socPercentile` (optional)](#socpercentile-optional)
-    - [`revisionsPercentile` (optional)](#revisionspercentile-optional)
-    - [`minCouplingPercentage` (optional)](#mincouplingpercentage-optional)
   - [Complete Example](#complete-example)
   - [How It Works](#how-it-works)
 - [Thoughts](#thoughts)
@@ -62,7 +59,7 @@ While cyclomatic complexity might be more academically accurate, this nested-bas
 
 # .charlie.config.json
 
-The `.charlie.config.json` file allows you to customize Charlie's analysis behavior. This file should be placed in the root of your repository (the same directory where you run the `charlie` command).
+The `.charlie.config.json` file allows you to customize Charlie's analysis behavior. This file should be placed in the root of your repository (the same directory where you run the `charlie` command). Additional analysis options like coupling thresholds and percentile filters are available through the interactive frontend.
 
 ## Configuration Fields
 
@@ -130,45 +127,6 @@ This allows you to see both the detailed file-level view and the higher-level ar
 }
 ```
 
-### `socPercentile` (optional)
-
-**Type:** `number` (between 0 and 1)  
-**Default:** `0.8` (80th percentile)
-
-Controls the percentile threshold for the Sum of Coupling (SOC) analysis. Only files with coupling scores at or above this percentile will be shown in the SOC visualization. A value of `0.8` means only the top 20% most coupled files are displayed.
-
-```json
-{
-  "socPercentile": 0.9
-}
-```
-
-### `revisionsPercentile` (optional)
-
-**Type:** `number` (between 0 and 1)  
-**Default:** `0.8` (80th percentile)
-
-Controls the percentile threshold for filtering coupled pairs based on revision count. Coupled pairs with revision counts at or above this percentile will be included in the visualization, regardless of their coupling percentage. This helps identify frequently co-changed files even if their coupling percentage is low.
-
-```json
-{
-  "revisionsPercentile": 0.9
-}
-```
-
-### `minCouplingPercentage` (optional)
-
-**Type:** `number` (between 0 and 1)  
-**Default:** `0.5` (50%)
-
-Sets the minimum coupling percentage threshold for including coupled pairs in the analysis. Files that are changed together at least this percentage of the time will always be included, regardless of their revision count. A value of `0.5` means files must be coupled at least 50% of the time to be shown.
-
-```json
-{
-  "minCouplingPercentage": 0.3
-}
-```
-
 ## Complete Example
 
 Here's a comprehensive example of a `.charlie.config.json` file:
@@ -192,10 +150,7 @@ Here's a comprehensive example of a `.charlie.config.json` file:
     "^src/store/": "State Management",
     "^src/utils/": "Utilities",
     "^src/types/": "Type Definitions"
-  },
-  "socPercentile": 0.85,
-  "revisionsPercentile": 0.9,
-  "minCouplingPercentage": 0.3
+  }
 }
 ```
 
@@ -207,9 +162,7 @@ Here's a comprehensive example of a `.charlie.config.json` file:
 
 3. **Architectural Grouping**: If `architecturalGroups` is specified, files matching the regex patterns are grouped together and their complexity/revision metrics are combined. Both the original file-level hotspots and the grouped architectural hotspots are displayed in separate visualizations.
 
-4. **SOC Filtering**: The SOC (Sum of Coupling) analysis shows only files above the specified percentile threshold to focus on the most problematic coupling relationships.
-
-5. **Coupled Pairs Filtering**: Coupled pairs are filtered using two criteria - files are included if they meet either the minimum coupling percentage threshold OR have revision counts above the specified percentile, ensuring both highly coupled and frequently co-changed files are captured.
+4. **Interactive Analysis**: Additional filtering options for SOC analysis, coupled pairs, and other metrics are available through the interactive frontend, allowing you to adjust thresholds and percentiles dynamically without regenerating the analysis.
 
 This configuration system allows you to focus your analysis on specific parts of your codebase and organize the results in a way that makes sense for your project's architecture.
 

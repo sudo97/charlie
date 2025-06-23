@@ -10,8 +10,5 @@ describe('parseConfig', () => {
     expect(config.after.getTime()).toBe(expectedDate.getTime());
     expect(config.include).toStrictEqual([]);
     expect(config.exclude).toStrictEqual([]);
-    expect(config.socPercentile).toBe(0.8);
-    expect(config.revisionsPercentile).toBe(0.8);
-    expect(config.minCouplingPercentage).toBe(0.5);
   });
 });
