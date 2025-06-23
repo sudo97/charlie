@@ -10,15 +10,10 @@ function processLine(
   if (line.length === 0) {
     return { count: 0, newDepth: prevDepth };
   }
+
   const newDepth = line.match(/^\s*/)?.[0]?.length || 0;
-  let count = 0;
 
-  if (newDepth > prevDepth) {
-    count++;
-  }
-  count++;
-
-  return { count, newDepth };
+  return { count: newDepth > prevDepth ? 2 : 1, newDepth };
 }
 
 export async function visualComplexity(emitter: VisualComplexityEmitter) {
