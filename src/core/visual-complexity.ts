@@ -16,7 +16,9 @@ function processLine(
   return { count: newDepth > prevDepth ? 2 : 1, newDepth };
 }
 
-export async function visualComplexity(emitter: VisualComplexityEmitter) {
+export async function visualComplexity(
+  emitter: VisualComplexityEmitter
+): Promise<number> {
   return new Promise<number>(resolve => {
     let count = 0;
     let buf = '';
