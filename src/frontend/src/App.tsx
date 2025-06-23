@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { Hotspots } from './hotspots/hotspots';
-import { CoupledPairsVisualization } from './coupled-pairs/coupled-pairs';
-import { CoupledPairsTable } from './coupled-pairs-table';
 import { SocVisualization } from './soc/soc-visualization';
 import { WordCloudComponent } from './visualizeWordCount';
 import type { AppData } from './data-loader';
+import { CoupledPairsTab } from './coupled-pairs/coupled-pairs-tab';
 
 interface AppProps {
   data: AppData;
@@ -36,19 +35,7 @@ export function App({ data }: AppProps) {
         );
 
       case 'coupled-pairs':
-        return (
-          <>
-            <div id="coupled-pairs" className="visualization">
-              <CoupledPairsVisualization
-                data={data.logItems}
-                architecturalGroups={data.architecturalGroups}
-              />
-            </div>
-            <div id="coupled-pairs-table" className="visualization">
-              <CoupledPairsTable data={data.coupledPairs} />
-            </div>
-          </>
-        );
+        return <CoupledPairsTab data={data} />;
 
       case 'soc':
         return (
