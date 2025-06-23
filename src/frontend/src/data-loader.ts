@@ -13,11 +13,12 @@ export interface AppData {
 }
 
 export function loadAllData(): AppData {
+  const logItems = loadLogItems();
   return {
     hotspots: loadHotspots(),
-    logItems: loadLogItems(),
-    soc: loadSoc(),
-    coupledPairs: loadCoupledPairs(),
+    logItems,
+    soc: loadSoc(logItems),
+    coupledPairs: loadCoupledPairs(logItems),
     architecturalGroups: loadArchitecturalGroups(),
     wordCount: loadWordCount(),
   };
@@ -39,13 +40,11 @@ function loadLogItems(): LogItem[] {
   return JSON.parse(dataElement.textContent || '[]');
 }
 
-function loadSoc(): Soc[] {
-  const logItems = loadLogItems();
+function loadSoc(logItems: LogItem[]): Soc[] {
   return soc(logItems);
 }
 
-function loadCoupledPairs(): CoupledPair[] {
-  const logItems = loadLogItems();
+function loadCoupledPairs(logItems: LogItem[]): CoupledPair[] {
   return coupledPairs(logItems);
 }
 
