@@ -1,5 +1,8 @@
 import type { Revisions } from './revisions.js';
-import { visualComplexity } from './visual-complexity.js';
+import {
+  visualComplexity,
+  type VisualComplexityEmitter,
+} from './visual-complexity.js';
 
 export type Hotspot = {
   file: string;
@@ -9,12 +12,12 @@ export type Hotspot = {
 
 export async function hotspots(
   revisions: Revisions,
-  fileReader: (file: string) => Promise<string>
+  fileReader: (file: string) => VisualComplexityEmitter
 ): Promise<Hotspot[]> {
   const hotspots: Hotspot[] = [];
   for (const file of Object.keys(revisions)) {
-    const contents = await fileReader(file);
-    const complexity = visualComplexity(contents);
+    const complexityEmitter = fileReader(file);
+    const complexity = await visualComplexity(complexityEmitter);
     hotspots.push({ file, complexity, revisions: revisions[file]! });
   }
   return hotspots

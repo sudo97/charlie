@@ -1,5 +1,6 @@
 import * as path from 'path';
-import * as fs from 'fs/promises';
+// import * as fs from 'fs/promises';
+import * as fsOld from 'fs';
 import { hotspots } from '../core/hotspots.js';
 import type { LogItem } from '../core/git-log.js';
 import { revisions } from '../core/revisions.js';
@@ -9,18 +10,32 @@ export async function readHotspots(
   logItems: LogItem[]
 ) {
   const revisionsData = revisions(logItems);
-  return hotspots(revisionsData, async file => {
+  return hotspots(revisionsData, file => {
     const filepath = path.join(repositoryPath, file);
-    console.log('reading', filepath);
-    if (
-      (await fs
-        .access(filepath)
-        .then(() => true)
-        .catch(() => false)) &&
-      !(await fs.stat(filepath)).isDirectory()
-    ) {
-      return fs.readFile(filepath, 'utf8');
+
+    if (!fsOld.existsSync(filepath) || fsOld.statSync(filepath).isDirectory()) {
+      return {
+        onData: () => {},
+        onEnd: onEnd => {
+          onEnd();
+        },
+      };
     }
-    return '';
+
+    console.log('reading', filepath);
+    const fileStream = fsOld.createReadStream(filepath, { encoding: 'utf8' });
+
+    return {
+      onData: listener => {
+        fileStream.on('data', (chunk: string | Buffer<ArrayBufferLike>) => {
+          listener(chunk.toString());
+        });
+      },
+      onEnd: listener => {
+        fileStream.on('end', () => {
+          listener();
+        });
+      },
+    };
   });
 }

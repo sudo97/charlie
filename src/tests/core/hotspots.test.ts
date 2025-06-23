@@ -1,18 +1,19 @@
 import { describe, it, expect } from 'vitest';
 import { hotspots } from '../../core/hotspots';
+import { mkEmitter } from './visual-complexity.test';
 
 describe('Hotspots', () => {
   it('should return an empty array if there are no hotspots', async () => {
-    const result = await hotspots({}, async () => '');
+    const result = await hotspots({}, () => mkEmitter(''));
     expect(result).toEqual([]);
   });
 
   it('should read each file', async () => {
     const files: string[] = [];
 
-    await hotspots({ 'file1.txt': 1, 'file2.txt': 1 }, async file => {
+    await hotspots({ 'file1.txt': 1, 'file2.txt': 1 }, file => {
       files.push(file);
-      return file;
+      return mkEmitter('');
     });
 
     expect(files).toEqual(['file1.txt', 'file2.txt']);
@@ -24,9 +25,8 @@ describe('Hotspots', () => {
       'file2.txt': 'line1\nline2\nline3',
     };
 
-    const result = await hotspots(
-      { 'file1.txt': 1, 'file2.txt': 1 },
-      async file => fileSystem[file]
+    const result = await hotspots({ 'file1.txt': 1, 'file2.txt': 1 }, file =>
+      mkEmitter(fileSystem[file])
     );
 
     expect(result).toEqual([
@@ -41,9 +41,8 @@ describe('Hotspots', () => {
       'file2.txt': 'line1\nline2\nline3',
     };
 
-    const result = await hotspots(
-      { 'file1.txt': 1, 'file2.txt': 1 },
-      async file => fileSystem[file]
+    const result = await hotspots({ 'file1.txt': 1, 'file2.txt': 1 }, file =>
+      mkEmitter(fileSystem[file])
     );
 
     expect(result).toEqual([
@@ -64,7 +63,7 @@ describe('Hotspots', () => {
         'high-complexity-low-revisions.txt': 3,
         'medium-complexity-medium-revisions.txt': 8,
       },
-      async file => fileSystem[file]
+      file => mkEmitter(fileSystem[file])
     );
 
     expect(result).toEqual([
