@@ -10,7 +10,7 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'src/frontend/src/index.ts'),
+        main: resolve(__dirname, 'src/frontend/src/index.tsx'),
       },
       output: {
         entryFileNames: 'bundle.js',
