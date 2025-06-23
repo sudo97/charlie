@@ -137,14 +137,16 @@ export function CoupledPairsVisualization({
             {Math.round(revisionsThreshold * 100)}%
           </span>
         </div>
-        <div>
-          <label style={{ marginRight: '0.5rem' }}>Grouped:</label>
-          <input
-            type="checkbox"
-            checked={grouped}
-            onChange={() => setGrouped(!grouped)}
-          />
-        </div>
+        {Object.keys(architecturalGroups).length > 0 && (
+          <div>
+            <label style={{ marginRight: '0.5rem' }}>Grouped:</label>
+            <input
+              type="checkbox"
+              checked={grouped}
+              onChange={() => setGrouped(!grouped)}
+            />
+          </div>
+        )}
       </div>
       <svg
         width={DEFAULT_CONFIG.width}
