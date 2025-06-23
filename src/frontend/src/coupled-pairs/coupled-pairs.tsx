@@ -1,14 +1,8 @@
-import {
-  coupledPairs,
-  significantCoupledPairs,
-  type CoupledPair,
-} from '@core/coupled-pairs';
+import { type CoupledPair } from '@core/coupled-pairs';
 import { useMemo, useState } from 'react';
 import { CoupledPairsNode } from './coupled-pairs-node';
 import { CoupledPairsLink } from './coupled-pairs-link';
 import { CoupledPairsTooltip } from './coupled-pairs-tooltip';
-import type { LogItem } from '@core/git-log';
-import { groupGitLog } from '@core/group-git-log';
 
 export interface Node {
   id: string;
@@ -43,28 +37,12 @@ const DEFAULT_CONFIG = {
   tension: 0.85,
 };
 
-export function CoupledPairsVisualization({
-  data,
-  architecturalGroups,
-}: {
-  data: LogItem[];
-  architecturalGroups: Record<string, string>;
-}) {
-  const [couplingThreshold, setCouplingThreshold] = useState(0.5);
-  const [revisionsThreshold, setRevisionsThreshold] = useState(0.5);
-  const [grouped, setGrouped] = useState(false);
-
+export function CoupledPairsVisualization({ data }: { data: CoupledPair[] }) {
   const [tooltip, setTooltip] = useState<TooltipData | null>(null);
 
   const { nodes, links } = useMemo(() => {
-    return processData(
-      significantCoupledPairs(
-        coupledPairs(grouped ? groupGitLog(data, architecturalGroups) : data),
-        couplingThreshold,
-        revisionsThreshold
-      )
-    );
-  }, [data, couplingThreshold, revisionsThreshold, grouped]);
+    return processData(data);
+  }, [data]);
 
   const handleLinkHover = (link: Link, event: React.MouseEvent) => {
     const svgElement = event.currentTarget.closest('svg');
@@ -100,104 +78,55 @@ export function CoupledPairsVisualization({
   };
 
   return (
-    <div>
-      <div style={{ marginBottom: '1rem' }}>
-        <div style={{ marginBottom: '0.5rem' }}>
-          <label style={{ marginRight: '0.5rem' }}>
-            Coupling Strength Threshold:
-          </label>
-          <input
-            type="range"
-            min="1"
-            max="100"
-            defaultValue="50"
-            style={{ width: '200px' }}
-            onChange={e => {
-              setCouplingThreshold(Number(e.target.value) / 100);
-            }}
+    <svg
+      width={DEFAULT_CONFIG.width}
+      height={DEFAULT_CONFIG.height}
+      viewBox={`-${DEFAULT_CONFIG.width / 2} -${DEFAULT_CONFIG.height / 2} ${DEFAULT_CONFIG.width} ${DEFAULT_CONFIG.height}`}
+      style={{
+        maxWidth: '100%',
+        height: 'auto',
+        display: 'block',
+        background: '#fafafa',
+      }}
+    >
+      <g>
+        {links.map((link, index) => (
+          <CoupledPairsLink
+            key={`${link.source.id}-${link.target.id}-${index}`}
+            link={link}
+            tension={DEFAULT_CONFIG.tension}
+            onHover={handleLinkHover}
+            onMouseLeave={handleMouseLeave}
+            isHighlighted={tooltip?.link === link}
+            isDimmed={tooltip?.link ? tooltip.link !== link : false}
           />
-          <span style={{ marginLeft: '0.5rem' }}>
-            {Math.round(couplingThreshold * 100)}%
-          </span>
-        </div>
-
-        <div>
-          <label style={{ marginRight: '0.5rem' }}>Revisions Threshold:</label>
-          <input
-            type="range"
-            min="1"
-            max="100"
-            defaultValue="50"
-            style={{ width: '200px' }}
-            onChange={e => {
-              setRevisionsThreshold(Number(e.target.value) / 100);
-            }}
+        ))}
+      </g>
+      <g>
+        {nodes.map(node => (
+          <CoupledPairsNode
+            key={node.id}
+            node={node}
+            onHover={handleNodeHover}
+            onMouseLeave={handleMouseLeave}
+            isHighlighted={tooltip?.node === node}
+            isDimmed={tooltip?.node ? tooltip.node !== node : false}
+            connectedToHighlighted={
+              tooltip?.link
+                ? tooltip.link.source === node || tooltip.link.target === node
+                : false
+            }
           />
-          <span style={{ marginLeft: '0.5rem' }}>
-            {Math.round(revisionsThreshold * 100)}%
-          </span>
-        </div>
-        {Object.keys(architecturalGroups).length > 0 && (
-          <div>
-            <label style={{ marginRight: '0.5rem' }}>Grouped:</label>
-            <input
-              type="checkbox"
-              checked={grouped}
-              onChange={() => setGrouped(!grouped)}
-            />
-          </div>
-        )}
-      </div>
-      <svg
-        width={DEFAULT_CONFIG.width}
-        height={DEFAULT_CONFIG.height}
-        viewBox={`-${DEFAULT_CONFIG.width / 2} -${DEFAULT_CONFIG.height / 2} ${DEFAULT_CONFIG.width} ${DEFAULT_CONFIG.height}`}
-        style={{
-          maxWidth: '100%',
-          height: 'auto',
-          display: 'block',
-          background: '#fafafa',
-        }}
-      >
-        <g>
-          {links.map((link, index) => (
-            <CoupledPairsLink
-              key={`${link.source.id}-${link.target.id}-${index}`}
-              link={link}
-              tension={DEFAULT_CONFIG.tension}
-              onHover={handleLinkHover}
-              onMouseLeave={handleMouseLeave}
-              isHighlighted={tooltip?.link === link}
-              isDimmed={tooltip?.link ? tooltip.link !== link : false}
-            />
-          ))}
-        </g>
-        <g>
-          {nodes.map(node => (
-            <CoupledPairsNode
-              key={node.id}
-              node={node}
-              onHover={handleNodeHover}
-              onMouseLeave={handleMouseLeave}
-              isHighlighted={tooltip?.node === node}
-              isDimmed={tooltip?.node ? tooltip.node !== node : false}
-              connectedToHighlighted={
-                tooltip?.link
-                  ? tooltip.link.source === node || tooltip.link.target === node
-                  : false
-              }
-            />
-          ))}
-        </g>
-        {tooltip && (
-          <CoupledPairsTooltip
-            tooltip={tooltip}
-            svgWidth={DEFAULT_CONFIG.width}
-            svgHeight={DEFAULT_CONFIG.height}
-          />
-        )}
-      </svg>
-    </div>
+        ))}
+      </g>
+      {tooltip && (
+        <CoupledPairsTooltip
+          tooltip={tooltip}
+          svgWidth={DEFAULT_CONFIG.width}
+          svgHeight={DEFAULT_CONFIG.height}
+        />
+      )}
+    </svg>
   );
 }
 
