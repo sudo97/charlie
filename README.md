@@ -234,19 +234,18 @@ This creates an interesting paradox: the feature works best on codebases that ne
 - [x] Add .charlie.config.json file support. It should support a list of files that should be excluded from the analysis, and a list of files that should be included, and a list of files that should be grouped into "architectural components".
 - [x] Add a way to group files into "architectural components"
 - [x] Coupled pairs and SOC should show only significant data. This filtering should be implemented in the backend using `revisionsPercentile` and `minCouplingPercentage` configuration options.
-- [ ] Rewrite frontend in react or similar, add dynamic filtering and grouping. Consider rendering svg directly instead of d3, consider using `react-spring` for animations.
+- [x] Rewrite frontend in react or similar, add dynamic filtering and grouping. Consider rendering svg directly instead of d3, consider using `react-spring` for animations.
   - [x] Rewrite hotspots
-  - [ ] Rewrite coupled pairs
+  - [x] Rewrite coupled pairs
     - [x] Rewrite coupled pairs table
-    - [ ] Add filtering on the frontend
-    - [ ] Rewrite coupled pairs diagram
-  - [ ] Add some form of routing
+    - [x] Add filtering on the frontend
+    - [x] Rewrite coupled pairs diagram
+  - [x] Add some form of routing
   - [x] Rewrite SOC
   - [x] Rewrite word count
-  - [ ] Add Social info
 - [ ] Default date should be 1 year before the last commit in the repo
-- [ ] Architectural groups should produce 1. hotpsots 2. coupled pairs 3. SOC?
-- [ ] Alternatively, maybe .charlie.config.json should be a starting point, but then in the webpage the user could change the config to see different slices of data.
+- [x] Architectural groups should produce 1. hotpsots 2. coupled pairs
+- [x] Alternatively, maybe .charlie.config.json should be a starting point, but then in the webpage the user could change the config to see different slices of data.
 - [ ] Add a way to find file/module owners
 - [ ] Add a way to find teams that happen to form by analyzing authors
 - [ ] Add a way to show fractal diagrams for the files or modules based on their ownership
