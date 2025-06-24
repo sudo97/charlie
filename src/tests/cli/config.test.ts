@@ -7,7 +7,7 @@ describe('parseConfig', () => {
     const expectedDate = new Date();
     expectedDate.setFullYear(expectedDate.getFullYear() - 1);
     expect(config.after).toBeInstanceOf(Date);
-    expect(config.after.getTime()).toBe(expectedDate.getTime());
+    expect(config.after.toISOString()).toBe(expectedDate.toISOString());
     expect(config.include).toStrictEqual([]);
     expect(config.exclude).toStrictEqual([]);
   });

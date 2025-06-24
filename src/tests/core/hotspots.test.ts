@@ -1,10 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { hotspots } from '../../core/hotspots';
-import { mkEmitter } from './visual-complexity.test';
 
 describe('Hotspots', () => {
   it('should return an empty array if there are no hotspots', async () => {
-    const result = await hotspots({}, () => mkEmitter(''));
+    const result = await hotspots({}, () => Promise.resolve(0));
     expect(result).toEqual([]);
   });
 
@@ -13,7 +12,7 @@ describe('Hotspots', () => {
 
     await hotspots({ 'file1.txt': 1, 'file2.txt': 1 }, file => {
       files.push(file);
-      return mkEmitter('');
+      return Promise.resolve(0);
     });
 
     expect(files).toEqual(['file1.txt', 'file2.txt']);
@@ -21,12 +20,12 @@ describe('Hotspots', () => {
 
   it('should return the complexity of each file and sort them by `complexity * revisions`', async () => {
     const fileSystem = {
-      'file1.txt': 'line1\nline2',
-      'file2.txt': 'line1\nline2\nline3',
+      'file1.txt': 2,
+      'file2.txt': 3,
     };
 
     const result = await hotspots({ 'file1.txt': 1, 'file2.txt': 1 }, file =>
-      mkEmitter(fileSystem[file])
+      Promise.resolve(fileSystem[file])
     );
 
     expect(result).toEqual([
@@ -37,12 +36,12 @@ describe('Hotspots', () => {
 
   it('should ignore files with complexity 0', async () => {
     const fileSystem = {
-      'file1.txt': '',
-      'file2.txt': 'line1\nline2\nline3',
+      'file1.txt': 0,
+      'file2.txt': 3,
     };
 
     const result = await hotspots({ 'file1.txt': 1, 'file2.txt': 1 }, file =>
-      mkEmitter(fileSystem[file])
+      Promise.resolve(fileSystem[file])
     );
 
     expect(result).toEqual([
@@ -52,9 +51,9 @@ describe('Hotspots', () => {
 
   it('should sort hotspots by complexity * revisions in descending order', async () => {
     const fileSystem = {
-      'low-complexity-high-revisions.txt': 'line1\nline2', // complexity: 2, revisions: 10 -> score: 20
-      'high-complexity-low-revisions.txt': 'line1\nline2\nline3\nline4\nline5', // complexity: 5, revisions: 3 -> score: 15
-      'medium-complexity-medium-revisions.txt': 'line1\nline2\nline3', // complexity: 3, revisions: 8 -> score: 24
+      'low-complexity-high-revisions.txt': 2, // complexity: 2, revisions: 10 -> score: 20
+      'high-complexity-low-revisions.txt': 5, // complexity: 5, revisions: 3 -> score: 15
+      'medium-complexity-medium-revisions.txt': 3, // complexity: 3, revisions: 8 -> score: 24
     };
 
     const result = await hotspots(
@@ -63,7 +62,7 @@ describe('Hotspots', () => {
         'high-complexity-low-revisions.txt': 3,
         'medium-complexity-medium-revisions.txt': 8,
       },
-      file => mkEmitter(fileSystem[file])
+      file => Promise.resolve(fileSystem[file])
     );
 
     expect(result).toEqual([

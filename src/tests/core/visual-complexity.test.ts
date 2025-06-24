@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { visualComplexity } from '../../core/visual-complexity';
 
-export function mkEmitter(text: string) {
+function mkEmitter(text: string) {
   const chunks = [...text];
   let done: () => void;
   return {
