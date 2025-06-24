@@ -1,4 +1,8 @@
-import { fileOwnership } from '../../core/file-ownership';
+import {
+  fileOwnership,
+  ownershipDistribution,
+  truckFactor,
+} from '../../core/file-ownership';
 import { describe, it, expect } from 'vitest';
 import { LogItem } from '../../core/git-log';
 
@@ -42,5 +46,70 @@ describe('fileOwnership', () => {
         },
       ],
     });
+  });
+});
+
+describe('ownershipDistribution', () => {
+  it('should return the ownership distribution', () => {
+    expect(
+      ownershipDistribution({
+        'file-1': [
+          {
+            name: 'Bob',
+            commits: 1,
+            percentage: 0.5,
+          },
+          {
+            name: 'Alice',
+            commits: 1,
+            percentage: 0.5,
+          },
+        ],
+        'file-2': [
+          {
+            name: 'Alice',
+            commits: 1,
+            percentage: 1,
+          },
+        ],
+      })
+    ).toEqual([
+      { name: 'Alice', percentage: 0.75 },
+      { name: 'Bob', percentage: 0.25 },
+    ]);
+  });
+});
+
+describe('truck factor', () => {
+  it('should return top knowledge holders for a project until the threshold is met', () => {
+    expect(
+      truckFactor([
+        {
+          name: 'Bob',
+          percentage: 0.3,
+        },
+        {
+          name: 'Alice',
+          percentage: 0.3,
+        },
+        {
+          name: 'Charlie',
+          percentage: 0.2,
+        },
+        {
+          name: 'David',
+          percentage: 0.2,
+        },
+      ])
+    ).toEqual([
+      {
+        name: 'Bob',
+        percentage: 0.3,
+      },
+      {
+        name: 'Alice',
+        percentage: 0.3,
+      },
+    ]);
   });
 });

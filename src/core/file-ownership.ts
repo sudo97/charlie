@@ -59,3 +59,65 @@ export function fileOwnership(revisions: LogItem[]): FileOwnership {
 
   return result;
 }
+
+type OwnershipDistribution = Array<{ name: string; percentage: number }>;
+
+export function ownershipDistribution(
+  ownership: FileOwnership
+): OwnershipDistribution {
+  const reversedMapping: Record<
+    string,
+    { file: string; percentage: number }[]
+  > = {};
+
+  for (const file of Object.keys(ownership)) {
+    for (const owner of ownership[file]!) {
+      if (!reversedMapping[owner.name]) {
+        reversedMapping[owner.name] = [];
+      }
+      reversedMapping[owner.name]!.push({
+        file,
+        percentage: owner.percentage,
+      });
+    }
+  }
+
+  const totalFiles = Object.keys(ownership).length;
+
+  const result: Record<string, { percentage: number }> = {};
+
+  for (const owner of Object.keys(reversedMapping)) {
+    const mapping = reversedMapping[owner]!;
+    result[owner] = {
+      percentage: mapping.reduce((acc, curr) => acc + curr.percentage, 0),
+    };
+  }
+
+  return Object.keys(result)
+    .map(name => ({
+      name,
+      percentage: result[name]!.percentage / totalFiles,
+    }))
+    .sort((a, b) => b.percentage - a.percentage);
+}
+
+export function truckFactor(
+  data: OwnershipDistribution
+): OwnershipDistribution {
+  const result: OwnershipDistribution = [];
+
+  const remaining = [...data];
+
+  while (isLessThan(result, 0.5)) {
+    const item = remaining.shift();
+    if (item) {
+      result.push(item);
+    }
+  }
+
+  return result;
+}
+
+function isLessThan(data: OwnershipDistribution, threshold: number): boolean {
+  return data.reduce((acc, curr) => acc + curr.percentage, 0) < threshold;
+}
