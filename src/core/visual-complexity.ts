@@ -1,5 +1,3 @@
-import * as path from 'path';
-import * as fsOld from 'fs';
 export interface VisualComplexityEmitter {
   onData: (listener: (chunk: string) => void) => void;
   onEnd: (listener: () => void) => void;
@@ -47,39 +45,3 @@ export async function visualComplexity(
     });
   });
 }
-
-export async function visualComplexityFile(
-  repositoryPath: string,
-  file: string
-): Promise<number> {
-  const filepath = path.join(repositoryPath, file);
-  const emitter = fileReader(filepath);
-  return visualComplexity(emitter);
-}
-
-const fileReader = (filepath: string): VisualComplexityEmitter => {
-  if (!fsOld.existsSync(filepath) || fsOld.statSync(filepath).isDirectory()) {
-    return {
-      onData: () => {},
-      onEnd: onEnd => {
-        onEnd();
-      },
-    };
-  }
-
-  console.log('reading', filepath);
-  const fileStream = fsOld.createReadStream(filepath, { encoding: 'utf8' });
-
-  return {
-    onData: listener => {
-      fileStream.on('data', (chunk: string | Buffer<ArrayBufferLike>) => {
-        listener(chunk.toString());
-      });
-    },
-    onEnd: listener => {
-      fileStream.on('end', () => {
-        listener();
-      });
-    },
-  };
-};
