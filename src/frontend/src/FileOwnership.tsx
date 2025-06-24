@@ -34,6 +34,8 @@ export function FileOwnershipComponent({
     { text: 'Owners', width: '70%' },
   ];
 
+  const truckFactorData = truckFactor(ownershipDistribution(fileOwnershipData));
+
   return (
     <>
       <div>
@@ -43,13 +45,12 @@ export function FileOwnershipComponent({
           each developer.
         </p>
         <div>
-          {truckFactor(ownershipDistribution(fileOwnershipData)).map(owner => (
+          {truckFactorData.map(owner => (
             <div key={owner.name}>
               {owner.name} ({Math.round(owner.percentage * 100)}%)
             </div>
           ))}
-          Truck factor ={' '}
-          {truckFactor(ownershipDistribution(fileOwnershipData)).length}
+          Truck factor = {truckFactorData.length}
         </div>
       </div>
       <div
