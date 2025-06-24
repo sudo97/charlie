@@ -73,10 +73,15 @@ export function sortCoupledPairs(data: CoupledPair[]): CoupledPair[] {
   const percentageValues = data.map(d => d.percentage);
   const revisionValues = data.map(d => d.revisions);
 
-  const percentageMin = Math.min(...percentageValues);
-  const percentageMax = Math.max(...percentageValues);
-  const revisionMin = Math.min(...revisionValues);
-  const revisionMax = Math.max(...revisionValues);
+  const percentage = percentageValues.reduce(
+    (acc, el) => ({ max: Math.max(el, acc.max), min: Math.min(el, acc.min) }),
+    { min: Infinity, max: -Infinity }
+  );
+
+  const revision = revisionValues.reduce(
+    (acc, el) => ({ max: Math.max(el, acc.max), min: Math.min(el, acc.min) }),
+    { min: Infinity, max: -Infinity }
+  );
 
   const normalize = (value: number, min: number, max: number) => {
     if (max === min) return 0;
@@ -86,25 +91,25 @@ export function sortCoupledPairs(data: CoupledPair[]): CoupledPair[] {
   return [...data].sort((a, b) => {
     const normalizedPercentageA = normalize(
       a.percentage,
-      percentageMin,
-      percentageMax
+      percentage.min,
+      percentage.max
     );
     const normalizedRevisionsA = normalize(
       a.revisions,
-      revisionMin,
-      revisionMax
+      revision.min,
+      revision.max
     );
     const scoreA = normalizedPercentageA * normalizedRevisionsA;
 
     const normalizedPercentageB = normalize(
       b.percentage,
-      percentageMin,
-      percentageMax
+      percentage.min,
+      percentage.max
     );
     const normalizedRevisionsB = normalize(
       b.revisions,
-      revisionMin,
-      revisionMax
+      revision.min,
+      revision.max
     );
     const scoreB = normalizedPercentageB * normalizedRevisionsB;
 
