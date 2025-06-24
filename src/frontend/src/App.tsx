@@ -4,12 +4,18 @@ import { SocVisualization } from './soc/soc-visualization';
 import { WordCloudComponent } from './visualizeWordCount';
 import type { AppData } from './data-loader';
 import { CoupledPairsTab } from './coupled-pairs/coupled-pairs-tab';
+import { FileOwnershipComponent } from './FileOwnership';
 
 interface AppProps {
   data: AppData;
 }
 
-type TabType = 'hotspots' | 'coupled-pairs' | 'soc' | 'word-count';
+type TabType =
+  | 'hotspots'
+  | 'coupled-pairs'
+  | 'soc'
+  | 'word-count'
+  | 'ownership';
 
 export function App({ data }: AppProps) {
   const [activeTab, setActiveTab] = useState<TabType>('hotspots');
@@ -19,6 +25,7 @@ export function App({ data }: AppProps) {
     { id: 'coupled-pairs' as const, label: 'Coupled Pairs' },
     { id: 'soc' as const, label: 'Sum of Coupling' },
     { id: 'word-count' as const, label: 'Word Count' },
+    { id: 'ownership' as const, label: 'Ownership' },
   ];
 
   const renderTabContent = () => {
@@ -55,6 +62,16 @@ export function App({ data }: AppProps) {
               <WordCloudComponent data={data.wordCount} />
             </div>
           </>
+        );
+
+      case 'ownership':
+        return (
+          <div id="file-ownership">
+            <FileOwnershipComponent
+              hotspots={data.hotspots}
+              logItems={data.logItems}
+            />
+          </div>
         );
 
       default:
