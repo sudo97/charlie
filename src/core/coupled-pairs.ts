@@ -70,49 +70,49 @@ export function coupledPairs(revisions: LogItem[]): CoupledPair[] {
 }
 
 export function sortCoupledPairs(data: CoupledPair[]): CoupledPair[] {
-  const percentageValues = data.map(d => d.percentage);
-  const revisionValues = data.map(d => d.revisions);
-
-  const percentage = percentageValues.reduce(
-    (acc, el) => ({ max: Math.max(el, acc.max), min: Math.min(el, acc.min) }),
-    { min: Infinity, max: -Infinity }
+  const { percentage, revision } = data.reduce(
+    (acc, el) => ({
+      percentage: {
+        max: Math.max(el.percentage, acc.percentage.max),
+        min: Math.min(el.percentage, acc.percentage.min),
+      },
+      revision: {
+        max: Math.max(el.revisions, acc.revision.max),
+        min: Math.min(el.revisions, acc.revision.min),
+      },
+    }),
+    {
+      percentage: {
+        max: -Infinity,
+        min: Infinity,
+      },
+      revision: {
+        max: -Infinity,
+        min: Infinity,
+      },
+    }
   );
-
-  const revision = revisionValues.reduce(
-    (acc, el) => ({ max: Math.max(el, acc.max), min: Math.min(el, acc.min) }),
-    { min: Infinity, max: -Infinity }
-  );
-
-  const normalize = (value: number, min: number, max: number) => {
-    if (max === min) return 0;
-    return (value - min) / (max - min);
-  };
 
   return [...data].sort((a, b) => {
-    const normalizedPercentageA = normalize(
-      a.percentage,
-      percentage.min,
-      percentage.max
-    );
-    const normalizedRevisionsA = normalize(
-      a.revisions,
-      revision.min,
-      revision.max
-    );
-    const scoreA = normalizedPercentageA * normalizedRevisionsA;
-
-    const normalizedPercentageB = normalize(
-      b.percentage,
-      percentage.min,
-      percentage.max
-    );
-    const normalizedRevisionsB = normalize(
-      b.revisions,
-      revision.min,
-      revision.max
-    );
-    const scoreB = normalizedPercentageB * normalizedRevisionsB;
+    const scoreA = score(a, percentage, revision);
+    const scoreB = score(b, percentage, revision);
 
     return scoreB - scoreA;
   });
 }
+
+const score = (
+  a: CoupledPair,
+  percentage: { min: number; max: number },
+  revision: { min: number; max: number }
+) => {
+  return (
+    normalize(a.percentage, percentage.min, percentage.max) *
+    normalize(a.revisions, revision.min, revision.max)
+  );
+};
+
+const normalize = (value: number, min: number, max: number) => {
+  if (max === min) return 0;
+  return (value - min) / (max - min);
+};
