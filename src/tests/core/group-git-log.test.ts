@@ -12,17 +12,17 @@ describe('groupGitLog', () => {
       fileEntries: [
         {
           added: 1,
-          removed: 0,
+          removed: 3,
           fileName: 'src/components/Button.tsx',
         },
         {
           added: 1,
-          removed: 0,
+          removed: 3,
           fileName: 'src/components/Header.tsx',
         },
         {
           added: 1,
-          removed: 0,
+          removed: 2,
           fileName: 'src/pages/Home.tsx',
         },
       ],
@@ -42,8 +42,8 @@ describe('groupGitLog', () => {
         author: 'John Doe',
         message: 'Initial commit',
         fileEntries: [
-          { added: 2, removed: 0, fileName: 'UI Components' },
-          { added: 1, removed: 0, fileName: 'Pages' },
+          { added: 2, removed: 6, fileName: 'UI Components' },
+          { added: 1, removed: 2, fileName: 'Pages' },
         ],
       },
     ]);
