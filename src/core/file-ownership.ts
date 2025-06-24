@@ -1,6 +1,6 @@
 import type { LogItem } from './git-log';
 
-type FileOwnership = Record<
+export type FileOwnership = Record<
   string,
   Array<{
     commits: number;

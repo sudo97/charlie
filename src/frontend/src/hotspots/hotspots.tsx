@@ -15,15 +15,18 @@ import { treeData as toTreeData } from '@core/tree-data.js';
 import { groupHotspots } from '@core/group-hotspots';
 import { HotspotTooltip } from './hotspot-tooltip';
 import type { Soc } from '@core/soc';
+import type { FileOwnership } from '@core/file-ownership';
 
 export function Hotspots({
   hotspots: data,
   architecturalGroups,
   soc,
+  fileOwnership,
 }: {
   hotspots: Hotspot[];
   architecturalGroups: Record<string, string>;
   soc: Soc[];
+  fileOwnership: FileOwnership;
 }) {
   const [grouped, setGrouped] = useState(false);
 
@@ -142,6 +145,7 @@ export function Hotspots({
             viewX={viewX}
             viewY={viewY}
             soc={soc}
+            fileOwnership={fileOwnership}
           />
         )}
       </svg>

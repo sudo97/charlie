@@ -1,3 +1,4 @@
+import type { FileOwnership } from '@core/file-ownership';
 import type { Soc } from '@core/soc';
 import type { TreeData } from '@core/tree-data';
 import * as d3 from 'd3';
@@ -8,12 +9,14 @@ export function HotspotTooltip({
   viewX,
   viewY,
   soc,
+  fileOwnership,
 }: {
   node: d3.HierarchyCircularNode<TreeData>;
   zoomScale: number;
   viewX: number;
   viewY: number;
   soc: Soc[];
+  fileOwnership: FileOwnership;
 }) {
   const x = (node.x - viewX) * zoomScale;
   const y = (node.y - viewY) * zoomScale;
@@ -39,6 +42,14 @@ export function HotspotTooltip({
   const lines = [node.data.path];
   if (socInfo) {
     lines.push(`SOC: ${socInfo.soc}`);
+  }
+
+  const owners = fileOwnership[node.data.path.slice(1)];
+
+  if (owners && owners[0]) {
+    lines.push(
+      `Owners: ${owners.length} (${owners[0]?.name} ${Math.round(owners[0].percentage * 100)}%)`
+    );
   }
 
   const maxLineWidth = Math.max(

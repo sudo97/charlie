@@ -37,6 +37,7 @@ export function App({ data }: AppProps) {
               hotspots={data.hotspots}
               architecturalGroups={data.architecturalGroups}
               soc={data.soc}
+              fileOwnership={data.fileOwnership}
             />
           </div>
         );

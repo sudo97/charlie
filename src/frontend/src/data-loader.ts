@@ -1,6 +1,7 @@
 import type { Hotspot } from '@core/hotspots.js';
 import type { LogItem } from '@core/git-log';
 import { soc, type Soc } from '@core/soc';
+import { type FileOwnership, fileOwnership } from '@core/file-ownership';
 // import { coupledPairs, type CoupledPair } from '@core/coupled-pairs';
 
 export interface AppData {
@@ -9,6 +10,7 @@ export interface AppData {
   soc: Soc[];
   architecturalGroups: Record<string, string>;
   wordCount: Record<string, number>;
+  fileOwnership: FileOwnership;
 }
 
 export function loadAllData(): AppData {
@@ -19,6 +21,7 @@ export function loadAllData(): AppData {
     soc: loadSoc(logItems),
     architecturalGroups: loadArchitecturalGroups(),
     wordCount: loadWordCount(),
+    fileOwnership: fileOwnership(logItems),
   };
 }
 
