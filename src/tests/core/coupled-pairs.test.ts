@@ -7,33 +7,30 @@ import {
 import { LogItem } from '../../core/git-log.js';
 
 describe('coupledPairs', () => {
+  function createRevisions(
+    ...fileEntries: { fileName: string; added: number; removed: number }[][]
+  ): LogItem[] {
+    return fileEntries.map(fileEntries => ({
+      hash: '123456',
+      message: 'Initial commit',
+      date: '2024-01-01',
+      author: 'John Doe',
+      fileEntries,
+    }));
+  }
   it('should return an empty array if there is only one revision', () => {
-    const revisions: LogItem[] = [
-      {
-        hash: '123456',
-        message: 'Initial commit',
-        date: '2024-01-01',
-        author: 'John Doe',
-        fileEntries: [{ fileName: 'file.txt', added: 1, removed: 1 }],
-      },
-    ];
+    const revisions: LogItem[] = createRevisions([
+      { fileName: 'file.txt', added: 1, removed: 1 },
+    ]);
     const result = coupledPairs(revisions);
     expect(result).toEqual([]);
   });
 
   it('should find a pair', () => {
-    const revisions: LogItem[] = [
-      {
-        hash: '123456',
-        message: 'Initial commit',
-        date: '2024-01-01',
-        author: 'John Doe',
-        fileEntries: [
-          { fileName: 'file.txt', added: 1, removed: 1 },
-          { fileName: 'file2.txt', added: 1, removed: 1 },
-        ],
-      },
-    ];
+    const revisions: LogItem[] = createRevisions([
+      { fileName: 'file.txt', added: 1, removed: 1 },
+      { fileName: 'file2.txt', added: 1, removed: 1 },
+    ]);
     const result = coupledPairs(revisions);
     expect(result).toEqual<CoupledPair[]>([
       {
@@ -46,28 +43,16 @@ describe('coupledPairs', () => {
   });
 
   it('should count two files as a pair independent of the order they appear in the commit', () => {
-    const revisions: LogItem[] = [
-      {
-        hash: '123456',
-        message: 'Initial commit',
-        date: '2024-01-01',
-        author: 'John Doe',
-        fileEntries: [
-          { fileName: 'file.txt', added: 1, removed: 1 },
-          { fileName: 'file2.txt', added: 1, removed: 1 },
-        ],
-      },
-      {
-        hash: '123456',
-        message: 'Initial commit',
-        date: '2024-01-01',
-        author: 'John Doe',
-        fileEntries: [
-          { fileName: 'file2.txt', added: 1, removed: 1 },
-          { fileName: 'file.txt', added: 1, removed: 1 },
-        ],
-      },
-    ];
+    const revisions: LogItem[] = createRevisions(
+      [
+        { fileName: 'file.txt', added: 1, removed: 1 },
+        { fileName: 'file2.txt', added: 1, removed: 1 },
+      ],
+      [
+        { fileName: 'file2.txt', added: 1, removed: 1 },
+        { fileName: 'file.txt', added: 1, removed: 1 },
+      ]
+    );
     const result = coupledPairs(revisions);
     expect(result).toEqual<CoupledPair[]>([
       {
@@ -80,19 +65,11 @@ describe('coupledPairs', () => {
   });
 
   it('should handle more than two files in a commit', () => {
-    const revisions: LogItem[] = [
-      {
-        hash: '123456',
-        date: '2024-01-01',
-        author: 'John Doe',
-        message: 'Initial commit',
-        fileEntries: [
-          { fileName: 'file.txt', added: 1, removed: 1 },
-          { fileName: 'file2.txt', added: 1, removed: 1 },
-          { fileName: 'file3.txt', added: 1, removed: 1 },
-        ],
-      },
-    ];
+    const revisions: LogItem[] = createRevisions([
+      { fileName: 'file.txt', added: 1, removed: 1 },
+      { fileName: 'file2.txt', added: 1, removed: 1 },
+      { fileName: 'file3.txt', added: 1, removed: 1 },
+    ]);
     const result = coupledPairs(revisions);
     expect(result).toEqual<CoupledPair[]>([
       {
@@ -117,25 +94,13 @@ describe('coupledPairs', () => {
   });
 
   it('should calculate percentage', () => {
-    const revisions: LogItem[] = [
-      {
-        hash: '123456',
-        date: '2024-01-01',
-        author: 'John Doe',
-        message: 'Initial commit',
-        fileEntries: [{ fileName: 'file.txt', added: 1, removed: 1 }],
-      },
-      {
-        hash: '123456',
-        date: '2024-01-01',
-        author: 'John Doe',
-        message: 'Initial commit',
-        fileEntries: [
-          { fileName: 'file.txt', added: 1, removed: 1 },
-          { fileName: 'file2.txt', added: 1, removed: 1 },
-        ],
-      },
-    ];
+    const revisions: LogItem[] = createRevisions(
+      [{ fileName: 'file.txt', added: 1, removed: 1 }],
+      [
+        { fileName: 'file.txt', added: 1, removed: 1 },
+        { fileName: 'file2.txt', added: 1, removed: 1 },
+      ]
+    );
     const result = coupledPairs(revisions);
     expect(result).toEqual<CoupledPair[]>([
       {
@@ -145,6 +110,133 @@ describe('coupledPairs', () => {
         revisions: 2,
       },
     ]);
+  });
+
+  it('ultimate test for percentage and revisions', () => {
+    const revisions: LogItem[] = createRevisions(
+      // 5 commits with only File A
+      [{ fileName: 'fileA.txt', added: 1, removed: 0 }],
+      [{ fileName: 'fileA.txt', added: 2, removed: 1 }],
+      [{ fileName: 'fileA.txt', added: 0, removed: 2 }],
+      [{ fileName: 'fileA.txt', added: 3, removed: 0 }],
+      [{ fileName: 'fileA.txt', added: 1, removed: 1 }],
+      // 10 commits with only File B
+      [{ fileName: 'fileB.txt', added: 1, removed: 0 }],
+      [{ fileName: 'fileB.txt', added: 2, removed: 1 }],
+      [{ fileName: 'fileB.txt', added: 0, removed: 2 }],
+      [{ fileName: 'fileB.txt', added: 3, removed: 0 }],
+      [{ fileName: 'fileB.txt', added: 1, removed: 1 }],
+      [{ fileName: 'fileB.txt', added: 2, removed: 0 }],
+      [{ fileName: 'fileB.txt', added: 0, removed: 3 }],
+      [{ fileName: 'fileB.txt', added: 4, removed: 1 }],
+      [{ fileName: 'fileB.txt', added: 1, removed: 2 }],
+      [{ fileName: 'fileB.txt', added: 2, removed: 2 }],
+      // 5 commits with both File A and File B
+      [
+        { fileName: 'fileA.txt', added: 1, removed: 0 },
+        { fileName: 'fileB.txt', added: 2, removed: 1 },
+      ],
+      [
+        { fileName: 'fileA.txt', added: 2, removed: 1 },
+        { fileName: 'fileB.txt', added: 1, removed: 0 },
+      ],
+      [
+        { fileName: 'fileA.txt', added: 0, removed: 2 },
+        { fileName: 'fileB.txt', added: 3, removed: 1 },
+      ],
+      [
+        { fileName: 'fileA.txt', added: 3, removed: 0 },
+        { fileName: 'fileB.txt', added: 1, removed: 2 },
+      ],
+      [
+        { fileName: 'fileA.txt', added: 1, removed: 1 },
+        { fileName: 'fileB.txt', added: 2, removed: 0 },
+      ],
+      // 4 commits with only File C
+      [{ fileName: 'fileC.txt', added: 2, removed: 2 }],
+      [{ fileName: 'fileC.txt', added: 2, removed: 2 }],
+      [{ fileName: 'fileC.txt', added: 2, removed: 2 }],
+      [{ fileName: 'fileC.txt', added: 2, removed: 2 }],
+      // 3 commits of File A and File C
+      [
+        { fileName: 'fileA.txt', added: 3, removed: 0 },
+        { fileName: 'fileC.txt', added: 1, removed: 2 },
+      ],
+      [
+        { fileName: 'fileA.txt', added: 3, removed: 0 },
+        { fileName: 'fileC.txt', added: 1, removed: 2 },
+      ],
+      [
+        { fileName: 'fileA.txt', added: 3, removed: 0 },
+        { fileName: 'fileC.txt', added: 1, removed: 2 },
+      ]
+    );
+
+    const result = coupledPairs(revisions);
+
+    {
+      const expectedRevisions = revisions.filter(
+        item =>
+          item.fileEntries.map(entry => entry.fileName).includes('fileA.txt') ||
+          item.fileEntries.map(entry => entry.fileName).includes('fileB.txt')
+      ).length;
+
+      expect(expectedRevisions).toBe(23);
+
+      const expectedPercentage =
+        revisions.filter(
+          item =>
+            item.fileEntries
+              .map(entry => entry.fileName)
+              .includes('fileA.txt') &&
+            item.fileEntries.map(entry => entry.fileName).includes('fileB.txt')
+        ).length / expectedRevisions;
+
+      expect(expectedPercentage).toBe(5 / expectedRevisions);
+
+      const item = result.find(
+        item => item.file1 === 'fileA.txt' && item.file2 === 'fileB.txt'
+      );
+
+      expect(item).toEqual<CoupledPair>({
+        file1: 'fileA.txt',
+        file2: 'fileB.txt',
+        percentage: expectedPercentage,
+        revisions: expectedRevisions,
+      });
+    }
+
+    {
+      const expectedRevisions = revisions.filter(
+        item =>
+          item.fileEntries.map(entry => entry.fileName).includes('fileA.txt') ||
+          item.fileEntries.map(entry => entry.fileName).includes('fileC.txt')
+      ).length;
+
+      expect(expectedRevisions).toBe(17);
+
+      const expectedPercentage =
+        revisions.filter(
+          item =>
+            item.fileEntries
+              .map(entry => entry.fileName)
+              .includes('fileA.txt') &&
+            item.fileEntries.map(entry => entry.fileName).includes('fileC.txt')
+        ).length / expectedRevisions;
+
+      expect(expectedPercentage).toBe(3 / expectedRevisions);
+
+      const item = result.find(
+        item => item.file1 === 'fileA.txt' && item.file2 === 'fileC.txt'
+      );
+
+      expect(item).toEqual<CoupledPair>({
+        file1: 'fileA.txt',
+        file2: 'fileC.txt',
+        percentage: expectedPercentage,
+        revisions: expectedRevisions,
+      });
+    }
   });
 });
 
