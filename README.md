@@ -200,6 +200,7 @@ This creates an interesting paradox: the feature works best on codebases that ne
 - [x] Architectural groups should produce 1. hotpsots 2. coupled pairs
 - [x] Alternatively, maybe .charlie.config.json should be a starting point, but then in the webpage the user could change the config to see different slices of data.
 - [x] Reading file for complexity should be done in chunks
+- [x] Coupled pairs are sorted in the table by normalized coupling percentage times the number of revisions, but filtered by two thresholds: minCouplingPercentage and revisionsPercentile. Instead, we should use the sorting that we have, and filter by single percentile threshold.
 - [ ] Add a way to find file/module owners
 - [ ] Add a way to find teams that happen to form by analyzing authors
 - [ ] Add a way to show fractal diagrams for the files or modules based on their ownership

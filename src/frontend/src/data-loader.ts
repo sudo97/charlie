@@ -7,7 +7,6 @@ export interface AppData {
   hotspots: Hotspot[];
   logItems: LogItem[];
   soc: Soc[];
-  // coupledPairs: CoupledPair[];
   architecturalGroups: Record<string, string>;
   wordCount: Record<string, number>;
 }
@@ -18,7 +17,6 @@ export function loadAllData(): AppData {
     hotspots: loadHotspots(),
     logItems,
     soc: loadSoc(logItems),
-    // coupledPairs: loadCoupledPairs(logItems),
     architecturalGroups: loadArchitecturalGroups(),
     wordCount: loadWordCount(),
   };
@@ -43,10 +41,6 @@ function loadLogItems(): LogItem[] {
 function loadSoc(logItems: LogItem[]): Soc[] {
   return soc(logItems);
 }
-
-// function loadCoupledPairs(logItems: LogItem[]): CoupledPair[] {
-//   return coupledPairs(logItems);
-// }
 
 function loadArchitecturalGroups(): Record<string, string> {
   const groupsElement = document.getElementById('architectural-groups');
