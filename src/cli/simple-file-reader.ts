@@ -1,5 +1,5 @@
 import * as fsOld from 'fs';
-import type { VisualComplexityEmitter } from './visual-complexity';
+import type { VisualComplexityEmitter } from '../core/visual-complexity';
 
 export const fileReader = (filepath: string): VisualComplexityEmitter => {
   if (!fsOld.existsSync(filepath) || fsOld.statSync(filepath).isDirectory()) {

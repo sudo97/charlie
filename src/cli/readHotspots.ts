@@ -2,7 +2,7 @@ import { hotspots } from '../core/hotspots.js';
 import * as path from 'path';
 import type { LogItem } from '../core/git-log.js';
 import { revisions } from '../core/revisions.js';
-import { fileReader } from '../core/simple-file-reader.js';
+import { fileReader } from './simple-file-reader.js';
 
 import { visualComplexity } from '../core/visual-complexity.js';
 
