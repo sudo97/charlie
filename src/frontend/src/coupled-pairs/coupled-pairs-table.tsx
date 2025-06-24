@@ -8,7 +8,7 @@ import {
   TEXT_COLOR,
   MUTED_TEXT_COLOR,
   HIGH_IMPORTANCE_COLOR,
-} from './colours.js';
+} from '../colours.js';
 
 interface CoupledPairsTableProps {
   data: CoupledPair[];
@@ -25,8 +25,6 @@ export const CoupledPairsTable: React.FC<CoupledPairsTableProps> = ({
     { text: 'Coupling', width: '7%' },
     { text: 'Revisions', width: '7%' },
   ];
-
-  const sortedData = sortData(data);
 
   return (
     <div
@@ -74,7 +72,7 @@ export const CoupledPairsTable: React.FC<CoupledPairsTableProps> = ({
           </tr>
         </thead>
         <tbody>
-          {sortedData.map((row, index) => (
+          {data.map((row, index) => (
             <tr
               key={index}
               style={{
@@ -139,47 +137,3 @@ const getCellStyle = (
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
 });
-
-function sortData(data: CoupledPair[]): CoupledPair[] {
-  // Calculate min/max for normalization
-  const percentageValues = data.map(d => d.percentage);
-  const revisionValues = data.map(d => d.revisions);
-
-  const percentageMin = Math.min(...percentageValues);
-  const percentageMax = Math.max(...percentageValues);
-  const revisionMin = Math.min(...revisionValues);
-  const revisionMax = Math.max(...revisionValues);
-
-  const normalize = (value: number, min: number, max: number) => {
-    if (max === min) return 0;
-    return (value - min) / (max - min);
-  };
-
-  return [...data].sort((a, b) => {
-    const normalizedPercentageA = normalize(
-      a.percentage,
-      percentageMin,
-      percentageMax
-    );
-    const normalizedRevisionsA = normalize(
-      a.revisions,
-      revisionMin,
-      revisionMax
-    );
-    const scoreA = normalizedPercentageA * normalizedRevisionsA;
-
-    const normalizedPercentageB = normalize(
-      b.percentage,
-      percentageMin,
-      percentageMax
-    );
-    const normalizedRevisionsB = normalize(
-      b.revisions,
-      revisionMin,
-      revisionMax
-    );
-    const scoreB = normalizedPercentageB * normalizedRevisionsB;
-
-    return scoreB - scoreA;
-  });
-}
