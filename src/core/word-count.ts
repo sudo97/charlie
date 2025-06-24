@@ -3,7 +3,7 @@ import type { LogItem } from './git-log';
 export function wordCount(text: string): Record<string, number> {
   return text
     .toLowerCase()
-    .split(/[^a-z]+/)
+    .split(/[^a-z]/)
     .filter(word => word.length > 0)
     .reduce(
       (acc, word) => {
