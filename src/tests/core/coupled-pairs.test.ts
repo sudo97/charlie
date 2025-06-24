@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   CoupledPair,
   coupledPairs,
-  significantCoupledPairs,
+  sortCoupledPairs,
 } from '../../core/coupled-pairs.js';
 import { LogItem } from '../../core/git-log.js';
 
@@ -148,64 +148,183 @@ describe('coupledPairs', () => {
   });
 });
 
-describe('significantCoupledPairs', () => {
-  it('should return all pairs when they meet minimum coupling percentage', () => {
-    const data: CoupledPair[] = [
-      { file1: 'a.ts', file2: 'b.ts', percentage: 0.5, revisions: 5 },
-      { file1: 'c.ts', file2: 'd.ts', percentage: 0.8, revisions: 3 },
-    ];
-    const result = significantCoupledPairs(data, 0.0, 0.5);
-    expect(result).toEqual(data);
-  });
-
-  it('should return pairs that meet revision threshold', () => {
-    const data: CoupledPair[] = [
-      { file1: 'a.ts', file2: 'b.ts', percentage: 0.2, revisions: 10 },
-      { file1: 'c.ts', file2: 'd.ts', percentage: 0.3, revisions: 8 },
-      { file1: 'e.ts', file2: 'f.ts', percentage: 0.1, revisions: 2 },
-    ];
-
-    const result = significantCoupledPairs(data, 0.8, 0.0);
-
-    expect(result).toEqual([
-      { file1: 'a.ts', file2: 'b.ts', percentage: 0.2, revisions: 10 },
-    ]);
-  });
-
-  it('should return pairs that meet both coupling percentage AND revision threshold', () => {
-    const data: CoupledPair[] = [
-      { file1: 'a.ts', file2: 'b.ts', percentage: 0.7, revisions: 5 },
-      { file1: 'c.ts', file2: 'd.ts', percentage: 0.2, revisions: 15 },
-      { file1: 'e.ts', file2: 'f.ts', percentage: 0.9, revisions: 20 }, // meets both
-      { file1: 'g.ts', file2: 'h.ts', percentage: 0.1, revisions: 3 },
-    ];
-    const result = significantCoupledPairs(data, 0.8, 0.6);
-    // 80th percentile of [3, 5, 15, 20] is index 3 (Math.floor(4 * 0.8) = 3), so threshold is 20
-    // Only pairs with percentage >= 0.6 OR revisions >= 20 are included
-    expect(result).toEqual([
-      { file1: 'e.ts', file2: 'f.ts', percentage: 0.9, revisions: 20 },
-    ]);
-  });
-
-  it('should return empty array when no pairs meet criteria', () => {
-    const data: CoupledPair[] = [
-      { file1: 'a.ts', file2: 'b.ts', percentage: 0.2, revisions: 5 },
-      { file1: 'c.ts', file2: 'd.ts', percentage: 0.3, revisions: 3 },
-    ];
-    const result = significantCoupledPairs(data, 0.8, 0.8);
-    // 80th percentile of [3, 5] is index 1 (Math.floor(2 * 0.8) = 1), so threshold is 5
-    // Neither pair meets 0.8 coupling percentage, and only one meets revision threshold
+describe('sortCoupledPairs', () => {
+  it('should return an empty array when given an empty array', () => {
+    const data: CoupledPair[] = [];
+    const result = sortCoupledPairs(data);
     expect(result).toEqual([]);
   });
 
-  it('should handle single pair correctly', () => {
+  it('should return a single item unchanged when given a single item', () => {
     const data: CoupledPair[] = [
-      { file1: 'a.ts', file2: 'b.ts', percentage: 0.4, revisions: 10 },
+      {
+        file1: 'file1.txt',
+        file2: 'file2.txt',
+        percentage: 0.5,
+        revisions: 10,
+      },
     ];
-    const result = significantCoupledPairs(data, 0.8, 0.3);
+    const result = sortCoupledPairs(data);
+    expect(result).toEqual(data);
+  });
 
-    expect(result).toEqual([
-      { file1: 'a.ts', file2: 'b.ts', percentage: 0.4, revisions: 10 },
-    ]);
+  it('should sort by combined normalized score in descending order', () => {
+    const data: CoupledPair[] = [
+      {
+        file1: 'low.txt',
+        file2: 'score.txt',
+        percentage: 0.2, // Low percentage
+        revisions: 5, // Low revisions
+      },
+      {
+        file1: 'high.txt',
+        file2: 'score.txt',
+        percentage: 0.8, // High percentage
+        revisions: 15, // High revisions
+      },
+      {
+        file1: 'medium.txt',
+        file2: 'score.txt',
+        percentage: 0.5, // Medium percentage
+        revisions: 10, // Medium revisions
+      },
+    ];
+
+    const result = sortCoupledPairs(data);
+
+    // High percentage + high revisions should be first
+    expect(result[0]).toEqual(data[1]);
+    // Medium should be second
+    expect(result[1]).toEqual(data[2]);
+    // Low should be last
+    expect(result[2]).toEqual(data[0]);
+  });
+
+  it('should handle edge case where all percentages are the same', () => {
+    const data: CoupledPair[] = [
+      {
+        file1: 'low-rev.txt',
+        file2: 'file.txt',
+        percentage: 0.5,
+        revisions: 5,
+      },
+      {
+        file1: 'high-rev.txt',
+        file2: 'file.txt',
+        percentage: 0.5,
+        revisions: 15,
+      },
+    ];
+
+    const result = sortCoupledPairs(data);
+
+    // When percentages are equal (normalized to 0), both items get score 0
+    // The sort is stable, so original order is maintained
+    expect(result[0]).toEqual(data[0]); // first item stays first
+    expect(result[1]).toEqual(data[1]); // second item stays second
+  });
+
+  it('should handle edge case where all revisions are the same', () => {
+    const data: CoupledPair[] = [
+      {
+        file1: 'low-perc.txt',
+        file2: 'file.txt',
+        percentage: 0.3,
+        revisions: 10,
+      },
+      {
+        file1: 'high-perc.txt',
+        file2: 'file.txt',
+        percentage: 0.7,
+        revisions: 10,
+      },
+    ];
+
+    const result = sortCoupledPairs(data);
+
+    // When revisions are equal (normalized to 0), both items get score 0
+    // The sort is stable, so original order is maintained
+    expect(result[0]).toEqual(data[0]); // first item stays first
+    expect(result[1]).toEqual(data[1]); // second item stays second
+  });
+
+  it('should handle edge case where all values are identical', () => {
+    const data: CoupledPair[] = [
+      {
+        file1: 'file1.txt',
+        file2: 'file.txt',
+        percentage: 0.5,
+        revisions: 10,
+      },
+      {
+        file1: 'file2.txt',
+        file2: 'file.txt',
+        percentage: 0.5,
+        revisions: 10,
+      },
+    ];
+
+    const result = sortCoupledPairs(data);
+
+    // Should maintain the order when scores are identical
+    expect(result).toHaveLength(2);
+    expect(result).toEqual(expect.arrayContaining(data));
+  });
+
+  it('should not mutate the original array', () => {
+    const data: CoupledPair[] = [
+      {
+        file1: 'file1.txt',
+        file2: 'file2.txt',
+        percentage: 0.2,
+        revisions: 5,
+      },
+      {
+        file1: 'file3.txt',
+        file2: 'file4.txt',
+        percentage: 0.8,
+        revisions: 15,
+      },
+    ];
+
+    const originalData = [...data]; // Create a copy to compare
+    const result = sortCoupledPairs(data);
+
+    // Original array should be unchanged
+    expect(data).toEqual(originalData);
+    // Result should be a different array
+    expect(result).not.toBe(data);
+  });
+
+  it('should correctly normalize when min and max are different', () => {
+    const data: CoupledPair[] = [
+      {
+        file1: 'a.txt',
+        file2: 'b.txt',
+        percentage: 0.1, // min percentage
+        revisions: 20, // max revisions
+      },
+      {
+        file1: 'c.txt',
+        file2: 'd.txt',
+        percentage: 0.9, // max percentage
+        revisions: 5, // min revisions
+      },
+      {
+        file1: 'e.txt',
+        file2: 'f.txt',
+        percentage: 0.5, // mid percentage
+        revisions: 10, // mid revisions
+      },
+    ];
+
+    const result = sortCoupledPairs(data);
+
+    // First item: 0.9 percentage (normalized to 1.0) * 5 revisions (normalized to 0.0) = 0.0
+    // Second item: 0.5 percentage (normalized to 0.5) * 10 revisions (normalized to 0.33) = 0.165
+    // Third item: 0.1 percentage (normalized to 0.0) * 20 revisions (normalized to 1.0) = 0.0
+
+    // The middle item should have the highest score
+    expect(result[0]).toEqual(data[2]); // mid values give best combined score
   });
 });
