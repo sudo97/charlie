@@ -70,6 +70,8 @@ Alternatively, you can run the tool with:
 charile /path/to/your/project
 ```
 
+After running the tool, in the root of your project you should see a file called `charlie-report.html`. Open it in your browser to see the report.
+
 ## Core Concepts
 
 ### Hotspots
