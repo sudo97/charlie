@@ -37,7 +37,7 @@
     "metrics",
     "cli"
   ],
-  "author": "",
+  "author": "Illia Mikhnevych <https://github.com/sudo97>",
   "license": "MIT",
   "dependencies": {
     "@react-spring/web": "^10.0.1",
