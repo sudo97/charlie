@@ -38,19 +38,71 @@ export function FileOwnershipComponent({
 
   return (
     <>
-      <div>
-        <h2>Truck Factor</h2>
-        <p>
-          The truck factor is a measure of how much of the codebase is owned by
-          each developer.
+      <div
+        style={{
+          marginTop: '20px',
+          padding: '15px',
+          background: '#f8f9fa',
+          borderRadius: '8px',
+          borderLeft: '4px solid #28a745',
+        }}
+      >
+        <h3 style={{ margin: '0 0 10px 0', color: '#333' }}>
+          Truck Factor Analysis
+        </h3>
+        <p style={{ margin: '0 0 15px 0', color: '#666', fontSize: '14px' }}>
+          The truck factor is a measure of how many developers are required to
+          be hit by a truck before half of the codebase is unsupported.
         </p>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '15px',
+            marginBottom: '15px',
+          }}
+        >
+          <div>
+            <strong>Truck Factor:</strong>
+            <br />
+            <span
+              style={{
+                fontSize: '1.5em',
+                color: '#28a745',
+                fontWeight: 'bold',
+              }}
+            >
+              {truckFactorData.length}
+            </span>
+          </div>
+          <div>
+            <strong>Total Contributors:</strong>
+            <br />
+            <span style={{ fontSize: '1.2em', color: '#007bff' }}>
+              {truckFactorData.length}
+            </span>
+          </div>
+        </div>
         <div>
-          {truckFactorData.map(owner => (
-            <div key={owner.name}>
-              {owner.name} ({Math.round(owner.percentage * 100)}%)
-            </div>
-          ))}
-          Truck factor = {truckFactorData.length}
+          <strong style={{ color: '#333' }}>Ownership Distribution:</strong>
+          <div style={{ marginTop: '8px' }}>
+            {truckFactorData.map(owner => (
+              <div
+                key={owner.name}
+                style={{
+                  padding: '4px 0',
+                  fontSize: '13px',
+                  color: '#555',
+                  borderBottom: '1px solid #eee',
+                }}
+              >
+                <span style={{ fontWeight: '500' }}>{owner.name}</span>
+                <span style={{ color: '#28a745', marginLeft: '8px' }}>
+                  ({Math.round(owner.percentage * 100)}%)
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
       <div
