@@ -177,7 +177,7 @@ This creates an interesting paradox: the feature works best on codebases that ne
 
 # Credits
 
-Special thanks to Aleksandra Kozlova and Darya Losich for their contributions and support in making this project possible. Also I'm thankful to Adam Tornhill for his book and for the inspiration. And special thanks for my wife for making impressed faces when I show her the visualizations.
+Special thanks to Aleksandra Kozlova and Darya Losich for their contributions and support in making this project possible. Also I'm thankful to Adam Tornhill for his book and for the inspiration. And special thanks for my wife, Olga, for making impressed faces when I show her the visualizations.
 
 # TODO:
 
