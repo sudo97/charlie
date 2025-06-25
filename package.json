@@ -1,11 +1,11 @@
 {
-  "name": "charlie",
+  "name": "charlie-git",
   "version": "0.1.0",
   "description": "A tool for analyzing and visualizing your git history. Based on ideas from 'Your Code as a Crime Scene' by Andrew M. Sutton.",
   "type": "module",
   "main": "./dist/cli/cli/index.js",
   "bin": {
-    "charlie": "./dist/cli/cli/index.js"
+    "charlie": "dist/cli/cli/index.js"
   },
   "files": [
     "dist/",
