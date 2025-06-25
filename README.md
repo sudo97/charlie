@@ -21,6 +21,7 @@ This is a tool for analyzing and visualizing your git history. Based on ideas fr
   - [How It Works](#how-it-works)
 - [Thoughts](#thoughts)
   - [On Architectural Grouping](#on-architectural-grouping)
+- [Credits](#credits)
 - [TODO](#todo)
 
 ## Motivation
@@ -31,7 +32,7 @@ In "Your Code as a Crime Scene", Adam Tornhill presents powerful techniques for 
 
 Charlie bridges this gap by providing a tool similar to `bundle-analyzer` or `dependency-cruiser` - you can run it locally with a single command and immediately see visual results in your browser. No file exports, no online services, just instant insights into your codebase's behavioral patterns.
 
-Building this tool has been the best way to truly understand the concepts from the book. As they say, you don't really know something until you can build it yourself.
+Building this tool (with a little help from my friends) has been the best way to truly understand the concepts from the book. As they say, you don't really know something until you can build it yourself.
 
 ## Core Concepts
 
@@ -173,6 +174,10 @@ This configuration system allows you to focus your analysis on specific parts of
 I personally haven't yet found an easy and useful case for architectural grouping. Usually when the codebase is messy, it's very hard to group things properly, but these types of codebases are the ones you usually need to analyze with tools like Charlie. And the codebases where things are easy to group, well... things are usually obvious enough without needing to group them.
 
 This creates an interesting paradox: the feature works best on codebases that need it least, and struggles most on codebases that would benefit from it the most. That said, your mileage may vary - if you have a reasonably well-organized codebase with clear architectural boundaries that just needs some fine-tuning, architectural grouping might provide valuable insights. Or, perhaps, you have a good codebase, but the number of files is so large that it's hard to see the forest for the trees.
+
+# Credits
+
+Special thanks to Aleksandra Kozlova and Darya Losich for their contributions and support in making this project possible.
 
 # TODO:
 
