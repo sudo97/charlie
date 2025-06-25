@@ -34,7 +34,15 @@ export function FileOwnershipComponent({
     { text: 'Owners', width: '70%' },
   ];
 
-  const truckFactorData = truckFactor(ownershipDistribution(fileOwnershipData));
+  const distributionData = useMemo(
+    () => ownershipDistribution(fileOwnershipData),
+    [fileOwnershipData]
+  );
+
+  const truckFactorData = useMemo(
+    () => truckFactor(distributionData),
+    [distributionData]
+  );
 
   return (
     <>
@@ -79,7 +87,7 @@ export function FileOwnershipComponent({
             <strong>Total Contributors:</strong>
             <br />
             <span style={{ fontSize: '1.2em', color: '#007bff' }}>
-              {truckFactorData.length}
+              {distributionData.length}
             </span>
           </div>
         </div>
