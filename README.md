@@ -34,6 +34,42 @@ Charlie bridges this gap by providing a tool similar to `bundle-analyzer` or `de
 
 Building this tool (with a little help from my friends) has been the best way to truly understand the concepts from the book. As they say, you don't really know something until you can build it yourself.
 
+## Installation and usage
+
+### Install from npm
+
+This will make the `charlie` command available globally. You may also omit -g if you want to install it locally.
+
+```bash
+npm install -g charlie-git
+```
+
+### Install from source
+
+After cloning the repository:
+
+```bash
+npm install
+npm run build
+npm pack
+npm i -g
+```
+
+### Usage
+
+After installing, you can run the tool with:
+```bash
+charlie
+```
+
+Don't forget to cd into your project directory before running the tool.
+
+Alternatively, you can run the tool with:
+
+```bash
+charile /path/to/your/project
+```
+
 ## Core Concepts
 
 ### Hotspots
