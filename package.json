@@ -1,8 +1,16 @@
 {
   "name": "charlie-git",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A tool for analyzing and visualizing your git history. Based on ideas from 'Your Code as a Crime Scene' by Andrew M. Sutton.",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sudo97/charlie.git"
+  },
+  "homepage": "https://github.com/sudo97/charlie#readme",
+  "bugs": {
+    "url": "https://github.com/sudo97/charlie/issues"
+  },
   "main": "./dist/cli/cli/index.js",
   "bin": {
     "charlie": "dist/cli/cli/index.js"
