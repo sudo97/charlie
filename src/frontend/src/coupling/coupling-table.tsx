@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import type { Soc } from '../../../core/soc.js';
+import type { CouplingItem } from '../../../core/coupling.js';
 import {
   LOW_IMPORTANCE_COLOR,
   MID_IMPORTANCE_COLOR,
@@ -8,10 +8,10 @@ import {
   BORDER_COLOR,
   TEXT_COLOR,
 } from '../colours.js';
-import { SocRow } from './soc-row.js';
+import { CouplingRow } from './coupling-row.js';
 
 interface VisualizationContainerProps {
-  data: Soc[];
+  data: CouplingItem[];
 }
 
 export function VisualizationContainer({ data }: VisualizationContainerProps) {
@@ -38,12 +38,18 @@ export function VisualizationContainer({ data }: VisualizationContainerProps) {
           color: TEXT_COLOR,
         }}
       >
+        <div style={{ flex: '0 0 50px', paddingRight: '10px' }}></div>
         <div style={{ flex: '0 0 300px', paddingRight: '20px' }}>File</div>
         <div style={{ flex: 1 }}>SOC Score</div>
       </div>
 
       {data.map(d => (
-        <SocRow key={d.file} data={d} maxSoc={maxSoc} colorScale={colorScale} />
+        <CouplingRow
+          key={d.file}
+          data={d}
+          maxSoc={maxSoc}
+          colorScale={colorScale}
+        />
       ))}
     </div>
   );

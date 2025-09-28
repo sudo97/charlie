@@ -1,29 +1,22 @@
 import { useState } from 'react';
 import { Hotspots } from './hotspots/hotspots';
-import { SocVisualization } from './soc/soc-visualization';
+import { CouplingVisualization } from './coupling/coupling-visualization';
 import { WordCloudComponent } from './visualizeWordCount';
 import type { AppData } from './data-loader';
-import { CoupledPairsTab } from './coupled-pairs/coupled-pairs-tab';
 import { FileOwnershipComponent } from './FileOwnership';
 
 interface AppProps {
   data: AppData;
 }
 
-type TabType =
-  | 'hotspots'
-  | 'coupled-pairs'
-  | 'soc'
-  | 'word-count'
-  | 'ownership';
+type TabType = 'hotspots' | 'soc' | 'word-count' | 'ownership';
 
 export function App({ data }: AppProps) {
   const [activeTab, setActiveTab] = useState<TabType>('hotspots');
 
   const tabs = [
     { id: 'hotspots' as const, label: 'File-level Hotspots' },
-    { id: 'coupled-pairs' as const, label: 'Coupled Pairs' },
-    { id: 'soc' as const, label: 'Sum of Coupling' },
+    { id: 'soc' as const, label: 'Coupling' },
     { id: 'word-count' as const, label: 'Word Count' },
     { id: 'ownership' as const, label: 'Ownership' },
   ];
@@ -42,13 +35,10 @@ export function App({ data }: AppProps) {
           </div>
         );
 
-      case 'coupled-pairs':
-        return <CoupledPairsTab data={data} />;
-
       case 'soc':
         return (
-          <div id="soc">
-            <SocVisualization data={data.soc} />
+          <div id="coupling">
+            <CouplingVisualization data={data.coupling} />
           </div>
         );
 

@@ -1,7 +1,7 @@
-import type { Soc } from '@core/soc';
+import type { CouplingItem } from '@core/coupling';
 
 interface StatisticsPanelProps {
-  data: Soc[];
+  data: CouplingItem[];
 }
 export function StatisticsPanel({ data }: StatisticsPanelProps) {
   const totalFiles = data.length;
