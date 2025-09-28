@@ -133,18 +133,20 @@ export function CouplingRow({ data, maxSoc, colorScale }: CouplingRowProps) {
               <div
                 key={index}
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  padding: '4px 0',
-                  fontSize: '12px',
-                  color: TEXT_COLOR,
+                  padding: '6px 0',
+                  borderBottom:
+                    index < data.coupledFiles.length - 1
+                      ? `1px solid ${BORDER_COLOR}20`
+                      : 'none',
                 }}
               >
+                {/* First line: filepath */}
                 <div
                   style={{
-                    flex: '0 0 250px',
+                    fontSize: '12px',
+                    color: TEXT_COLOR,
                     fontFamily: 'monospace',
-                    paddingRight: '10px',
+                    marginBottom: '4px',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
@@ -153,22 +155,47 @@ export function CouplingRow({ data, maxSoc, colorScale }: CouplingRowProps) {
                 >
                   {coupled.file}
                 </div>
-                <div style={{ flex: '0 0 80px', paddingRight: '10px' }}>
-                  {Math.round(coupled.percentage * 100)}%
-                </div>
-                <div style={{ flex: '0 0 60px', color: '#666' }}>
-                  ({coupled.revisions} rev{coupled.revisions !== 1 ? 's' : ''})
-                </div>
-                <div style={{ flex: 1 }}>
+
+                {/* Second line: percentage, revisions, and bar */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    fontSize: '12px',
+                    color: TEXT_COLOR,
+                  }}
+                >
                   <div
                     style={{
-                      height: '8px',
-                      backgroundColor: LOW_IMPORTANCE_COLOR,
-                      borderRadius: '4px',
-                      width: `${coupled.percentage * 100}%`,
-                      minWidth: '10px',
+                      flex: '0 0 80px',
+                      paddingRight: '10px',
+                      fontWeight: 'bold',
                     }}
-                  />
+                  >
+                    {Math.round(coupled.percentage * 100)}%
+                  </div>
+                  <div
+                    style={{
+                      flex: '0 0 80px',
+                      paddingRight: '10px',
+                      color: '#666',
+                      fontSize: '11px',
+                    }}
+                  >
+                    ({coupled.revisions} rev{coupled.revisions !== 1 ? 's' : ''}
+                    )
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div
+                      style={{
+                        height: '8px',
+                        backgroundColor: LOW_IMPORTANCE_COLOR,
+                        borderRadius: '4px',
+                        width: `${coupled.percentage * 100}%`,
+                        minWidth: '10px',
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             ))}
