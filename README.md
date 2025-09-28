@@ -7,8 +7,7 @@ This is a tool for analyzing and visualizing your git history. Based on ideas fr
 - [Motivation](#motivation)
 - [Core Concepts](#core-concepts)
   - [Hotspots](#hotspots)
-  - [Coupled Pairs](#coupled-pairs)
-  - [Sum of Coupling (SOC)](#sum-of-coupling-soc)
+  - [Coupling Analysis](#coupling-analysis)
   - [The Power of Data Over Time](#the-power-of-data-over-time)
   - [Complexity Calculation](#complexity-calculation)
 - [.charlie.config.json](#charlieconfigjson)
@@ -78,13 +77,23 @@ After running the tool, in the root of your project you should see a file called
 
 A **hotspot** is a file or module that is both frequently modified AND has high complexity. These represent the most problematic areas of your codebase - they change often (indicating active development or bug fixes) and are complex (making them risky to modify). Hotspots should be your top priority for refactoring. The circle size represents the complexity of the file being changed. Colors represent the frequency of the file being changed (from gray i.e. low frequency, to blue-ish, to red-ish i.e. high frequency).
 
-### Coupled Pairs
+### Coupling Analysis
 
-**Coupled pairs** are files that frequently appear together in the same commits. When two files are consistently modified together, it suggests they're more tightly coupled than your architecture might indicate. High coupling can lead to ripple effects where changes in one file require changes in another.
+The **Coupling** view combines two powerful metrics to help you identify architectural problems and find clusters of tightly related files:
 
-### Sum of Coupling (SOC)
+#### Sum of Coupling (SOC)
+**SOC** is a metric calculated per file that counts how many times the file appears in commits with other files (i.e., it's not alone in the commit). Every time a file is committed alongside other files, we assume it might be coupled with them. A high SOC score indicates a file that's frequently involved in multi-file changes, which could signal architectural problems.
 
-**SOC** is a metric calculated per file that counts how many times the file appears in commits with other files (i.e., it's not alone in the commit). Every time a file is committed alongside other files, we assume it might be coupled with them. A high SOC score indicates a file that's frequently involved in multi-file changes, which could signal architectural problems. When a file is both a hotspot AND has high SOC, it becomes a critical refactoring priority.
+#### Coupled Pairs Integration
+Each file in the coupling view can be expanded to reveal its **coupled pairs** - files that frequently appear together in the same commits. When two files are consistently modified together, it suggests they're more tightly coupled than your architecture might indicate. High coupling can lead to ripple effects where changes in one file require changes in another.
+
+#### Finding Clusters
+By expanding high-SOC files, you can identify clusters of tightly coupled files that might benefit from:
+- Being moved into the same module or package
+- Being refactored to reduce dependencies
+- Being split if they're doing too many things
+
+When a file is both a hotspot AND has high SOC with many coupled pairs, it becomes a critical refactoring priority. The expandable view helps you understand not just that coupling exists, but exactly which files are involved in the coupling relationships.
 
 ### The Power of Data Over Time
 
@@ -151,7 +160,7 @@ Allows you to group files into architectural components for analysis. The key is
 When `architecturalGroups` is specified, Charlie generates both file-level and grouped visualizations in the report:
 1. **File-level Hotspots** - Shows individual files as separate hotspots
 2. **Grouped Hotspots** - Shows architectural groups as consolidated hotspots
-3. **Grouped Coupled Pairs** - Shows coupling relationships between architectural groups
+3. **Coupling Analysis** - Shows both file-level and group-level coupling relationships with expandable details
 
 This allows you to see both the detailed file-level view and the higher-level architectural view simultaneously.
 
@@ -239,6 +248,7 @@ Special thanks to Aleksandra Kozlova and Darya Losich for their contributions an
   - [x] Add some form of routing
   - [x] Rewrite SOC
   - [x] Rewrite word count
+  - [x] Integrate coupling analysis: combine SOC and coupled pairs into unified expandable view
 - [ ] Default date should be 1 year before the last commit in the repo
 - [x] Architectural groups should produce 1. hotpsots 2. coupled pairs
 - [x] Alternatively, maybe .charlie.config.json should be a starting point, but then in the webpage the user could change the config to see different slices of data.
