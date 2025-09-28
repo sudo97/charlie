@@ -254,8 +254,8 @@ Special thanks to Aleksandra Kozlova and Darya Losich for their contributions an
 - [x] Alternatively, maybe .charlie.config.json should be a starting point, but then in the webpage the user could change the config to see different slices of data.
 - [x] Reading file for complexity should be done in chunks
 - [x] Coupled pairs are sorted in the table by normalized coupling percentage times the number of revisions, but filtered by two thresholds: minCouplingPercentage and revisionsPercentile. Instead, we should use the sorting that we have, and filter by single percentile threshold.
-- [ ] Add a way to find file/module owners
+- [x] Add a way to find file/module owners
 - [ ] Add a way to find teams that happen to form by analyzing authors
 - [ ] Add a way to show fractal diagrams for the files or modules based on their ownership
 - [ ] Add a way to show the "social graph" of the team based on the git history
-- [ ] Add a way to calculate truck-factor of a project (i.e. how many people can leave before 50% of the code is left without a knowledgeable maintainer)
+- [x] Add a way to calculate truck-factor of a project (i.e. how many people can leave before 50% of the code is left without a knowledgeable maintainer)
