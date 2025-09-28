@@ -29,8 +29,6 @@ export function VisualizationContainer({ data }: VisualizationContainerProps) {
     >
       <div
         style={{
-          display: 'flex',
-          alignItems: 'center',
           padding: '10px 0',
           borderBottom: `2px solid ${BORDER_COLOR}`,
           marginBottom: '10px',
@@ -38,9 +36,28 @@ export function VisualizationContainer({ data }: VisualizationContainerProps) {
           color: TEXT_COLOR,
         }}
       >
-        <div style={{ flex: '0 0 50px', paddingRight: '10px' }}></div>
-        <div style={{ flex: '0 0 300px', paddingRight: '20px' }}>File</div>
-        <div style={{ flex: 1 }}>SOC Score</div>
+        {/* Header for filename row */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: '4px',
+          }}
+        >
+          <div style={{ flex: '0 0 50px', paddingRight: '10px' }}></div>
+          <div style={{ flex: 1 }}>File</div>
+        </div>
+
+        {/* Header for SOC bar row */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            marginLeft: '60px', // Align with the bar position
+          }}
+        >
+          <div style={{ flex: 1 }}>SOC Score</div>
+        </div>
       </div>
 
       {data.map(d => (

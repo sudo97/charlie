@@ -29,60 +29,78 @@ export function CouplingRow({ data, maxSoc, colorScale }: CouplingRowProps) {
     <>
       <div
         style={{
-          display: 'flex',
-          alignItems: 'center',
           padding: '8px 0',
           borderBottom: `1px solid ${BORDER_COLOR}`,
           cursor: hasCoupledFiles ? 'pointer' : 'default',
         }}
         onClick={toggleExpanded}
       >
-        <div style={{ flex: '0 0 50px', paddingRight: '10px' }}>
-          {hasCoupledFiles && (
-            <span
-              style={{
-                fontSize: '14px',
-                color: TEXT_COLOR,
-                userSelect: 'none',
-                transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)',
-                transition: 'transform 0.2s ease',
-                display: 'inline-block',
-              }}
-            >
-              ▶
-            </span>
-          )}
-        </div>
         <div
           style={{
-            flex: '0 0 300px',
-            paddingRight: '20px',
-            color: TEXT_COLOR,
-            fontFamily: 'monospace',
-            fontSize: '14px',
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: '8px',
           }}
         >
-          {data.file}
-        </div>
-        <div style={{ flex: 1 }}>
+          <div style={{ flex: '0 0 50px', paddingRight: '10px' }}>
+            {hasCoupledFiles && (
+              <span
+                style={{
+                  fontSize: '14px',
+                  color: TEXT_COLOR,
+                  userSelect: 'none',
+                  transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)',
+                  transition: 'transform 0.2s ease',
+                  display: 'inline-block',
+                }}
+              >
+                ▶
+              </span>
+            )}
+          </div>
           <div
             style={{
-              height: '24px',
-              backgroundColor,
-              borderRadius: '12px',
-              position: 'relative',
-              display: 'flex',
-              alignItems: 'center',
-              paddingLeft: '10px',
-              color: '#fff',
-              fontSize: '12px',
-              fontWeight: 'bold',
-              textShadow: '1px 1px 1px rgba(0,0,0,0.5)',
-              width: `${(data.soc / maxSoc) * 100}%`,
-              minWidth: '60px',
+              flex: 1,
+              color: TEXT_COLOR,
+              fontFamily: 'monospace',
+              fontSize: '14px',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
             }}
+            title={data.file}
           >
-            {data.soc}
+            {data.file}
+          </div>
+        </div>
+
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            marginLeft: '60px',
+          }}
+        >
+          <div style={{ flex: 1, position: 'relative' }}>
+            <div
+              style={{
+                height: '24px',
+                backgroundColor,
+                borderRadius: '12px',
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                paddingLeft: '10px',
+                color: '#fff',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                textShadow: '1px 1px 1px rgba(0,0,0,0.5)',
+                width: `${(data.soc / maxSoc) * 100}%`,
+                minWidth: '60px',
+              }}
+            >
+              {data.soc}
+            </div>
           </div>
         </div>
       </div>
