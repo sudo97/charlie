@@ -16,17 +16,21 @@ import { groupHotspots } from '@core/group-hotspots';
 import { HotspotTooltip } from './hotspot-tooltip';
 import type { Soc } from '@core/soc';
 import type { FileOwnership } from '@core/file-ownership';
+import type { CouplingItem } from '@core/coupling';
+import { CouplingLines } from './coupling-lines';
 
 export function Hotspots({
   hotspots: data,
   architecturalGroups,
   soc,
   fileOwnership,
+  coupling,
 }: {
   hotspots: Hotspot[];
   architecturalGroups: Record<string, string>;
   soc: Soc[];
   fileOwnership: FileOwnership;
+  coupling: CouplingItem[];
 }) {
   const [grouped, setGrouped] = useState(false);
 
@@ -138,6 +142,14 @@ export function Hotspots({
             />
           ))}
         </g>
+        <CouplingLines
+          hoveredNode={hover}
+          allNodes={items}
+          couplingData={coupling}
+          zoomScale={zoomScale}
+          viewX={viewX}
+          viewY={viewY}
+        />
         {hover && (
           <HotspotTooltip
             node={hover}

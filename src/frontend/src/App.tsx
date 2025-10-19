@@ -31,6 +31,7 @@ export function App({ data }: AppProps) {
               architecturalGroups={data.architecturalGroups}
               soc={data.soc}
               fileOwnership={data.fileOwnership}
+              coupling={data.coupling}
             />
           </div>
         );
