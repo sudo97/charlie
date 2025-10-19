@@ -191,9 +191,7 @@ const packData = (
   );
 };
 
-const mkColor = (root: d3.HierarchyCircularNode<TreeData>) => {
-  const [min, max] = getColorDomain(root);
-  const mid = (min + max) / 2;
+function colorizeWithImportance(min: number, mid: number, max: number) {
   return d3
     .scaleLinear()
     .domain([min, mid, max])
@@ -203,6 +201,12 @@ const mkColor = (root: d3.HierarchyCircularNode<TreeData>) => {
       HIGH_IMPORTANCE_COLOR,
     ] as any)
     .interpolate(d3.interpolateHcl as any);
+}
+
+const mkColor = (root: d3.HierarchyCircularNode<TreeData>) => {
+  const [min, max] = getColorDomain(root);
+  const mid = (min + max) / 2;
+  return colorizeWithImportance(min, mid, max);
 };
 
 const mkColorForFocus = (focusNode: d3.HierarchyCircularNode<TreeData>) => {
@@ -223,15 +227,7 @@ const mkColorForFocus = (focusNode: d3.HierarchyCircularNode<TreeData>) => {
   const max = Math.max(...revisions);
   const mid = (min + max) / 2;
 
-  return d3
-    .scaleLinear()
-    .domain([min, mid, max])
-    .range([
-      LOW_IMPORTANCE_COLOR,
-      MID_IMPORTANCE_COLOR,
-      HIGH_IMPORTANCE_COLOR,
-    ] as any)
-    .interpolate(d3.interpolateHcl as any);
+  return colorizeWithImportance(min, mid, max);
 };
 
 const getColorDomain = (
