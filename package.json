@@ -38,6 +38,11 @@
     "clean": "rm -rf dist templates",
     "prepublishOnly": "npm run clean && npm run build"
   },
+  "jscpd": {
+    "ignore": [
+      "**/*.test.ts"
+    ]
+  },
   "keywords": [
     "git",
     "analysis",
