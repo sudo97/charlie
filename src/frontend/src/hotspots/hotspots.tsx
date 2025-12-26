@@ -6,7 +6,7 @@ import {
   LOW_IMPORTANCE_COLOR,
   ROOT_COLOR,
 } from '../colours';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { HotspotItem } from './hotspot-item';
 import { Label } from './hotspot-label';
 import type { Hotspot } from '@core/hotspots.js';
@@ -53,10 +53,6 @@ export function Hotspots({
 
   const [focus, setFocus] = useState<d3.HierarchyCircularNode<TreeData>>(root);
 
-  useEffect(() => {
-    setFocus(root);
-  }, [grouped]);
-
   const view = {
     width: focus.x,
     height: focus.y,
@@ -95,7 +91,10 @@ export function Hotspots({
           <input
             type="checkbox"
             checked={grouped}
-            onChange={() => setGrouped(!grouped)}
+            onChange={() => {
+              setGrouped(!grouped);
+              setFocus(root);
+            }}
           />
           <label>Grouped</label>
         </div>
