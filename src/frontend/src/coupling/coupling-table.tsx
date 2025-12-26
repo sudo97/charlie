@@ -2,7 +2,6 @@ import * as d3 from 'd3';
 import type { CouplingItem } from '../../../core/coupling.js';
 import {
   LOW_IMPORTANCE_COLOR,
-  MID_IMPORTANCE_COLOR,
   HIGH_IMPORTANCE_COLOR,
   BACKGROUND_COLOR,
   BORDER_COLOR,
@@ -76,6 +75,6 @@ function createColorScale(maxSoc: number) {
   return d3
     .scaleLinear<string>()
     .domain([0, maxSoc / 2, maxSoc])
-    .range([LOW_IMPORTANCE_COLOR, MID_IMPORTANCE_COLOR, HIGH_IMPORTANCE_COLOR])
-    .interpolate(d3.interpolateHcl);
+    .range([LOW_IMPORTANCE_COLOR, HIGH_IMPORTANCE_COLOR])
+    .interpolate(d3.interpolateRgb);
 }

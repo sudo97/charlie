@@ -1,9 +1,8 @@
 // Shared color constants for visualizations
 
 // Complexity/Coupling colors (used for gradients)
-export const LOW_IMPORTANCE_COLOR = 'rgba(207, 215, 222, 1)';
-export const MID_IMPORTANCE_COLOR = 'rgba(160, 173, 187, 1)';
-export const HIGH_IMPORTANCE_COLOR = 'rgba(208, 0, 0, 1)';
+export const LOW_IMPORTANCE_COLOR = '#87878555';
+export const HIGH_IMPORTANCE_COLOR = '#c21600ff';
 
 // Background colors
 export const BACKGROUND_COLOR = '#fafafa';

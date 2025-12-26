@@ -4,7 +4,6 @@ import * as d3 from 'd3';
 import {
   HIGH_IMPORTANCE_COLOR,
   LOW_IMPORTANCE_COLOR,
-  MID_IMPORTANCE_COLOR,
   ROOT_COLOR,
 } from '../colours';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -195,12 +194,8 @@ function colorizeWithImportance(min: number, mid: number, max: number) {
   return d3
     .scaleLinear()
     .domain([min, mid, max])
-    .range([
-      LOW_IMPORTANCE_COLOR,
-      MID_IMPORTANCE_COLOR,
-      HIGH_IMPORTANCE_COLOR,
-    ] as any)
-    .interpolate(d3.interpolateHcl as any);
+    .range([LOW_IMPORTANCE_COLOR, HIGH_IMPORTANCE_COLOR] as any)
+    .interpolate(d3.interpolateRgb as any);
 }
 
 const mkColor = (root: d3.HierarchyCircularNode<TreeData>) => {
