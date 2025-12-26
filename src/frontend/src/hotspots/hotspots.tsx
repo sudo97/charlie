@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { TreeData } from '@core/tree-data';
 import * as d3 from 'd3';
 import {
@@ -190,11 +189,15 @@ const packData = (
 };
 
 function colorizeWithImportance(min: number, mid: number, max: number) {
-  return d3
-    .scaleLinear()
-    .domain([min, mid, max])
-    .range([LOW_IMPORTANCE_COLOR, HIGH_IMPORTANCE_COLOR] as any)
-    .interpolate(d3.interpolateRgb as any);
+  return (
+    d3
+      .scaleLinear()
+      .domain([min, mid, max])
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .range([LOW_IMPORTANCE_COLOR, HIGH_IMPORTANCE_COLOR] as any)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .interpolate(d3.interpolateRgb as any)
+  );
 }
 
 const mkColor = (root: d3.HierarchyCircularNode<TreeData>) => {
@@ -207,14 +210,18 @@ const mkColorForFocus = (focusNode: d3.HierarchyCircularNode<TreeData>) => {
   const descendants = focusNode.descendants();
   const revisions = descendants
     .filter(d => 'revisions' in d.data)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .map(d => (d.data as any).revisions);
 
   if (revisions.length === 0) {
     // If no revisions data, return a default scale
-    return d3
-      .scaleLinear()
-      .domain([0, 1])
-      .range([LOW_IMPORTANCE_COLOR, LOW_IMPORTANCE_COLOR] as any);
+    return (
+      d3
+        .scaleLinear()
+        .domain([0, 1])
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .range([LOW_IMPORTANCE_COLOR, LOW_IMPORTANCE_COLOR] as any)
+    );
   }
 
   const min = Math.min(...revisions);
