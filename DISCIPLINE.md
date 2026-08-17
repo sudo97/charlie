@@ -184,7 +184,7 @@ The agent:
 - **During work:** all pipeline artifacts live in `docs/work/<branch-name>/`. They are versioned, updated as understanding evolves, and honest — including records of halted budgets and revised specs.
 - **In the PR:** the artifacts are part of the diff. Reviewers read them.
 - **On merge:** a post-merge CI job deletes `docs/work/**` from the main branch automatically. No exceptions, no "let's keep this one."
-- **In code:** comments explain _why_, never _what_. Section comments are banned (CI greps for them in Core code). Narration comments do not survive phase 5.
+- **In code:** comments explain _why_, never _what_. Section comments are banned in the Core. Narration comments do not survive phase 5. None of this is machine-checked — see CI: The Referee.
 
 **The default fate of every document is erasure.** The agent never decides that a document is important enough to keep, never promotes it, never copies content into a permanent location "just in case." If something in the work docs turns out to be genuinely lasting, a **human** decides that — and does the extraction themselves, into the permanent, human-curated folder that CI does not auto-erase (e.g., `docs/` for README/ADRs). Persistence is a deliberate human act, never an agent's judgment call.
 
@@ -247,8 +247,9 @@ CI enforces everything that can be enforced deterministically. A red check is no
 | Dependency cycles               | All                                         | Zero, hard fail                                                                               |
 | Stable Dependency Principle     | Modules                                     | No violation, hard fail                                                                       |
 | Core purity                     | Core                                        | No imports from Shell/framework/I-O — effects only via injected functions/objects (hard fail) |
-| Section comments                | Core                                        | None (`// --.*----` and equivalents)                                                          |
 | Docs cleanup                    | Main branch                                 | Post-merge job deletes `docs/work/**`                                                         |
+
+**What CI deliberately does not check.** Comment quality is not on the list, and the omission is on purpose. No pattern can distinguish a section comment or a narration comment from the rare comment that carries a genuine _why_ — the difference is whether an abstraction is missing, which is not a textual property. A check that catches only the decorated style (`// -- VALIDATION ----`) reports green on `// Validation`, and a green check that means nothing is worse than no check, because it launders an unreviewed file as reviewed. This rule is enforced by the agent's slop sweep at the end of phase 5 and by the engineer at phase 6. Prefer this outcome to a leaky gate whenever a rule resists deterministic checking: name it, assign it to a human, and leave CI out of it.
 
 Mutation testing has three layers: the agent runs it **per-file during Build** (fast, immediate feedback), CI runs it on the **changed Core surface per PR** (keeps CI fast, catches anything the agent skipped), and a **full-Core nightly run** catches drift. By the time CI runs it, surviving mutants should already be dead.
 
