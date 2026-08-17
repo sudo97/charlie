@@ -1,8 +1,5 @@
 import type { LogItem } from '@core/git-log.js';
 import { parseFileEntry, parseHeader } from './parse-log.js';
-import { createGitLogEmitter } from './createGitLogEmitter.js';
-import { applyFilters } from '../core/filters.js';
-import type { Config } from './config.js';
 
 export type GitLogEmitter = {
   onData: (listener: (chunk: string) => void) => void;
@@ -11,11 +8,26 @@ export type GitLogEmitter = {
   onClose: (listener: (code: number) => void) => void;
 };
 
-// This is tricky. I tried using isomorphic-git, but it was very slow.
-// Now we are parsing the output of git log --all --numstat --date=short --pretty=format:'--%h--%ad--%aN' --no-renames --after=(CURRENT_YEAR - 1)
-// and splitting it into log items.
-// Then I also decided to write tests for this, so that it's easier to maintain.
-// So I created a GitLogEmitter type instead of using child_process.spawn directly.
+// isomorphic-git was measured too slow for this repository's histories, so the
+// log is parsed as text instead:
+// git log --all --numstat --date=short --pretty=format:'--%h--%ad--%aN' --no-renames --after=<a year ago>
+function appendLine(logItems: LogItem[], line: string): void {
+  if (line.startsWith("'--")) {
+    const { hash, date, author, message } = parseHeader(line);
+    logItems.push({ hash, date, author, fileEntries: [], message });
+    return;
+  }
+
+  if (line.length === 0) {
+    return;
+  }
+
+  try {
+    logItems[logItems.length - 1]!.fileEntries.push(parseFileEntry(line));
+  } catch (e) {
+    console.log(e);
+  }
+}
 
 export async function produceGitLog(
   gitLogEmitter: GitLogEmitter
@@ -26,41 +38,22 @@ export async function produceGitLog(
     let buffer = '';
 
     gitLogEmitter.onData(chunk => {
-      // console.log("buffer", JSON.stringify(buffer));
-      // Process each chunk of data as it comes in
-      // console.log("--");
-
+      // Node delivers Buffers here despite the string type on GitLogEmitter.
       buffer += chunk.toString();
 
-      if (buffer.includes('\n\n')) {
-        const [chunkStr, rest] = buffer.split('\n\n');
-        buffer = rest!;
-
-        const commitLines = chunkStr!.toString().trim().split('\n');
-
-        for (const line of commitLines) {
-          // console.log(line);
-          if (line.startsWith("'--")) {
-            const { hash, date, author, message } = parseHeader(line);
-            logItems.push({ hash, date, author, fileEntries: [], message });
-          } else if (line.length > 0) {
-            try {
-              const fileEntry = parseFileEntry(line);
-
-              logItems[logItems.length - 1]!.fileEntries.push(fileEntry);
-            } catch (e) {
-              console.log(e);
-            }
-          }
-        }
+      if (!buffer.includes('\n\n')) {
+        return;
       }
 
-      // console.log("--");
-      // process.stdout.write(chunk);
+      const [completed, rest] = buffer.split('\n\n');
+      buffer = rest!;
+
+      for (const line of completed!.trim().split('\n')) {
+        appendLine(logItems, line);
+      }
     });
 
     gitLogEmitter.onErrorData(chunk => {
-      // Handle error output
       process.stderr.write(chunk);
     });
 
@@ -78,11 +71,4 @@ export async function produceGitLog(
       }
     });
   });
-}
-
-export async function getLogItems(repositoryPath: string, config: Config) {
-  return applyFilters(
-    await produceGitLog(createGitLogEmitter(repositoryPath, config.after)),
-    config
-  );
 }
