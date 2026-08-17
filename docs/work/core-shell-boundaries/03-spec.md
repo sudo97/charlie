@@ -60,6 +60,15 @@ That last pair is the real risk of this change. Moving code between modules can 
 **when** it is formatted,
 **then** `npx prettier --check .` passes.
 
+### S7 — the gates run on the runtime CI actually uses
+
+_Added after the PR opened, when CI failed on something the local suite cannot see._
+
+**Given** `dependency-cruiser@18` requires node `^22||^24||>=26` and the workflows pinned node 20,
+**when** the workflows pin a version the tooling supports,
+**then** `check:deps` runs in CI rather than aborting,
+**and** `package.json`'s `engines: >=18` is unchanged, because that constrains the published CLI, not the dev toolchain.
+
 ## Error behaviour
 
 Unchanged. `produceGitLog` still rejects on spawn error and on a non-zero exit code, still writes stderr through, and still swallows a malformed file-entry line with a logged error rather than failing the run. The two rejection tests are the guard on this.

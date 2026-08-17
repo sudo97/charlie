@@ -36,6 +36,16 @@ Three survived. Two were cut, and the cuts are listed at the end so the filterin
 
 ---
 
+## 4. A trap — `npm run verify` passing locally does not mean the gates can run in CI
+
+**What.** The full suite exited 0 locally and the PR still went red. `dependency-cruiser@18` requires node `^22||^24||>=26`; the workflows pinned node 20. Local node is 22.22.0, so `check:deps` had never once been executed on the version CI uses. The tool did not fail a check — it refused to start.
+
+**Why it might outlive the PR.** The adoption process (§263) says to verify a tool by running it against the repository, and that was done — on the wrong runtime. Every future tool added to these gates has the same hole, and the symptom is a red PR that no amount of local verification reproduces. It also means `npm run verify` is not the authority `AGENTS.md` currently implies it is.
+
+**Where it would live.** Partly fixed in the diff: the workflows now pin 22. The residue worth a human's decision is whether to make the constraint checkable — a `engines` field for the dev toolchain, a `.nvmrc` matching the CI pin, or a line in `AGENTS.md` saying `verify` is necessary but not sufficient and CI is the authority. **Recommend: `.nvmrc` pinned to the CI version, so local and CI cannot drift silently.**
+
+---
+
 ## Considered and cut
 
 - **`[...someString]` spreads to characters, so the chunking in `git-log-reader.test.ts` is genuinely random.** Discovering this corrected a wrong assumption and is written up in `01-exploration.md` as the experiment that earned its keep. But as a _lesson_ it fails the test: it is one `node -e` away for anyone who wonders, and knowing it in advance would not change what the next agent does. Search cost is not the bar (§200).

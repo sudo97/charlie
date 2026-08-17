@@ -83,6 +83,21 @@ Scenarios: S5, S6.
 
 Runs last, so that the SDP scope change cannot mask a violation T1–T3 was supposed to fix. If it ran first, `core` and `cli` would still be covered, but sequencing it last means every earlier green was measured under the stricter rule.
 
+## T6 — pin CI to a node version the tooling supports
+
+Scenario: S7. Added mid-flight, after CI failed on the opened PR.
+
+| Item               | Value                                                                                                |
+| ------------------ | ---------------------------------------------------------------------------------------------------- |
+| Spec scenarios     | 1                                                                                                    |
+| Predicted files    | 2 — `.github/workflows/ci.yml`, `.github/workflows/nightly-mutation.yml`                             |
+| Expected new tests | none                                                                                                 |
+| Open decisions     | 0                                                                                                    |
+| Red                | CI: `ERROR: Your node version (20.20.2) is not supported. dependency-cruiser ... ^22\|\|^24\|\|>=26` |
+| Green              | all three CI jobs pass                                                                               |
+
+This is a defect in the adoption commit, not in this change set, and it is here only because it blocks this PR from going green. `npm run verify` cannot catch it: it runs on the developer's node, which is 22.22.0 locally. Adding the task rather than editing the workflows quietly keeps the diff explainable.
+
 ## Tripwires
 
 Watched across all five tasks:

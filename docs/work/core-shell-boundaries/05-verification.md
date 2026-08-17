@@ -92,6 +92,23 @@ Both builds completed with exit 0, and the CLI ran end to end — reading source
 
 Total code files changed: **10** against a predicted 16, halt threshold 25. No tripwire fired. No task needed more than one attempt to go green, so no re-planning was required.
 
+## T6 — what the local suite could not see
+
+The PR opened green locally and went red in CI:
+
+```
+> depcruise src
+ERROR: Your node version (20.20.2) is not supported. dependency-cruiser
+       follows the node.js release cycle and runs on these node versions:
+       ^22||^24||>=26
+```
+
+Two of the three jobs passed — tests, coverage and mutation on the changed Core surface. Only the coupling job failed, and it failed by the tool refusing to start rather than by finding a violation.
+
+Local node is **22.22.0**; the workflows pinned **20**. `npm run verify` therefore cannot catch this class of failure by construction. Workflows now pin 22; `package.json`'s `engines: >=18` is deliberately unchanged, since it constrains the published CLI rather than the dev toolchain.
+
+This is a defect in the adoption commit surfaced by this PR, not a defect in the boundary work. Recorded as lesson 4.
+
 ## What was not verified
 
 - `cli/index.ts` has no automated test, so the composition move is covered only by the runtime run above. That gap is on the deferred list in `03-spec.md`.
