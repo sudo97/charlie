@@ -2,7 +2,9 @@
 
 Candidates nominated for a human to decide on before this folder is erased. Nominating is not keeping. The bar applied to each: **would you tell this to the next agent before it starts, and would it change what they do?**
 
-Three survived. Two were cut, and the cuts are listed at the end so the filtering is visible.
+Five survived. Two were cut, and the cuts are listed at the end so the filtering is visible.
+
+Items 1–3 came out of the work itself. Items 4 and 5 were found after the PR opened, when CI disagreed with the local suite — both are defects in the adoption commit rather than in this change set, and both are the kind of thing only a real CI run can surface.
 
 ---
 
@@ -60,8 +62,6 @@ Three survived. Two were cut, and the cuts are listed at the end so the filterin
 
 - **`[...someString]` spreads to characters, so the chunking in `git-log-reader.test.ts` is genuinely random.** Discovering this corrected a wrong assumption and is written up in `01-exploration.md` as the experiment that earned its keep. But as a _lesson_ it fails the test: it is one `node -e` away for anyone who wonders, and knowing it in advance would not change what the next agent does. Search cost is not the bar (§200).
 - **Branch coverage rising can mean tests left the scope, not that testing improved.** Real, and it nearly slipped past during T3 — but `03-spec.md` already made the file-count check part of the spec, and the same instinct is one that CI's absolute thresholds enforce anyway. Keeping it would be padding.
-
----
 
 ---
 
