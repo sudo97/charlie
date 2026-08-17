@@ -73,6 +73,7 @@ State which track you are on and why: **full pipeline**, **lightweight** (`00-li
 - **Comments explain why, never what.** If you think you need a comment, you probably need a better name or a missing abstraction. Section comments are banned in the Core.
 - **Never promote a document to permanence.** You nominate in `06-lessons.md`; a human decides. Never copy work docs into `docs/` or this file "just in case."
 - **The spec is binding.** If code and spec disagree, stop and fix one of them explicitly.
+- **Whole-graph gates cannot be cleared per task.** `check:deps` passing on every task does not mean it passes on the branch — instability is `I = Ce / (Ca + Ce)`, so adding a module changes the rating of every module it imports, and an edge you never touched can start violating the Stable Dependency Principle. Run `npm run check:deps` again once the whole branch is assembled, and expect it to fail late. When it does, the answer is a structural fix, not a wider rule scope: widening breaks the ratchet.
 
 ## Notes
 
