@@ -14,6 +14,11 @@ import {
   MUTED_TEXT_COLOR,
 } from './colours';
 
+// FIXME: 218 lines mixing rendering with the presentation decisions around
+// ownership thresholds and truck-factor banding. Those are pure and belong in
+// the Core behind a Humble Object. Same family as the note in
+// hotspots/hotspots.tsx.
+
 export function FileOwnershipComponent({
   hotspots,
   logItems,

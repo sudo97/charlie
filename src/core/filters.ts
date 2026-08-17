@@ -1,8 +1,12 @@
 import type { LogItem } from './git-log.js';
-import { type Config } from '../cli/config.js';
 
-export function applyFilters(items: LogItem[], config: Config): LogItem[] {
-  const { exclude, include } = config;
+export type FilterRules = {
+  include: RegExp[];
+  exclude: RegExp[];
+};
+
+export function applyFilters(items: LogItem[], rules: FilterRules): LogItem[] {
+  const { exclude, include } = rules;
   return items
     .map(item => ({
       ...item,

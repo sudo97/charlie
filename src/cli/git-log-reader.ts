@@ -1,9 +1,14 @@
 import type { LogItem } from '@core/git-log.js';
 import { parseFileEntry, parseHeader } from './parse-log.js';
-import { createGitLogEmitter } from './createGitLogEmitter.js';
-import { applyFilters } from '../core/filters.js';
-import type { Config } from './config.js';
 
+// FIXME: onData lies. createGitLogEmitter wires this listener to
+// stdout.on('data'), which hands it a Buffer, so the chunk.toString() below is
+// load-bearing rather than the no-op its type suggests — delete it and the CLI
+// breaks while all 75 tests stay green, because every test passes strings.
+// The fix is `chunk: Buffer | string` here, after which the conversion is
+// visibly necessary. It was left out of the boundary change because listener
+// contravariance under strictFunctionTypes forces the three test doubles in
+// tests/cli/git-log-reader.test.ts to change signature too.
 export type GitLogEmitter = {
   onData: (listener: (chunk: string) => void) => void;
   onError: (listener: (error: Error) => void) => void;
@@ -11,11 +16,34 @@ export type GitLogEmitter = {
   onClose: (listener: (code: number) => void) => void;
 };
 
-// This is tricky. I tried using isomorphic-git, but it was very slow.
-// Now we are parsing the output of git log --all --numstat --date=short --pretty=format:'--%h--%ad--%aN' --no-renames --after=(CURRENT_YEAR - 1)
-// and splitting it into log items.
-// Then I also decided to write tests for this, so that it's easier to maintain.
-// So I created a GitLogEmitter type instead of using child_process.spawn directly.
+// isomorphic-git was measured too slow for this repository's histories, so the
+// log is parsed as text instead:
+// git log --all --numstat --date=short --pretty=format:'--%h--%ad--%aN' --no-renames --after=<a year ago>
+//
+// FIXME: appendLine and the buffer draining in produceGitLog are pure — text
+// in, LogItem[] out — and belong in the Core along with parse-log.ts, which is
+// pure too. They sit in the Shell only because the streaming does. The move
+// needs an error-reporting port first: produceGitLog writes to process.stderr
+// and console.error, and console.log(e) below swallows a malformed file entry,
+// none of which the Core may do. Doing it would put this parser under the
+// Core's coverage and mutation thresholds, where it belongs.
+function appendLine(logItems: LogItem[], line: string): void {
+  if (line.startsWith("'--")) {
+    const { hash, date, author, message } = parseHeader(line);
+    logItems.push({ hash, date, author, fileEntries: [], message });
+    return;
+  }
+
+  if (line.length === 0) {
+    return;
+  }
+
+  try {
+    logItems[logItems.length - 1]!.fileEntries.push(parseFileEntry(line));
+  } catch (e) {
+    console.log(e);
+  }
+}
 
 export async function produceGitLog(
   gitLogEmitter: GitLogEmitter
@@ -26,41 +54,22 @@ export async function produceGitLog(
     let buffer = '';
 
     gitLogEmitter.onData(chunk => {
-      // console.log("buffer", JSON.stringify(buffer));
-      // Process each chunk of data as it comes in
-      // console.log("--");
-
+      // Not redundant — see the note on GitLogEmitter above.
       buffer += chunk.toString();
 
-      if (buffer.includes('\n\n')) {
-        const [chunkStr, rest] = buffer.split('\n\n');
-        buffer = rest!;
-
-        const commitLines = chunkStr!.toString().trim().split('\n');
-
-        for (const line of commitLines) {
-          // console.log(line);
-          if (line.startsWith("'--")) {
-            const { hash, date, author, message } = parseHeader(line);
-            logItems.push({ hash, date, author, fileEntries: [], message });
-          } else if (line.length > 0) {
-            try {
-              const fileEntry = parseFileEntry(line);
-
-              logItems[logItems.length - 1]!.fileEntries.push(fileEntry);
-            } catch (e) {
-              console.log(e);
-            }
-          }
-        }
+      if (!buffer.includes('\n\n')) {
+        return;
       }
 
-      // console.log("--");
-      // process.stdout.write(chunk);
+      const [completed, rest] = buffer.split('\n\n');
+      buffer = rest!;
+
+      for (const line of completed!.trim().split('\n')) {
+        appendLine(logItems, line);
+      }
     });
 
     gitLogEmitter.onErrorData(chunk => {
-      // Handle error output
       process.stderr.write(chunk);
     });
 
@@ -78,11 +87,4 @@ export async function produceGitLog(
       }
     });
   });
-}
-
-export async function getLogItems(repositoryPath: string, config: Config) {
-  return applyFilters(
-    await produceGitLog(createGitLogEmitter(repositoryPath, config.after)),
-    config
-  );
 }

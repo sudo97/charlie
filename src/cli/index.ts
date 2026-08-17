@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 import * as path from 'path';
-import { getLogItems } from './git-log-reader.js';
+import { produceGitLog } from './git-log-reader.js';
+import { createGitLogEmitter } from './createGitLogEmitter.js';
 import { generateReport } from './report-generator.js';
 import { readConfigFile } from './config.js';
+import { applyFilters } from '../core/filters.js';
 import { gitHistoryWordCount } from '../core/word-count.js';
 import { readHotspots } from './readHotspots.js';
 
@@ -10,7 +12,10 @@ const repositoryPath = path.resolve(process.argv[2] ?? '.');
 
 const config = await readConfigFile(repositoryPath);
 
-const logItems = await getLogItems(repositoryPath, config);
+const logItems = applyFilters(
+  await produceGitLog(createGitLogEmitter(repositoryPath, config.after)),
+  config
+);
 
 const hotspotsData = await readHotspots(repositoryPath, logItems);
 

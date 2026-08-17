@@ -8,6 +8,11 @@ import {
   LOW_IMPORTANCE_COLOR,
 } from '../colours.js';
 
+// FIXME: 206 lines, and the sorting, thresholding and colour-scale decisions
+// in here are pure — they belong in the Core behind a Humble Object, which
+// would also make them testable without a renderer. Same family as the note in
+// hotspots/hotspots.tsx.
+
 interface CouplingRowProps {
   data: CouplingItem;
   maxSoc: number;

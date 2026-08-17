@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
       - run: npm ci
 
@@ -43,7 +43,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
       - run: npm ci
 
@@ -67,7 +67,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
       - run: npm ci
 
@@ -79,14 +79,30 @@ jobs:
           else
             BASE="${{ github.event.before }}"
           fi
-          FILES=$(git diff --name-only --diff-filter=ACMR "$BASE" HEAD -- 'src/core/**/*.ts' \
-            | { grep -v '\.\(test\|spec\)\.ts$' || true; } \
+
+          # Fail loudly rather than silently mutating nothing: an unresolvable
+          # base makes every diff empty, which would look like a clean pass.
+          if ! git rev-parse --verify --quiet "$BASE^{commit}" >/dev/null; then
+            echo "::error::Cannot resolve base revision '$BASE'; refusing to report a pass."
+            exit 1
+          fi
+
+          # Pathspec is the directory, not 'src/core/**/*.ts' — in a git
+          # pathspec '**' must be a whole path component, so that pattern
+          # silently matches nothing directly inside src/core.
+          ALL=$(git diff --name-only --diff-filter=ACMR "$BASE" HEAD -- src/core)
+          echo "Core files in diff:"
+          echo "${ALL:-  (none)}"
+
+          FILES=$(printf '%s\n' "$ALL" \
+            | { grep -E '\.ts$' || true; } \
+            | { grep -vE '\.(test|spec)\.ts$' || true; } \
             | paste -sd, -)
           echo "files=$FILES" >> "$GITHUB_OUTPUT"
           if [ -z "$FILES" ]; then
-            echo "No Core files changed."
+            echo "No Core files to mutate."
           else
-            echo "Changed Core files: $FILES"
+            echo "Mutating: $FILES"
           fi
 
       - name: Mutation test

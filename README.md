@@ -57,6 +57,7 @@ npm i -g
 ### Usage
 
 After installing, you can run the tool with:
+
 ```bash
 charlie
 ```
@@ -82,13 +83,17 @@ A **hotspot** is a file or module that is both frequently modified AND has high 
 The **Coupling** view combines two powerful metrics to help you identify architectural problems and find clusters of tightly related files:
 
 #### Sum of Coupling (SOC)
+
 **SOC** is a metric calculated per file that counts how many times the file appears in commits with other files (i.e., it's not alone in the commit). Every time a file is committed alongside other files, we assume it might be coupled with them. A high SOC score indicates a file that's frequently involved in multi-file changes, which could signal architectural problems.
 
 #### Coupled Pairs Integration
+
 Each file in the coupling view can be expanded to reveal its **coupled pairs** - files that frequently appear together in the same commits. When two files are consistently modified together, it suggests they're more tightly coupled than your architecture might indicate. High coupling can lead to ripple effects where changes in one file require changes in another.
 
 #### Finding Clusters
+
 By expanding high-SOC files, you can identify clusters of tightly coupled files that might benefit from:
+
 - Being moved into the same module or package
 - Being refactored to reduce dependencies
 - Being split if they're doing too many things
@@ -158,6 +163,7 @@ Specifies the earliest date for git commits to include in the analysis. Only com
 Allows you to group files into architectural components for analysis. The key is a regex pattern that matches file paths, and the value is the name of the architectural group. Files matching the same group will be consolidated into single entries. Only the first group that matches a file is used.
 
 When `architecturalGroups` is specified, Charlie generates both file-level and grouped visualizations in the report:
+
 1. **File-level Hotspots** - Shows individual files as separate hotspots
 2. **Grouped Hotspots** - Shows architectural groups as consolidated hotspots
 3. **Coupling Analysis** - Shows both file-level and group-level coupling relationships with expandable details
