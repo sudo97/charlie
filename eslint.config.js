@@ -6,6 +6,16 @@ import { defineConfig } from 'eslint/config';
 
 export default defineConfig([
   {
+    ignores: [
+      'dist/**',
+      'templates/**',
+      'coverage/**',
+      'reports/**',
+      'html/**',
+      '.stryker-tmp/**',
+    ],
+  },
+  {
     files: ['**/*.{js,mjs,cjs,ts,mts,cts}'],
     plugins: { js },
     extends: ['js/recommended'],
