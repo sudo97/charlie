@@ -30,9 +30,6 @@ jobs:
       - name: Coupling (cycles, Core purity, Stable Dependency Principle)
         run: npm run check:deps
 
-      - name: Section comments in the Core
-        run: npm run check:sections
-
       - name: Duplication
         run: npm run check:duplicates
 

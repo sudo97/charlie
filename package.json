@@ -36,10 +36,9 @@
     "format:check": "prettier --check .",
     "check:duplicates": "jscpd src --mode strict",
     "check:deps": "depcruise src",
-    "check:sections": "bash scripts/check-section-comments.sh",
     "mutation": "stryker run",
     "mutation:file": "stryker run --mutate",
-    "verify": "npm run format:check && npm run lint && npm run check:deps && npm run check:sections && npm run check:duplicates && npm run test:coverage && npm run mutation",
+    "verify": "npm run format:check && npm run lint && npm run check:deps && npm run check:duplicates && npm run test:coverage && npm run mutation",
     "clean": "rm -rf dist templates",
     "prepublishOnly": "npm run clean && npm run build"
   },

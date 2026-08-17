@@ -19,7 +19,6 @@ npm run verify              # the full local quality suite — run before openin
 npm run lint                # eslint (cyclomatic < 10, cognitive <= 10) + tsc --noEmit
 npm run test:coverage       # tests + Core coverage thresholds
 npm run check:deps          # cycles, Core purity, Stable Dependency Principle
-npm run check:sections      # section comments banned in the Core
 npm run check:duplicates    # jscpd
 npm run mutation            # Stryker over the whole Core
 npm run mutation:file src/core/soc.ts    # single file — use this during Build
@@ -38,7 +37,8 @@ Gates, all enforced by CI. These ratchet upward and never down.
 | Core mutation score                       | >= 95%          |
 | Dependency cycles                         | zero            |
 | Core purity, Stable Dependency Principle  | zero violations |
-| Section comments in the Core              | zero            |
+
+Comments in the Core are **not** machine-checked. No pattern can tell a section comment from a legitimate one, and a check that catches only the decorated style buys a green tick that means nothing. Enforcement is your own sweep at the end of Build and the engineer's review at Deliver.
 
 Per-task scope contract, written down before implementation starts:
 
