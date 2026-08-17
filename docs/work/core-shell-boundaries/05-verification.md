@@ -109,6 +109,43 @@ Local node is **22.22.0**; the workflows pinned **20**. `npm run verify` therefo
 
 This is a defect in the adoption commit surfaced by this PR, not a defect in the boundary work. Recorded as lesson 4.
 
+## T7 — a green check that had run nothing
+
+After T6 turned all three jobs green, the mutation job's 13-second runtime looked too fast. It was:
+
+```
+Mutation on changed Core files   pass   13s
+  > No Core files changed.
+```
+
+On a PR changing four Core files. Reproduced locally:
+
+```
+$ git diff --name-only --diff-filter=ACMR origin/main HEAD -- 'src/core/**/*.ts'
+(nothing)
+
+$ git diff --name-only --diff-filter=ACMR origin/main HEAD -- src/core
+src/core/count-revisions.ts
+src/core/filters.ts
+src/core/group-git-log.ts
+src/core/revisions.ts
+```
+
+`**` in a git pathspec must be a whole path component, so `src/core/**/*.ts` never matched files directly inside `src/core`. The step produced an empty list, the `if:` guard skipped the mutation step, and the job reported success.
+
+The fixed step, simulated locally before pushing:
+
+```
+Core files in diff:
+src/core/count-revisions.ts   src/core/group-git-log.ts
+src/core/filters.ts           src/core/revisions.ts
+Mutating: src/core/count-revisions.ts,src/core/filters.ts,src/core/group-git-log.ts,src/core/revisions.ts
+
+Final mutation score of 100.00 is greater than or equal to break threshold 95
+```
+
+The step now prints what it examined and fails outright on an unresolvable base, so an empty diff can no longer read as a clean pass. Recorded as lesson 5.
+
 ## What was not verified
 
 - `cli/index.ts` has no automated test, so the composition move is covered only by the runtime run above. That gap is on the deferred list in `03-spec.md`.

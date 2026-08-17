@@ -46,6 +46,16 @@ Three survived. Two were cut, and the cuts are listed at the end so the filterin
 
 ---
 
+## 5. A trap — the mutation gate passed by doing nothing
+
+**What.** The "Mutation on changed Core files" job went green in 13 seconds on a PR changing four Core files, having logged `No Core files changed`. The cause was a single git pathspec: `src/core/**/*.ts`. In a git pathspec `**` must be a whole path component, so that pattern never matches a file sitting directly in `src/core`. The step found nothing, the mutation step was skipped by its `if:` guard, and the job reported success.
+
+**Why it might outlive the PR.** This is the exact failure the section-comment grep was deleted for: a green tick that launders unchecked code as checked. It is strictly more dangerous than a gate that is absent, because the PR page says the Core was mutation-tested. It survived local verification, survived review of the workflow, and would have kept passing indefinitely — the only reason it surfaced is that 13 seconds looked too fast to be real.
+
+**Where it would live.** The pathspec is fixed in the diff, and the step now prints the files it found and fails on an unresolvable base rather than treating an empty diff as clean. The part worth a human's attention is the general principle: **every conditional CI gate needs a reason it cannot pass vacuously.** Any future `if: steps.x.outputs.y != ''` in these workflows has the same shape. **Recommend: a line in `DISCIPLINE.md` under "What CI deliberately does not check" — a gate that can skip itself must log what it examined and fail when it examined nothing.**
+
+---
+
 ## Considered and cut
 
 - **`[...someString]` spreads to characters, so the chunking in `git-log-reader.test.ts` is genuinely random.** Discovering this corrected a wrong assumption and is written up in `01-exploration.md` as the experiment that earned its keep. But as a _lesson_ it fails the test: it is one `node -e` away for anyone who wonders, and knowing it in advance would not change what the next agent does. Search cost is not the bar (§200).

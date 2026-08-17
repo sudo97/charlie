@@ -98,6 +98,21 @@ Scenario: S7. Added mid-flight, after CI failed on the opened PR.
 
 This is a defect in the adoption commit, not in this change set, and it is here only because it blocks this PR from going green. `npm run verify` cannot catch it: it runs on the developer's node, which is 22.22.0 locally. Adding the task rather than editing the workflows quietly keeps the diff explainable.
 
+## T7 — make the mutation job actually mutate
+
+Scenario: S8. Added after T6, when the _passing_ mutation check was found to have run nothing.
+
+| Item               | Value                                                                                                                  |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| Spec scenarios     | 1                                                                                                                      |
+| Predicted files    | 1 — `.github/workflows/ci.yml`                                                                                         |
+| Expected new tests | none                                                                                                                   |
+| Open decisions     | 0                                                                                                                      |
+| Red                | CI job "Mutation on changed Core files" passes in 13s having logged `No Core files changed`, on a PR that changes four |
+| Green              | the job lists the four files and mutates them                                                                          |
+
+Second defect in the adoption commit, and a worse one than T6: T6 failed loudly, this reported success.
+
 ## Tripwires
 
 Watched across all five tasks:

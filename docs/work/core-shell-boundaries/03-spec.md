@@ -69,6 +69,15 @@ _Added after the PR opened, when CI failed on something the local suite cannot s
 **then** `check:deps` runs in CI rather than aborting,
 **and** `package.json`'s `engines: >=18` is unchanged, because that constrains the published CLI, not the dev toolchain.
 
+### S8 — the mutation job mutates, or fails
+
+_Added after S7, when the green mutation check turned out to have skipped._
+
+**Given** a PR that changes files in `src/core`,
+**when** the mutation job runs,
+**then** it reports those files and mutates them,
+**and** if it cannot resolve the base revision it fails rather than reporting a pass on an empty diff.
+
 ## Error behaviour
 
 Unchanged. `produceGitLog` still rejects on spawn error and on a non-zero exit code, still writes stderr through, and still swallows a malformed file-entry line with a logged error rather than failing the run. The two rejection tests are the guard on this.
