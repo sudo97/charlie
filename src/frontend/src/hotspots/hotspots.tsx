@@ -17,6 +17,18 @@ import type { FileOwnership } from '@core/file-ownership';
 import type { CouplingItem } from '@core/coupling';
 import { CouplingLines } from './coupling-lines';
 
+// FIXME: this component holds decisions, not just rendering — packData,
+// mkColor, colorizeWithImportance and getColorDomain all belong in the Core
+// behind a Humble Object. They are stuck here because they take
+// d3.HierarchyCircularNode, which the core-no-io rule forbids the Core from
+// importing; separating the layout maths from the colour maths is the way out.
+// This is also why src/frontend has no tests: the logic worth asserting is
+// inside a component that needs a DOM to instantiate.
+// Two things follow from fixing it. The 14 imports below are what makes this
+// module less stable than its parent, so the not-to-unstable rule could cover
+// the frontend again (see .dependency-cruiser.cjs), and the extracted
+// functions become unit-testable without a renderer.
+
 export function Hotspots({
   hotspots: data,
   architecturalGroups,

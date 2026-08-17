@@ -63,4 +63,23 @@ Three survived. Two were cut, and the cuts are listed at the end so the filterin
 
 ---
 
-An empty lessons file is a perfectly good outcome, and three is close to it. Items 1 and 2 are the two worth a human's attention; item 3 is already handled in the diff.
+---
+
+## Disposition
+
+The driver acted on these before the merge button rather than after, which is the point of surfacing them here.
+
+Four deferred findings are now anchored as `FIXME` comments in the code that would change, each carrying the why and the condition for revisiting. `grep -rn FIXME src .dependency-cruiser.cjs` is the backlog; there is no second list to fall out of sync.
+
+| Finding                                                          | Anchored in                                                               |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `GitLogEmitter.onData` is typed `string` but receives a `Buffer` | `src/cli/git-log-reader.ts`, on the type                                  |
+| `produceGitLog` and `parse-log.ts` belong in the Core            | `src/cli/git-log-reader.ts`, above `appendLine`                           |
+| Humble Object extraction, and why there are no frontend tests    | `hotspots/hotspots.tsx`, `FileOwnership.tsx`, `coupling/coupling-row.tsx` |
+| SDP scoped off the frontend                                      | `.dependency-cruiser.cjs`, on the `not-to-unstable` rule                  |
+
+The last two are deliberately cross-referenced: thinning `hotspots.tsx` is what would let the SDP rule cover the frontend again, and the rule's note says so, including the instruction not to widen the scope first.
+
+Lesson 5 — that a conditional CI gate needs a reason it cannot pass vacuously — has no natural code anchor and remains open for the driver.
+
+Lesson 2 — the knowledge graph answering "are there cycles?" from `CALLS` edges — is a note for `AGENTS.md` if the driver wants it, and dies with this folder otherwise.
