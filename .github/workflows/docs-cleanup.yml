@@ -1,0 +1,35 @@
+name: Erase work docs on merge
+
+# The default fate of every pipeline artifact is erasure. Anything worth keeping
+# is extracted by a human, deliberately, before the merge button.
+# See DISCIPLINE.md, Documentation Lifecycle.
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    name: Delete docs/work
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Remove docs/work and push
+        run: |
+          if [ ! -d docs/work ] || [ -z "$(ls -A docs/work 2>/dev/null)" ]; then
+            echo "Nothing to erase."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm -r --quiet docs/work
+          git commit -m "chore: erase docs/work after merge
+
+          Pipeline artifacts do not survive the merge. Anything worth keeping
+          was extracted by a human before this point."
+          git push origin HEAD:main

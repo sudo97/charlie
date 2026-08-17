@@ -1,0 +1,105 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Build, lint, complexity, coupling
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+
+      - name: Format check
+        run: npm run format:check
+
+      - name: Lint and type check (cyclomatic < 10, cognitive <= 10)
+        run: npm run lint
+
+      - name: Coupling (cycles, Core purity, Stable Dependency Principle)
+        run: npm run check:deps
+
+      - name: Section comments in the Core
+        run: npm run check:sections
+
+      - name: Duplication
+        run: npm run check:duplicates
+
+      - name: Build
+        run: npm run build
+
+  test:
+    name: Tests and Core coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+
+      - name: Tests with Core coverage thresholds
+        run: npm run test:coverage
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+          retention-days: 7
+
+  mutation:
+    name: Mutation on changed Core files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+
+      - name: Determine changed Core files
+        id: changed
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE="origin/${{ github.base_ref }}"
+          else
+            BASE="${{ github.event.before }}"
+          fi
+          FILES=$(git diff --name-only --diff-filter=ACMR "$BASE" HEAD -- 'src/core/**/*.ts' \
+            | { grep -v '\.\(test\|spec\)\.ts$' || true; } \
+            | paste -sd, -)
+          echo "files=$FILES" >> "$GITHUB_OUTPUT"
+          if [ -z "$FILES" ]; then
+            echo "No Core files changed."
+          else
+            echo "Changed Core files: $FILES"
+          fi
+
+      - name: Mutation test
+        if: steps.changed.outputs.files != ''
+        run: npx stryker run --mutate "${{ steps.changed.outputs.files }}"
+
+      - name: Upload mutation report
+        if: always() && steps.changed.outputs.files != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: mutation-report
+          path: reports/mutation/
+          retention-days: 7
