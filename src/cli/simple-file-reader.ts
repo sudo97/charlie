@@ -11,7 +11,7 @@ export const fileReader = (filepath: string): VisualComplexityEmitter => {
     };
   }
 
-  console.log('reading', filepath);
+  console.error('reading', filepath);
   const fileStream = fsOld.createReadStream(filepath, { encoding: 'utf8' });
 
   return {

@@ -7,8 +7,13 @@ import { readConfigFile } from './config.js';
 import { applyFilters } from '../core/filters.js';
 import { gitHistoryWordCount } from '../core/word-count.js';
 import { readHotspots } from './readHotspots.js';
+import { parseArgs } from '../core/parse-args.js';
+import { couplingAnalysis } from '../core/coupling-analysis.js';
+import { defaultLimits, jsonPayload } from '../core/json-payload.js';
 
-const repositoryPath = path.resolve(process.argv[2] ?? '.');
+const args = parseArgs(process.argv.slice(2));
+
+const repositoryPath = path.resolve(args.repositoryPath);
 
 const config = await readConfigFile(repositoryPath);
 
@@ -19,15 +24,25 @@ const logItems = applyFilters(
 
 const hotspotsData = await readHotspots(repositoryPath, logItems);
 
-const outputPath = path.join(repositoryPath, 'charlie-report.html');
+if (args.json) {
+  const payload = jsonPayload(
+    hotspotsData,
+    couplingAnalysis(logItems),
+    args.all ? undefined : defaultLimits
+  );
 
-await generateReport({
-  title: repositoryPath.split('/').pop() ?? 'Charlie Code Hotspots Report',
-  outputPath,
-  hotspots: hotspotsData,
-  logItems,
-  wordCount: gitHistoryWordCount(logItems),
-  architecturalGroups: config.architecturalGroups,
-});
+  console.log(JSON.stringify(payload, null, 2));
+} else {
+  const outputPath = path.join(repositoryPath, 'charlie-report.html');
 
-console.log(`Report generated successfully at: ${outputPath}`);
+  await generateReport({
+    title: repositoryPath.split('/').pop() ?? 'Charlie Code Hotspots Report',
+    outputPath,
+    hotspots: hotspotsData,
+    logItems,
+    wordCount: gitHistoryWordCount(logItems),
+    architecturalGroups: config.architecturalGroups,
+  });
+
+  console.log(`Report generated successfully at: ${outputPath}`);
+}
