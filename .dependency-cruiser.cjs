@@ -37,9 +37,9 @@ module.exports = {
       name: 'not-to-unstable',
       severity: 'error',
       comment:
-        'Stable Dependency Principle: a module may only depend on modules at least as stable as itself.',
-      from: { path: '^src', pathNot: '^src/tests' },
-      to: { path: '^src', pathNot: '^src/tests', moreUnstable: true },
+        'Stable Dependency Principle: a module may only depend on modules at least as stable as itself. Scoped to core and cli, where dependency direction is a design choice. In a React tree the parent imports its children, so with Ca=1 throughout the rule reduces to "no component may import more modules than its parent" — a claim about React, not about coupling. The frontend is still checked for cycles and Core purity.',
+      from: { path: '^src/(core|cli)' },
+      to: { path: '^src/(core|cli)', moreUnstable: true },
     },
     {
       name: 'no-orphans',
