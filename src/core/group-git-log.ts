@@ -1,10 +1,9 @@
-import type { Config } from '../cli/config.js';
 import { compileGroups, filenameToGroup } from './architectural-groups.js';
 import type { FileEntry, LogItem } from './git-log.js';
 
 export function groupGitLog(
   gitLogItems: LogItem[],
-  architecturalGroups: Config['architecturalGroups']
+  architecturalGroups: Record<string, string>
 ): LogItem[] {
   const groups = compileGroups(architecturalGroups);
 
