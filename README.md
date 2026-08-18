@@ -72,6 +72,62 @@ charile /path/to/your/project
 
 After running the tool, in the root of your project you should see a file called `charlie-report.html`. Open it in your browser to see the report.
 
+### JSON output
+
+For reading the analysis in a terminal — or letting an AI agent run Charlie and read the result itself — pass `--json`:
+
+```bash
+charlie --json
+charlie --json /path/to/your/project    # the path may come before or after the flag
+```
+
+Charlie prints the analysis to stdout and writes no HTML report. Progress goes to stderr, so `charlie --json > analysis.json` gives you a file containing only JSON, and `charlie --json 2>/dev/null` silences everything else.
+
+The document has two keys:
+
+```json
+{
+  "hotspots": [
+    { "file": "src/core/soc.ts", "complexity": 412, "revisions": 9 }
+  ],
+  "coupling": [
+    {
+      "file": "src/core/soc.ts",
+      "soc": 31,
+      "coupledFiles": [
+        { "file": "src/core/coupling.ts", "percentage": 0.75, "revisions": 8 }
+      ]
+    }
+  ]
+}
+```
+
+`hotspots` is ordered by `complexity * revisions`, highest first. `coupling` is ordered by SOC score, and each entry's `coupledFiles` by coupling percentage. A pair appears twice — once under each of the two files.
+
+Output is 2-space indented so it is readable as-is. Pipe through `jq -c .` if you want it compact.
+
+#### Limits
+
+A full analysis is far too large to read: on a 518-file repository, the unbounded output is **8.5 MB**, around 2.2 million tokens. So `--json` keeps only what is worth acting on:
+
+| Limit                 | Value | Effect                                                                     |
+| --------------------- | ----- | -------------------------------------------------------------------------- |
+| Percentile            | 0.95  | Keeps the top 5% — of `hotspots` by score, and of `coupling` by SOC        |
+| Minimum kept          | 30    | If the percentile leaves fewer than 30 entries, keep 30 (or all, if fewer) |
+| Maximum coupled files | 10    | Each `coupling` entry lists at most its 10 most strongly coupled partners  |
+
+That same 518-file repository produces about 53 KB with these limits applied.
+
+Pass `--all` to remove every limit and get the complete analysis:
+
+```bash
+charlie --json --all > full-analysis.json
+```
+
+Be aware of what that means — `--all` is what produced the 8.5 MB above. It is meant for piping into `jq`, not for reading.
+
+Use `.charlie.config.json`'s `include` and `exclude` (below) to narrow which files are analyzed in the first place; that reduces both outputs.
+
 ## Core Concepts
 
 ### Hotspots
@@ -112,7 +168,7 @@ While cyclomatic complexity might be more academically accurate, this nested-bas
 
 # .charlie.config.json
 
-The `.charlie.config.json` file allows you to customize Charlie's analysis behavior. This file should be placed in the root of your repository (the same directory where you run the `charlie` command). Additional analysis options like coupling thresholds and percentile filters are available through the interactive frontend.
+The `.charlie.config.json` file allows you to customize Charlie's analysis behavior. This file should be placed in the root of your repository (the same directory where you run the `charlie` command). The HTML report shows the full analysis, with coupling rows collapsed until you expand them; the limits described under [JSON output](#json-output) apply only to `--json`.
 
 ## Configuration Fields
 

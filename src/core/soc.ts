@@ -21,11 +21,3 @@ export function soc(gitRevisions: LogItem[]): Soc[] {
     .map(([file, soc]) => ({ file, soc }))
     .sort((a, b) => b.soc - a.soc);
 }
-
-export function socPercentile(data: Soc[], percentile: number): Soc[] {
-  const percentileIdx = Math.floor(data.length * percentile);
-
-  return [...data]
-    .sort((a, b) => b.soc - a.soc)
-    .slice(0, data.length - percentileIdx);
-}

@@ -48,10 +48,22 @@ describe('git-log parser', () => {
         fileEntries: [{ fileName: 'file2.txt', added: 1, removed: 1 }],
         message: 'some other message',
       },
+      // A third commit matters: with only two, the stream carries a single
+      // separator and cannot exercise a chunk holding more than one.
+      {
+        hash: 'fedcba',
+        date: '2024-01-03',
+        author: 'Nohj Eoj',
+        fileEntries: [{ fileName: 'file3.txt', added: 1, removed: 1 }],
+        message: 'a third message',
+      },
     ];
 
+    // Real `git log --pretty=format:` output separates commits with a blank
+    // line and emits no trailing separator after the last one. A fixture that
+    // gets either detail wrong cannot detect commits being dropped.
     const expectedLogItemString = [
-      ...(expectedLogItems
+      ...expectedLogItems
         .map(item => {
           return `'--${item.hash}--${item.date}--${
             item.author
@@ -59,7 +71,7 @@ describe('git-log parser', () => {
             .map(file => `${file.added} ${file.removed} ${file.fileName}`)
             .join('\n')}`;
         })
-        .join('\n') + '\n\n'),
+        .join('\n\n'),
     ];
 
     const mockGitLogEmitter: GitLogEmitter = {
